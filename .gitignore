@@ -1,0 +1,7 @@
+*.txt
+x64/
+Debug/
+*.suo
+*.sln
+*.vfproj
+*.u2d
