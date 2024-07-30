@@ -52,194 +52,15 @@ subroutine SolveInRetirement(counter)
     !Married    
     do iaf = 1, na
         do ixm = 1, nexp
-
-            !Pension depends on expected wage conditional on ability and experience
-            Psi_pension=(psi0+psi1*av_earnings(1,1,iam)*min(1d0,exp_grid(ixm,T+Tret+1-it)/35d0))*(1d0-t_const)
-            Psi_pensionf=(psi0+psi1*av_earnings(2,1,iaf)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0))*(1d0-t_const)
-
-            if(it==1) then
-                ! Solve the very last period problem:
-                k_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = 0d0
-                c_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = ((k_grid(ik) + Gamma_redistr)*(1d0 + r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
-                Uprime_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = dUc(((k_grid(ik) + Gamma_redistr)*(1d0 + r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc))
-                nf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=0d0
-                nm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=0d0
-                retf(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=1d0
-                retm(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=1d0
-                v_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = Uc(c_ret(1,1,ik,ix,ixm,iam,1,iaf,1,Tret-it+1,1,1))
-                v_ret2(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = Uc(c_ret(1,1,ik,ix,ixm,iam,1,iaf,1,Tret-it+1,1,1))
-                
-                lfpm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = 0d0
-                lfpf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = 0d0
-                
-                c_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:,LFP_M0,LFP_F0)=P2
-                k_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:,LFP_M0,LFP_F0)=0d0
-                nm_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:,LFP_M0,LFP_F0)=0d0
-                nf_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:,LFP_M0,LFP_F0)=0d0                 
-            else
-                ! Solve the Tret-1 to 1st period of retirement:
-                !Finding optimal capital by golden search
-                P1=0.001d0
-                P4=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
-                do
-                    P2 = (P4+P1)/2d0
-
-                    dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum-P2*(1d0+tc))/(1d0+mu)
-
-                    if((dum2<k_grid(nk)).AND.(dum2>k_grid(1))) then
-                        call db3val(dum2,exp_grid(ix,T+Tret+1-it),exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                                tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                nk,nexp,nexp,kx,ky,kz,&
-                                edc_ret_bspl(1,1,iam,1,iaf,1,1,1)%coefs,vnext_p2,iflag,&
-                                inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-                        !vnext_p2 = D_BS3VL(dum2, exp_grid(ix,T+Tret+1-it), exp_grid(ixm,T+Tret+1-it), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret+2-it), EXP_KNOT(:,T+Tret+2-it), nk, nexp, nexp, edc_ret_spln_coefs(1,1,:,:,:,iam,1,iaf,1,Tret+2-it,1,1))
-                        V2=dUc(P2)-beta*OmegaRet(Tret-it+1)*((1d0+r_ret_next*(1d0-tk))/(1d0+mu))*vnext_p2
-                    else
-                        pnt2=(/dum2, exp_grid(ix,T+Tret-it), exp_grid(ixm,T+Tret-it)/)
-                        INTERP3D=edc_ret(1,1,:,:,:,iam,1,iaf,1,Tret+2-it,1,1)
-                        vnext_p2 = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                        V2=dUc(P2)-beta*OmegaRet(Tret-it+1)*((1d0+r_ret_next*(1d0-tk))/(1d0+mu))*vnext_p2
-                    end if
-
-                    if (V2 < 0d0) then
-                        P4=P2
-                    else
-                        P1=P2
-                    end if
-                    if((P4-P1)<1d-8) exit
-                end do
-
-                if(dum2<1d-4) then
-                    dum2=k_grid(1)
-                    P2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
-                end if
-
-                if((dum2<k_grid(nk)).AND.(dum2>k_grid(1))) then
-                    call db3val(dum2,exp_grid(ix,T+Tret+1-it),exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                            tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                            nk,nexp,nexp,kx,ky,kz,&
-                            ev_ret_bspl(1,1,iam,1,iaf,1,1,1)%coefs,vnext_p2,iflag,&
-                            inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-                    !vnext_p2 = D_BS3VL(dum2, exp_grid(ix,T+Tret+1-it), exp_grid(ixm,T+Tret+1-it), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret+2-it), EXP_KNOT(:,T+Tret+2-it), nk, nexp, nexp, ev_ret_spln_coefs(1,1,:,:,:,iam,1,iaf,1,Tret+2-it,1,1))
-                else
-                    pnt2=(/dum2, exp_grid(ix,T+Tret-it), exp_grid(ixm,T+Tret-it)/)
-                    INTERP3D=ev_ret(1,1,:,:,:,iam,1,iaf,1,Tret+2-it,1,1)
-                    vnext_p2 = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                end if
-                V2=Uc(P2)+beta*OmegaRet(Tret-it+1)*vnext_p2
-
-                v_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=V2
-                v_ret2(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=V2
-                k_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=dum2
-                nf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0
-                nm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0
-                retf(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=1d0
-                retm(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=1d0
-                c_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=P2
-                Uprime_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=dUc(P2)
-                
-                c_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:,LFP_M0,LFP_F0)=P2
-                k_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:,LFP_M0,LFP_F0)=dum2
-                nm_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:,LFP_M0,LFP_F0)=0d0
-                nf_ret_lfp(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:,LFP_M0,LFP_F0)=0d0 
-                lfpm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0
-                lfpf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0                   
-            end if
-
+            v_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=-999999999d0
+            v_ret2(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=-999999999d0                 
         end do
     end do
 
     !Single
     do j=1,2
-
-        !Pension depends on expected earnings conditional on ability, marital status and gender
-        Psi_pension=((psi0+psi1*av_earnings(j,2,iam)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0)))*(1d0-t_const)
-
-        if(it==1) then
-            !Solve the very last period problem:     
-            ks_ret(1,j,ik,ix,iam,:,Tret,:) = 0d0
-            cs_ret(1,j,ik,ix,iam,:,Tret,:) = ((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0)/(1d0+tc)
-            Uprimes_ret(1,j,ik,ix,iam,:,Tret,:) = dUc(((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0)/(1d0+tc))
-            ns_ret(1,j,ik,ix,iam,:,Tret,:) = 0d0
-            rets(1,j,ik,ix,iam,:,Tret,:) = 1d0
-            vs_ret(1,j,ik,ix,iam,:,Tret,:) = Uc(cs_ret(1,j,ik,ix,iam,1,Tret,1))
-            vs_ret2(1,j,ik,ix,iam,:,Tret,:) = Uc(cs_ret(1,j,ik,ix,iam,1,Tret,1))
-            
-            cs_ret_lfp(1,j,ik,ix,iam,:,Tret,:,LFP_0) = P2
-            ks_ret_lfp(1,j,ik,ix,iam,:,Tret,:,LFP_0) = 0d0
-            ns_ret_lfp(1,j,ik,ix,iam,:,Tret,:,LFP_0) = 0d0      
-            lfps_ret(1,j,ik,ix,iam,:,Tret,:) = 0d0            
-        else
-            ! Solve the Tret-1 to 1st period of retirement:
-            !Finding optimal capital by golden search
-            P1=0.001d0
-            P4=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0)/(1d0+tc)
-            do
-                P2 = (P4+P1)/2d0
-
-                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0-P2*(1d0+tc))/(1d0+mu)
-
-                if((dum2<k_grid(nk)).AND.(dum2>k_grid(1))) then
-                    call db2val(dum2,exp_grid(ix,T+Tret+1-it),idx,idy,&
-                        tx,ty(:,T+Tret+2-it),nk,nexp,kx,ky,&
-                        edcs_ret_bspl(1,j,iam,1,1)%coefs,vnext_p2,iflag,&
-                        inbvx,inbvy,iloy,w1_d2,w0_d2,extrap=.false.)
-                    !vnext_p2 = D_BS2VL(dum2, exp_grid(ix,T+Tret+1-it), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret+2-it), nk, nexp,edcs_ret_spln_coefs(1,j,:,:,iam,1,Tret+2-it,1))
-                    V2=dUc(P2)-beta*OmegaRet(Tret-it+1)*((1d0+r_ret_next*(1d0-tk))/(1d0+mu))*vnext_p2
-                else
-                    pnt1=(/dum2, exp_grid(ix,T+Tret+1-it)/)
-                    INTERP2D=edcs_ret(1,j,:,:,iam,1,Tret+2-it,1)
-                    vnext_p2 = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
-                    V2=dUc(P2)-beta*OmegaRet(Tret-it+1)*((1d0+r_ret_next*(1d0-tk))/(1d0+mu))*vnext_p2
-                end if
-
-                if (V2 < 0d0) then
-                    P4=P2
-                else
-                    P1=P2
-                end if
-                if((P4-P1)<1d-8) exit
-            end do
-
-            if(dum2<1d-4) then
-                dum2=k_grid(1)
-                P2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0)/(1d0+tc)
-            end if
-
-            if((dum2<k_grid(nk)).AND.(dum2>k_grid(1))) then
-                !vnext_p2 = D_BS2VL(dum2, exp_grid(ix,T+Tret+1-it), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret+2-it), nk, nexp,evs_ret_spln_coefs(1,j,:,:,iam,1,Tret+2-it,1))
-                call db2val(dum2,exp_grid(ix,T+Tret+1-it),idx,idy,&
-                    tx,ty(:,T+Tret+2-it),nk,nexp,kx,ky,&
-                    evs_ret_bspl(1,j,iam,1,1)%coefs,vnext_p2,iflag,&
-                    inbvx,inbvy,iloy,w1_d2,w0_d2,extrap=.false.)
-            else
-                pnt1=(/dum2, exp_grid(ix,T+Tret+1-it)/)
-                INTERP2D=vs_ret(1,j,:,:,iam,1,Tret+2-it,1)
-                vnext_p2 = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
-            end if
-            V2=Uc(P2)+beta*OmegaRet(Tret-it+1)*vnext_p2
-
-            vs_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=V2
-            vs_ret2(1,j,ik,ix,iam,:,Tret-it+1,:)=V2
-            ks_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=dum2
-            ns_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=0d0
-            rets(1,j,ik,ix,iam,:,Tret-it+1,:)=1d0
-            cs_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=P2
-            Uprimes_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=dUc(P2)
-
-            !pnt1=(/dum2, exp_grid(ix,T+Tret+1-it)/)
-            !INTERP2D=cs_ret(1,j,:,:,iam,1,Tret+2-it,1)
-            !vnext_p2 = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
-            !V2=dUc(P2)-beta*OmegaRet(Tret-it+1)*((1d0+r_ret_next*(1d0-tk))/(1d0+mu))*dUc(vnext_p2)
-            !Eulers_ret(1,j,ik,:,iam,:,Tret-it+1,:)=V2
-            
-            lfps_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=0d0
-            cs_ret_lfp(1,j,ik,ix,iam,:,Tret-it+1,:,LFP_0) = P2
-            ks_ret_lfp(1,j,ik,ix,iam,:,Tret-it+1,:,LFP_0) = dum2
-            ns_ret_lfp(1,j,ik,ix,iam,:,Tret-it+1,:,LFP_0) = 0d0                  
-
-        end if
-
+        vs_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=-999999999d0
+        vs_ret2(1,j,ik,ix,iam,:,Tret-it+1,:)=-999999999d0
     end do
 
 end subroutine SolveInRetirement
@@ -331,229 +152,8 @@ subroutine SolveInRetirement2(counter)
         do iaf = 1, na
             do ixm = 1, nexp
 
-                wagef = (1d0/(1d0+exp(kappa*(T+Tret+1-it-agestart))))*wage(2,a(2,iam),exp_grid(ix,T+Tret+1-it),u(2,ium))/(1d0+t_employer)
-
-                !Pension depends on expected wage conditional on ability and experience
-                Psi_pension=(psi0+psi1*av_earnings(1,1,iaf)*min(1d0,exp_grid(ixm,T+Tret+1-it)/35d0))*(1d0-t_const)
-                Psi_pensionf=(psi0+psi1*av_earnings(2,1,iam)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0))*(1d0-t_const)
-
-                if(it==1) then
-                    ! Solve the very last period problem:         
-                    ke = 0d0
-                    ce = ((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
-                    nem = 0d0
-                    nef = 0d0
-                    ve = Uc(ce)
-                    
-                    c_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=ce
-                    k_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=ke
-                    nm_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=0d0
-                    nf_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=0d0                                         
-                    
-                else
-                    ! Solve the Tret-1 to 1st period of retirement:
-                    !Finding optimal capital by golden search
-                    P1=0.001d0
-                    nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension
-                    aftertax_lab_inc = after_tax_labor_inc_married(wagef)
-                    P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagef*t_employee))/(1d0+tc))
-                    do
-                        P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
-                        P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
-
-                        pnt1 = (/P2, wagef/)
-                        dum4 = min(max(bilin_interp(c_grid, wage_grid, laborfwork, nc, nw, pnt1),0d0),1d0)
-                        y=dum4*wagef
-                        aftertax_lab_inc = after_tax_labor_inc_married(y)
-                        dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P2*(1d0+tc))/(1d0+mu) 
-                        if(dum2<0.0001d0) then
-                            V2=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V2=Uc(P2)-chif*(dum4**(1d0+etaf))/(1d0+etaf)-fc(1,ifc)
-
-                            pnt2=(/dum2, exp_grid(ix,T+Tret-it)+1d0, exp_grid(ixm,T+Tret-it)/)
-                            INTERP3D=ev_ret(2,1,:,:,:,iaf,1,iam,ium,Tret+2-it,ifc,1)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V2=Uc(P2)-chif*(dum4**(1d0+etaf))/(1d0+etaf)-fc(1,ifc)
-                            call db3val(dum2,exp_grid(ix,T+Tret+1-it)+1d0,exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(2,1,iaf,1,iam,ium,ifc,1)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-                        pnt1 = (/P3, wagef/)
-                        dum4 = min(max(bilin_interp(c_grid, wage_grid, laborfwork, nc, nw, pnt1),0d0),1d0)
-                        y=dum4*wagef
-                        !dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
-                        
-                        aftertax_lab_inc = after_tax_labor_inc_married(y)
-                        dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu)     
-                        !if (abs(dum2 - dum2_test) > 1d-6) then
-                        !    print *, 'WARNING: dum2 != dum2_test'
-                        !end if                        
-                        
-                        if(dum2<0.0001d0) then
-                            V3=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V3=Uc(P3)-chif*(dum4**(1d0+etaf))/(1d0+etaf)-fc(1,ifc)
-
-                            pnt2=(/dum2, exp_grid(ix,T+Tret-it)+1d0, exp_grid(ixm,T+Tret-it)/)
-                            INTERP3D=ev_ret(2,1,:,:,:,iaf,1,iam,ium,Tret+2-it,ifc,1)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V3=Uc(P3)-chif*(dum4**(1d0+etaf))/(1d0+etaf)-fc(1,ifc)
-                            call db3val(dum2,exp_grid(ix,T+Tret+1-it)+1d0,exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(2,1,iaf,1,iam,ium,ifc,1)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-
-                        if (V2 < V3) then
-                            P1=P2
-                        else
-                            P4=P3
-                        end if
-                        if((P4-P1)<1d-8) exit
-                    end do
-                    
-                    if(dum4<minhours) then
-                        V2=-999999999d0
-                    end if
-                    
-                    Ve=V2
-                    ke=dum2
-                    nef=dum4
-                    nem=0d0
-                    ce=P2
-                    
-                    c_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F1)=P2
-                    k_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F1)=dum2
-                    nm_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F1)=0d0
-                    nf_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F1)=dum4  
-                    
-                    lfpm_e = 0d0
-                    lfpf_e = 1d0                    
-
-                    !Working 0 hours but still not retiring
-
-                    P1=0.001d0
-                    P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit)/(1d0+tc))
-
-                    do
-                        P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
-                        P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
-
-                        dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
-
-                        if(dum2<0.0001d0) then
-                            V2=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V2=Uc(P2)
-
-                            pnt2=(/dum2, exp_grid(ix,T+Tret-it), exp_grid(ixm,T+Tret-it)/)
-                            INTERP3D=ev_ret(2,1,:,:,:,iaf,1,iam,ium,Tret+2-it,ifc,1)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V2=Uc(P2)
-                            call db3val(dum2,exp_grid(ix,T+Tret+1-it),exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(2,1,iaf,1,iam,ium,ifc,1)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-                        dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
-                        if(dum2<0.0001d0) then
-                            V3=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V3=Uc(P3)
-
-                            pnt2=(/dum2, exp_grid(ix,T+Tret-it), exp_grid(ixm,T+Tret-it)/)
-                            INTERP3D=ev_ret(2,1,:,:,:,iaf,1,iam,ium,Tret+2-it,ifc,1)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V3=Uc(P3)
-                            call db3val(dum2,exp_grid(ix,T+Tret+1-it),exp_grid(ixm,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(2,1,iaf,1,iam,ium,ifc,1)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-
-                        if (V2 < V3) then
-                            P1=P2
-                        else
-                            P4=P3
-                        end if
-                        if((P4-P1)<1d-8) exit
-                    end do
-
-                    if (V2 >= ve) then
-                        Ve=V2
-                        ke=dum2
-                        nef=0d0
-                        nem=0d0
-                        ce=P2
-                    end if
-                    
-                    c_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=P2
-                    k_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=dum2
-                    nm_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=0d0
-                    nf_ret_lfp(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:,LFP_M0,LFP_F0)=0d0 
-                    
-                    lfpm_u = 0d0
-                    lfpf_u = 0d0                        
-                    
-
-                end if
-
-                v_ret2(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=ve
-                c_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=ce
-                k_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=ke
-                nf_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=nef
-                nm_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=nem
-
-                vu=v_ret(1,1,ik,ix,ixm,iaf,1,iam,ium,Tret-it+1,ifc,1)
-
-                if (ve >= vu) then
-                    v_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=ve
-                    retf(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0
-                    retm(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=1d0
-                    lfpm_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=lfpm_e
-                    lfpf_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=lfpf_e                                                           
-                else
-                    v_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=vu
-                    retf(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=1d0
-                    retm(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=1d0
-                    lfpm_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=lfpm_u
-                    lfpf_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=lfpf_u                                                             
-                end if
-
-                if(it==1) then
-                    retf(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=1d0
-                    retm(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=1d0
-                    lfpm_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0
-                    lfpf_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0                      
-                end if
+                v_ret2(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=-999999999d0 
+                v_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=-999999999d0
 
             end do
         end do
@@ -576,236 +176,8 @@ subroutine SolveInRetirement2(counter)
         do iaf = 1, na
             do ixm = 1, nexp
 
-
-                !Pension depends on expected wage conditional on ability and experience
-                Psi_pension=(psi0+psi1*av_earnings(2,1,iaf)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0))*(1d0-t_const)
-                Psi_pensionf=(psi0+psi1*av_earnings(1,1,iam)*min(1d0,exp_grid(ixm,T+Tret+1-it)/35d0))*(1d0-t_const)
-
-                wagem = (1d0/(1d0+exp(kappa*(T+Tret+1-it-agestart))))*wage(1,a(1,iam),exp_grid(ix,T+Tret+1-it),u(1,ium))/(1d0+t_employer)
-
-
-                if(it==1) then
-                    ! Solve the very last period problem:
-                    ke = 0d0
-                    ce = ((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
-                    nem = 0d0
-                    nef = 0d0
-                    ve = Uc(ce)
-                    
-                    c_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=ce
-                    k_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=ke
-                    nm_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=0d0
-                    nf_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=0d0                     
-                    
-                else
-                    ! Solve the Tret-1 to 1st period of retirement:
-                    !Finding optimal capital by golden search
-                    P1=0.001d0
-                    nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension
-                    aftertax_lab_inc = after_tax_labor_inc_married(wagem)
-                    P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagem*t_employee))/(1d0+tc))                  
-                    do
-                        P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
-                        P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
-
-                        pnt1 = (/P2, wagem/)
-                        dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
-                        y=dum4*wagem
-                        aftertax_lab_inc = after_tax_labor_inc_married(y)
-                        dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P2*(1d0+tc))/(1d0+mu) 
-                        
-                        !if (abs(dum2 - dum2_test) > 1d-6) then
-                        !    print *, 'WARNING: dum2 != dum2_test'
-                        !end if
-
-                        if(dum2<0.0001d0) then
-                            V2=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V2=Uc(P2)-chim*(dum4**(1d0+etam))/(1d0+etam)-fcm(1,ifc)
-
-                            pnt2=(/dum2, exp_grid(ixm,T+Tret-it), exp_grid(ix,T+Tret-it)+1d0/)
-                            INTERP3D=ev_ret(1,2,:,:,:,iam,ium,iaf,1,Tret+2-it,1,ifc)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V2=Uc(P2)-chim*(dum4**(1d0+etam))/(1d0+etam)-fcm(1,ifc)
-                            call db3val(dum2,exp_grid(ixm,T+Tret+1-it),exp_grid(ix,T+Tret+1-it)+1d0,idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(1,2,iam,ium,iaf,1,1,ifc)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                            !vnext = D_BS3VL(dum2, exp_grid(ixm,T+Tret+1-it), exp_grid(ix,T+Tret+1-it), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret-it+2),EXP_KNOT(:,T+Tret-it+2), nk, nexp, nexp, ev_ret_spln_coefs(1,2,:,:,:,iam,ium,iaf,1,Tret+2-it,1,ifc))
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-                        pnt1 = (/P3, wagem/)
-                        dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
-                        y=dum4*wagem
-                        !dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
-
-                        aftertax_lab_inc = after_tax_labor_inc_married(y)
-                        dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu) 
-                        
-                        !if (abs(dum2 - dum2_test) > 1d-6) then
-                        !    print *, 'WARNING: dum2 != dum2_test'
-                        !end if
-
-
-                        if(dum2<0.0001d0) then
-                            V3=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V3=Uc(P3)-chim*(dum4**(1d0+etam))/(1d0+etam)-fcm(1,ifc)
-
-                            pnt2=(/dum2, exp_grid(ixm,T+Tret-it), exp_grid(ix,T+Tret-it)+1d0/)
-                            INTERP3D=ev_ret(1,2,:,:,:,iam,ium,iaf,1,Tret+2-it,1,ifc)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V3=Uc(P3)-chim*(dum4**(1d0+etam))/(1d0+etam)-fcm(1,ifc)
-                            call db3val(dum2,exp_grid(ixm,T+Tret+1-it),exp_grid(ix,T+Tret+1-it)+1d0,idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(1,2,iam,ium,iaf,1,1,ifc)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-
-                        if (V2 < V3) then
-                            P1=P2
-                        else
-                            P4=P3
-                        end if
-                        if((P4-P1)<1d-8) exit
-                    end do
-                    
-                    if(dum4<minhours) then
-                        V2=-999999999d0
-                    end if
-                    
-                    Ve=V2
-                    ke=dum2
-                    nef=0d0
-                    nem=dum4
-                    ce=P2
-                    
-                    c_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M1,LFP_F0)=P2
-                    k_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M1,LFP_F0)=dum2
-                    nm_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M1,LFP_F0)=dum4
-                    nf_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M1,LFP_F0)=0d0  
-                    
-                    lfpm_e = 0d0
-                    lfpf_e = 1d0                    
-                    
-
-                    !Working 0 hours but not retiring
-
-                    P1=0.001d0
-                    P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit)/(1d0+tc))
-                    do
-                        P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
-                        P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
-
-                        dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
-                        if(dum2<0.0001d0) then
-                            V2=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V2=Uc(P2)
-
-                            pnt2=(/dum2, exp_grid(ixm,T+Tret-it), exp_grid(ix,T+Tret-it)/)
-                            INTERP3D=ev_ret(1,2,:,:,:,iam,ium,iaf,1,Tret+2-it,1,ifc)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V2=Uc(P2)
-                            call db3val(dum2,exp_grid(ixm,T+Tret+1-it),exp_grid(ix,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(1,2,iam,ium,iaf,1,1,ifc)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                            V2=V2+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-                        dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
-                        if(dum2<0.0001d0) then
-                            V3=-999999999d0
-                        elseif(dum2>k_grid(nk)-0.001d0) then
-                            V3=Uc(P3)
-                            pnt2=(/dum2, exp_grid(ixm,T+Tret-it), exp_grid(ix,T+Tret-it)/)
-                            INTERP3D=ev_ret(1,2,:,:,:,iam,ium,iaf,1,Tret+2-it,1,ifc)
-                            vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-                        else
-                            V3=Uc(P3)
-                            call db3val(dum2,exp_grid(ixm,T+Tret+1-it),exp_grid(ix,T+Tret+1-it),idx,idy,idz,&
-                                    tx,ty(:,T+Tret-it+2),tz(:,T+Tret-it+2),&
-                                    nk,nexp,nexp,kx,ky,kz,&
-                                    ev_ret_bspl(1,2,iam,ium,iaf,1,1,ifc)%coefs,vnext,iflag,&
-                                    inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                            V3=V3+beta*OmegaRet(Tret-it+1)*vnext
-
-                        end if
-
-
-                        if (V2 < V3) then
-                            P1=P2
-                        else
-                            P4=P3
-                        end if
-                        if((P4-P1)<1d-8) exit
-                    end do
-
-                    if (V2 >= ve) then
-                        Ve=V2
-                        ke=dum2
-                        nef=0d0
-                        nem=0d0
-                        ce=P2
-                    end if
-                    
-                    c_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=P2
-                    k_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=dum2
-                    nm_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=0d0
-                    nf_ret_lfp(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc,LFP_M0,LFP_F0)=0d0                                          
-                    
-
-                end if
-
-                v_ret2(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=ve
-                c_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=ce
-                k_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=ke
-                nf_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=nef
-                nm_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=nem
-
-                vu=v_ret(1,1,ik,ixm,ix,iam,ium,iaf,1,Tret-it+1,1,ifc)
-
-                if (ve >= vu) then
-                    v_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=ve
-                    retf(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    retm(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0
-                    lfpm_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    lfpf_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0                                           
-                    
-                else
-                    v_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=vu
-                    retf(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    retm(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    lfpm_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0
-                    lfpf_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0                        
-                end if
-
-                if(it==1) then
-                    retf(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    retm(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=1d0
-                    lfpm_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0
-                    lfpf_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=0d0                      
-                end if
+                v_ret2(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=-999999999d0
+                v_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=-999999999d0
 
             end do
         end do
@@ -815,12 +187,12 @@ subroutine SolveInRetirement2(counter)
     j=2
     do ifc=1,nfc
         wagef = (1d0/(1d0+exp(kappa*(T+Tret+1-it-agestart))))*wage(2,a(2,iam),exp_grid(ix,T+Tret+1-it),u(2,ium))/(1d0+t_employer)
-        Psi_pension=(psi0+psi1*av_earnings(2,2,iam)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0))*(1d0-t_const)
+        Psi_pensionf=(psi0+psi1*av_earnings(2,2,iam)*min(1d0,exp_grid(ix,T+Tret+1-it)/35d0))*(1d0-t_const)
 
         if(it==1) then
             ! Solve the very last period problem:           
             kes = 0d0
-            ces = ((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pension+lumpsum*0.5d0)/(1d0+tc)
+            ces = ((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + Psi_pensionf + lumpsum*0.5d0)/(1d0+tc)
             nes = 0d0
             ves = Uc(ces)
             
@@ -832,7 +204,7 @@ subroutine SolveInRetirement2(counter)
             ! Solve the Tret-1 to 1st period of retirement:
             !Finding optimal capital by golden search
             P1=0.001d0
-            nonlab_inc = (k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0
+            nonlab_inc = (k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0 + Psi_pensionf
             aftertax_lab_inc = after_tax_labor_inc_single(wagef)
             P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagef*t_employee))/(1d0+tc))
             do
@@ -868,14 +240,9 @@ subroutine SolveInRetirement2(counter)
                 pnt1 = (/P3, wagef/)
                 dum4 = min(max(bilin_interp(c_grid, wage_grid, laborsinglef, nc, nw, pnt1),0d0),1d0)
                 y=dum4*wagef
-                !dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
 
                 aftertax_lab_inc = after_tax_labor_inc_single(y)
                 dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu) 
-
-                !if (abs(dum2 - dum2_test) > 1d-6) then
-                !    print *, 'WARNING: dum2 != dum2_test'
-                !end if
 
                 if(dum2<0.0001d0) then
                     V3=-999999999d0
@@ -920,12 +287,12 @@ subroutine SolveInRetirement2(counter)
             !Working 0 hours but not retiring
 
             P1=0.001d0
-            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pensionf+Unemp_benefit)/(1d0+tc))
             do
                 P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                 P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pensionf+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
                 if(dum2<0.0001d0) then
                     V2=-999999999d0
                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -946,7 +313,7 @@ subroutine SolveInRetirement2(counter)
 
                 end if
 
-                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pensionf+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
                 if(dum2<0.0001d0) then
                     V3=-999999999d0
                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1036,7 +403,7 @@ subroutine SolveInRetirement2(counter)
             ! Solve the Tret-1 to 1st period of retirement:
             !Finding optimal capital by golden search
             P1=0.001d0
-            nonlab_inc = (k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0
+            nonlab_inc = (k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pension
             aftertax_lab_inc = after_tax_labor_inc_single(wagem)
             P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagem*t_employee))/(1d0+tc))
             do
@@ -1072,14 +439,9 @@ subroutine SolveInRetirement2(counter)
                 pnt1 = (/P3, wagem/)
                 dum4 = min(max(bilin_interp(c_grid, wage_grid, laborsinglem, nc, nw, pnt1),0d0),1d0)
                 y=dum4*wagem
-                !dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
 
                 aftertax_lab_inc = after_tax_labor_inc_single(y)
                 dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu) 
-
-                !if (abs(dum2 - dum2_test) > 1d-6) then
-                !    print *, 'WARNING: dum2 != dum2_test'
-                !end if
 
                 if(dum2<0.0001d0) then
                     V3=-999999999d0
@@ -1124,12 +486,12 @@ subroutine SolveInRetirement2(counter)
             !Working 0 hours but not retiring
 
             P1=0.001d0
-            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pension+Unemp_benefit)/(1d0+tc))
             do
                 P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                 P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pension+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
                 if(dum2<0.0001d0) then
                     V2=-999999999d0
                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1150,7 +512,7 @@ subroutine SolveInRetirement2(counter)
 
                 end if
 
-                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+                dum2=((k_grid(ik)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+Psi_pension+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
                 if(dum2<0.0001d0) then
                     V3=-999999999d0
                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1331,7 +693,7 @@ subroutine SolveInRetirement3(counter)
                             ! Solve the Tret-1 to 1st period of retirement:
                             !Finding optimal capital by golden search
                             P1=0.001d0
-                            nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum
+                            nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf
                             aftertax_lab_inc = after_tax_labor_inc_married(wagem+wagef)
                             P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc -(wagem+wagef)*t_employee))/(1d0+tc))
                             do
@@ -1425,7 +787,7 @@ subroutine SolveInRetirement3(counter)
                             ! Solve the Tret-1 to 1st period of retirement:
                             !Finding optimal capital by golden search
                             P1=0.001d0
-                            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Unemp_benefit+(wagem)*(1d0-tax_labor(wagem)-tSS_employee(wagem)))/(1d0+tc))
+                            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+Unemp_benefit+(wagem)*(1d0-tax_labor(wagem)-tSS_employee(wagem)))/(1d0+tc))
                             do
                                 P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                                 P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
@@ -1433,7 +795,7 @@ subroutine SolveInRetirement3(counter)
                                 pnt1 = (/P2, wagem/)
                                 dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
                                 y=dum4*wagem
-                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P2*(1d0+tc))/(1d0+mu)
+                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P2*(1d0+tc))/(1d0+mu)
                                 if(dum2<0.0001d0) then
                                     V2=-999999999d0
                                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1459,7 +821,7 @@ subroutine SolveInRetirement3(counter)
                                 pnt1 = (/P3, wagem/)
                                 dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
                                 y=dum4*wagem
-                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
+                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
                                 if(dum2<0.0001d0) then
                                     V3=-999999999d0
                                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1514,7 +876,7 @@ subroutine SolveInRetirement3(counter)
                             !Male not working but not retiring
 
                             P1=0.001d0
-                            nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Unemp_benefit
+                            nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+Unemp_benefit
                             aftertax_lab_inc = after_tax_labor_inc_married(wagef)
                             P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc -(wagef)*t_employee))/(1d0+tc))
                             do
@@ -1550,14 +912,9 @@ subroutine SolveInRetirement3(counter)
                                 pnt1 = (/P3, wagef/)
                                 dum5 = min(max(bilin_interp(c_grid, wage_grid, laborfwork, nc, nw, pnt1),0d0),1d0)
                                 y=dum5*wagef
-                                !dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
 
                                 aftertax_lab_inc = after_tax_labor_inc_married(y)
                                 dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu) 
-
-                                !if (abs(dum2 - dum2_test) > 1d-6) then
-                                !    print *, 'WARNING: dum2 != dum2_test'
-                                !end if
 
                                 if(dum2<0.0001d0) then
                                     V3=-999999999d0
@@ -1610,12 +967,12 @@ subroutine SolveInRetirement3(counter)
                             !Both spouses do not work but do not retire
 
                             P1=0.001d0
-                            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+2d0*Unemp_benefit)/(1d0+tc))
+                            P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+2d0*Unemp_benefit)/(1d0+tc))
                             do
                                 P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                                 P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+2d0*Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
                                 if(dum2<0.0001d0) then
                                     V2=-999999999d0
                                 elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1637,7 +994,7 @@ subroutine SolveInRetirement3(counter)
 
                                 end if
 
-                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+                                dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+Psi_pension+Psi_pensionf+2d0*Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
                                 if(dum2<0.0001d0) then
                                     V3=-999999999d0
                                 elseif(dum2>k_grid(nk)-0.001d0) then
