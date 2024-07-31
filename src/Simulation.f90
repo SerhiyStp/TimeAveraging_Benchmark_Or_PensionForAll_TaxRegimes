@@ -1039,19 +1039,18 @@ contains
                     
                     
                     !Social Security
-
-                    if(irm==2) then
-                        SimR1m(ik,it2,i,14)=0d0
-                    else
+                    !if(irm==2) then
+                    !    SimR1m(ik,it2,i,14)=0d0
+                    !else
                         !Pension depends on expected wage conditional on ability and experience
                         SimR1m(ik,it2,i,14)=(psi0+psi1*av_earnings(1,1,iam)*min(1d0,dble(ixm)/35d0))*(1d0-t_const)
-                    end if
+                    !end if
 
-                    if(ir==2) then
-                        SimR1f(ik,it3,i,14)=0d0
-                    else
+                    !if(ir==2) then
+                    !    SimR1f(ik,it3,i,14)=0d0
+                    !else
                         SimR1f(ik,it3,i,14)=(psi0+psi1*av_earnings(2,1,iaf)*min(1d0,dble(ix)/35d0))*(1d0-t_const)
-                    end if
+                    !end if
 
                     !Budget
                     if(SimR1m(ik,it2,i,7)>0.001d0) then
@@ -1189,18 +1188,18 @@ contains
                     end if
 
 
-                    if(irm==2) then
-                        SimR1m(ik,it2,i,14)=0d0
-                        if(SimR1m(ik,it2,i,7)>0.0001d0) then
-                            y=SimR1m(ik,it2,i,7)
-                            SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                        else
-                            SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                        end if
-                    else
+                    !if(irm==2) then
+                    !    SimR1m(ik,it2,i,14)=0d0
+                    !    if(SimR1m(ik,it2,i,7)>0.0001d0) then
+                    !        y=SimR1m(ik,it2,i,7)
+                    !        SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !    else
+                    !        SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !    end if
+                    !else
                         SimR1m(ik,it2,i,14)=(psi0+psi1*av_earnings(1,2,iam)*min(1d0,dble(ixm)/35d0))*(1d0-t_const)
                         SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    end if
+                    !end if
 
                     !Social welfare
                     INTERP2D=vs_ret(irm,j,:,:,iam,ium,i,ifcm)
@@ -1269,14 +1268,6 @@ contains
                         expR1f(ik,it2,i+1,3)=1
                     end if
                     
-                    !if(i==1) then
-                    !    dum2=k_grid(2)
-                    !    ix=exp_grid_dum(3)
-                    !    iaf=5
-                    !    iuf=4
-                    !    ir=2
-                    !    pnt1 = (/dum2, ix/)
-                    !end if
                     
                     !Next period's capital
                     INTERP2D=ks_ret(ir,j,:,:,iaf,iuf,i,ifc)
@@ -1342,26 +1333,26 @@ contains
                     !Social security and budget constraint
 
                     
-                    if(ir==2) then
-                        !expR1f(ik,it2,i+1,3)=2
-                        SimR1f(ik,it2,i,14)=0d0
-                        !Budget Constraint
-                        if(SimR1f(ik,it2,i,7)>0.0001d0) then
-                            y=SimR1f(ik,it2,i,6)
-                            !SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                            !test1=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                            SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                        else
-                            SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                        end if
-                            
-                            
-                    else
+                    !if(ir==2) then
+                    !    !expR1f(ik,it2,i+1,3)=2
+                    !    SimR1f(ik,it2,i,14)=0d0
+                    !    !Budget Constraint
+                    !    if(SimR1f(ik,it2,i,7)>0.0001d0) then
+                    !        y=SimR1f(ik,it2,i,6)
+                    !        !SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !        !test1=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !        SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !    else
+                    !        SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                    !    end if
+                    !        
+                    !        
+                    !else
                         !expR1f(ik,it2,i+1,3)=1
                         SimR1f(ik,it2,i,14)=(psi0+psi1*av_earnings(2,2,iaf)*min(1d0,dble(ix)/35d0))*(1d0-t_const)
                         !Budget Constraint
                         SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    end if
+                    !end if
 
                     !Social welfare
                     INTERP2D=vs_ret(ir,j,:,:,iaf,iuf,i,ifc)
@@ -1395,36 +1386,6 @@ contains
 
 
             end do
-
-            !do it2=1,nsim
-            !    um=expR1m(ik,it2,i,2)
-            !    if(Random3m(ik,it2,T+i)<trans_u(1,um,1)) then
-            !        expR1m(ik,it2,i+1,2)=1
-            !    elseif((trans_u(1,um,1)<Random3m(ik,it2,T+i)).AND.(Random3m(ik,it2,T+i)<(trans_u(1,um,1)+trans_u(1,um,2)))) then
-            !        expR1m(ik,it2,i+1,2)=2
-            !    elseif(((trans_u(1,um,1)+trans_u(1,um,2))<Random3m(ik,it2,T+i)).AND.(Random3m(ik,it2,T+i)<(trans_u(1,um,1)+trans_u(1,um,2)+trans_u(1,um,3)))) then
-            !        expR1m(ik,it2,i+1,2)=3
-            !    elseif(((trans_u(1,um,1)+trans_u(1,um,2)+trans_u(1,um,3))<Random3m(ik,it2,T+i)).AND.(Random3m(ik,it2,T+i)<(trans_u(1,um,1)+trans_u(1,um,2)+trans_u(1,um,3)+trans_u(1,um,4)))) then
-            !        expR1m(ik,it2,i+1,2)=4
-            !    else
-            !        expR1m(ik,it2,i+1,2)=5
-            !    end if
-            !end do
-            !
-            !do it2=1,nsim
-            !    uf=expR1f(ik,it2,i,2)
-            !    if(Random3f(ik,it2,T+i)<trans_u(2,uf,1)) then
-            !        expR1f(ik,it2,i+1,2)=1
-            !    elseif((trans_u(2,uf,1)<Random3f(ik,it2,T+i)).AND.(Random3f(ik,it2,T+i)<(trans_u(2,uf,1)+trans_u(2,uf,2)))) then
-            !        expR1f(ik,it2,i+1,2)=2
-            !    elseif(((trans_u(2,uf,1)+trans_u(2,uf,2))<Random3f(ik,it2,T+i)).AND.(Random3f(ik,it2,T+i)<(trans_u(2,uf,1)+trans_u(2,uf,2)+trans_u(2,uf,3)))) then
-            !        expR1f(ik,it2,i+1,2)=3
-            !    elseif(((trans_u(2,uf,1)+trans_u(2,uf,2)+trans_u(2,uf,3))<Random3f(ik,it2,T+i)).AND.(Random3f(ik,it2,T+i)<(trans_u(2,uf,1)+trans_u(2,uf,2)+trans_u(2,uf,3)+trans_u(2,uf,4)))) then
-            !        expR1f(ik,it2,i+1,2)=4
-            !    else
-            !        expR1f(ik,it2,i+1,2)=5
-            !    end if
-            !end do
 
         end do
 
