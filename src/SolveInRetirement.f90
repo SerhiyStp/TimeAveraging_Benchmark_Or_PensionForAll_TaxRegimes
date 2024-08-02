@@ -53,7 +53,9 @@ subroutine SolveInRetirement(counter)
     do iaf = 1, na
         do ixm = 1, nexp
             v_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=-999999999d0
-            v_ret2(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=-999999999d0                 
+            v_ret2(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=-999999999d0   
+            lfpm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0
+            lfpf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret-it+1,:,:)=0d0
         end do
     end do
 
@@ -61,8 +63,10 @@ subroutine SolveInRetirement(counter)
     do j=1,2
         vs_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=-999999999d0
         vs_ret2(1,j,ik,ix,iam,:,Tret-it+1,:)=-999999999d0
-    end do
-
+        
+        lfps_ret(1,j,ik,ix,iam,:,Tret-it+1,:)=0d0
+    end do   
+    
 end subroutine SolveInRetirement
 
     
@@ -154,6 +158,9 @@ subroutine SolveInRetirement2(counter)
 
                 v_ret2(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=-999999999d0 
                 v_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=-999999999d0
+                
+                lfpm_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0
+                lfpf_ret(2,1,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0                
 
             end do
         end do
@@ -178,6 +185,9 @@ subroutine SolveInRetirement2(counter)
 
                 v_ret2(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=-999999999d0
                 v_ret(1,2,ik,ixm,ix,iam,ium,iaf,:,Tret-it+1,:,ifc)=-999999999d0
+                
+                lfpm_ret(1,2,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0
+                lfpf_ret(1,2,ik,ix,ixm,iaf,:,iam,ium,Tret-it+1,ifc,:)=0d0                 
 
             end do
         end do
@@ -774,7 +784,7 @@ subroutine SolveInRetirement3(counter)
                             ce=P2
                             
                             lfpm_loc=1d0
-                            lfpm_loc=1d0
+                            lfpf_loc=1d0
                             
                             c_ret_lfp(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm,LFP_M1,LFP_F1)=P2
                             k_ret_lfp(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm,LFP_M1,LFP_F1)=dum2
@@ -1044,6 +1054,9 @@ subroutine SolveInRetirement3(counter)
                         k_ret(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)=ke
                         nf_ret(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)=nef
                         nm_ret(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)=nem
+                        
+                        lfpm_ret(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)=lfpm_loc
+                        lfpf_ret(2,2,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)=lfpf_loc
 
                         vu=v_ret(1,1,ik,ix,ixm,iam,ium,iaf,iuf,Tret-it+1,ifc,ifcm)
                         if (ve >= vu) then

@@ -393,15 +393,7 @@ contains
         integer :: i_m, i_f
         integer :: i_husb, i_wife
         
-
-        !dum2=0.0
-
-        !Sim1m(ik,:,:,:)=0d0
-        !Sim1f(ik,:,:,:)=0d0
-        !
-        !exp1m(ik,:,:,4)=0
-        !exp1f(ik,:,:,4)=0
-        
+       
         !call Marriages(ik)
 
         !Starting to simulate age 25-64, using piecewise linear interpolation of the policy functions
@@ -941,18 +933,40 @@ contains
                         irm=1
                     end if
                     
+                    
+                    
+                    
+                    !INTERP3D=lfpm(:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    INTERP3D=lfpm_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    LFP_M = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
+                    if (LFP_M >= 0.5d0) then
+                        LFP_M_I = LFP_1
+                    else
+                        LFP_M_I = LFP_0
+                    end if
+                    !INTERP3D=lfpf(:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    INTERP3D=lfpf_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    LFP_F = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)     
+                    if (LFP_F >= 0.5d0) then
+                        LFP_F_I = LFP_1
+                    else
+                        LFP_F_I = LFP_0
+                    end if                       
+                    
                     expR1m(ik,it2,i,3)=irm
                     expR1m(ik,it2,i+1,3)=irm
                     expR1f(ik,it3,i,3)=ir
                     expR1f(ik,it3,i+1,3)=ir
                     
                     !Next period's capital
-                    INTERP3D=k_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    ! INTERP3D=k_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    INTERP3D=k_ret_lfp(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm,LFP_M_I,LFP_F_I)
                     SimR1m(ik,it2,i+1,1) = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
                     SimR1f(ik,it3,i+1,1) = SimR1m(ik,it2,i+1,1)
 
                     !Next periods's consumption
-                    INTERP3D=c_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    ! INTERP3D=c_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                    INTERP3D=c_ret_lfp(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm,LFP_M_I,LFP_F_I)
                     dum4 = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
                     SimR1m(ik,it2,i,2) = dum4
                     SimR1f(ik,it3,i,2) = dum4
@@ -960,29 +974,35 @@ contains
                     SimR1f(ik,it3,i,3)= dum4*tc
 
                     ! Male wage, work hours and earnings
-
-                    INTERP3D=nm_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
-                    SimR1m(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
-                    dum5=trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                    dum5=max(dum5,0d0)
-                    if(dum5<(minhours/2d0)) then
-                        dum5=0d0
+                    if (LFP_M_I == LFP_0) then
+                        dum5 = 0d0
                     else
-                        dum5=max(minhours,dum5)
+                        INTERP3D=nm_ret_lfp(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm,LFP_M_I,LFP_F_I)
+                        SimR1m(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
+                        dum5=trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
+                        dum5=max(dum5,0d0)
+                        if(dum5<(minhours/2d0)) then
+                            dum5=0d0
+                        else
+                            dum5=max(minhours,dum5)
+                        end if
                     end if
                     SimR1m(ik,it2,i,5) = dum5
                     SimR1m(ik,it2,i,6) = dum5*(1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
 
                     ! Female wage, work hours and earnings
-
-                    INTERP3D=nf_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
-                    SimR1f(ik,it3,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
-                    dum6=trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
-                    dum6=max(dum6,0d0)
-                    if(dum6<(minhours/2d0)) then
-                        dum6=0d0
+                    if (LFP_F_I == LFP_0) then
+                        dum6 = 0d0
                     else
-                        dum6=max(minhours,dum6)
+                        INTERP3D=nf_ret(ir,irm,:,:,:,iam,ium,iaf,iuf,i,ifc,ifcm)
+                        SimR1f(ik,it3,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
+                        dum6=trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
+                        dum6=max(dum6,0d0)
+                        if(dum6<(minhours/2d0)) then
+                            dum6=0d0
+                        else
+                            dum6=max(minhours,dum6)
+                        end if
                     end if
                     SimR1f(ik,it3,i,5) = dum6
                     SimR1f(ik,it3,i,6) = dum6*(1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
@@ -1125,27 +1145,42 @@ contains
                         expR1m(ik,it2,i+1,3)=1
                     end if
 
+
+                    INTERP2D=lfps_ret(irm,j,:,:,iam,ium,i,ifcm)
+                    LFP_S=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
+                    if (LFP_S >= 0.5d0) then
+                        LFP_S_I = LFP_1
+                    else
+                        LFP_S_I = LFP_0
+                    end if                 
+
+
                     !Next period's capital
-                    INTERP2D=ks_ret(irm,j,:,:,iam,ium,i,ifcm)
+                    ! INTERP2D=ks_ret(irm,j,:,:,iam,ium,i,ifcm)
+                    INTERP2D=ks_ret_lfp(irm,j,:,:,iam,ium,i,ifcm,LFP_S_I)
                     SimR1m(ik,it2,i+1,1) = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
 
                     !This periods's consumption
-                    INTERP2D=cs_ret(irm,j,:,:,iam,ium,i,ifcm)
+                    ! INTERP2D=cs_ret(irm,j,:,:,iam,ium,i,ifcm)
+                    INTERP2D=cs_ret_lfp(irm,j,:,:,iam,ium,i,ifcm,LFP_S_I)
                     dum4 = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                     SimR1m(ik,it2,i,2) = dum4
                     SimR1m(ik,it2,i,3)= dum4*tc
 
 
                     !>Single male wage, work hours and earnings
-
-                    INTERP2D=ns_ret(irm,j,:,:,iam,ium,i,ifcm)
-                    SimR1m(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
-                    dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
-                    dum5=max(dum5,0d0)
-                    if(dum5<(minhours/2d0)) then
-                        dum5=0d0
-                    else
-                        dum5=max(minhours,dum5)
+                    if (LFP_S_I == LFP_0) then
+                        dum5 = 0d0
+                    else                
+                        INTERP2D=ns_ret(irm,j,:,:,iam,ium,i,ifcm)
+                        SimR1m(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
+                        dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
+                        dum5=max(dum5,0d0)
+                        if(dum5<(minhours/2d0)) then
+                            dum5=0d0
+                        else
+                            dum5=max(minhours,dum5)
+                        end if
                     end if
                     SimR1m(ik,it2,i,5) = dum5
                     SimR1m(ik,it2,i,6) = dum5*(1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
@@ -1267,28 +1302,41 @@ contains
                     else
                         expR1f(ik,it2,i+1,3)=1
                     end if
+
+                    INTERP2D=lfps_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                    LFP_S=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
+                    if (LFP_S >= 0.5d0) then
+                        LFP_S_I = LFP_1
+                    else
+                        LFP_S_I = LFP_0
+                    end if                  
                     
                     
                     !Next period's capital
-                    INTERP2D=ks_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                    ! INTERP2D=ks_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                    INTERP2D=ks_ret_lfp(ir,j,:,:,iaf,iuf,i,ifc,LFP_S_I)
                     SimR1f(ik,it2,i+1,1) = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
 
                     !Next periods's consumption
-                    INTERP2D=cs_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                    ! INTERP2D=cs_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                    INTERP2D=cs_ret_lfp(ir,j,:,:,iaf,iuf,i,ifc,LFP_S_I)
                     dum4 = bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                     SimR1f(ik,it2,i,2) = dum4
                     SimR1f(ik,it2,i,3)= dum4*tc
 
                     ! Female wage, work hours and earnings
-
-                    INTERP2D=ns_ret(ir,j,:,:,iaf,iuf,i,ifc)
-                    SimR1f(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
-                    dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
-                    dum5=max(dum5,0d0)
-                    if(dum5<(minhours/2d0)) then
-                        dum5=0d0
-                    else
-                        dum5=max(minhours,dum5)
+                    if (LFP_S_I == LFP_0) then
+                        dum5 = 0d0
+                    else      
+                        INTERP2D=ns_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                        SimR1f(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
+                        dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
+                        dum5=max(dum5,0d0)
+                        if(dum5<(minhours/2d0)) then
+                            dum5=0d0
+                        else
+                            dum5=max(minhours,dum5)
+                        end if
                     end if
                     SimR1f(ik,it2,i,5) = dum5
                     SimR1f(ik,it2,i,6) = dum5*(1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
