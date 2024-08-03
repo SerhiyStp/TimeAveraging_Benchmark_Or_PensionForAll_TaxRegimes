@@ -357,6 +357,9 @@ subroutine SolveInRetirement2(counter)
                 nes=0d0
                 Inces=0d0
                 ces=P2
+                lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
+            else
+                lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
             end if
             
             cs_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = P2
@@ -376,11 +379,11 @@ subroutine SolveInRetirement2(counter)
         if (ves >= vus) then
             vs_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=ves
             rets(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
-            lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
+            ! lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
         else
             vs_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=vus
             rets(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
-            lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
+            ! lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
         end if
 
         if(it==1) then
@@ -550,16 +553,20 @@ subroutine SolveInRetirement2(counter)
                 if((P4-P1)<1d-8) exit
             end do
 
+            cs_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = P2
+            ks_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = dum2
+            ns_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = 0d0     
+            
             if (V2 >= ves) then
                 Ves=V2
                 kes=dum2
                 nes=0d0
                 ces=P2
-            end if
+                lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
+            else
+                lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
+            end if            
             
-            cs_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = P2
-            ks_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = dum2
-            ns_ret_lfp(2,j,ik,ix,iam,ium,Tret-it+1,ifc,LFP_0) = 0d0               
 
         end if
 
@@ -574,11 +581,11 @@ subroutine SolveInRetirement2(counter)
         if (ves >= vus) then
             vs_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=ves
             rets(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
-            lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
+            !lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
         else
             vs_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=vus
             rets(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=1d0
-            lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
+            !lfps_ret(2,j,ik,ix,iam,ium,Tret-it+1,ifc)=0d0
         end if
 
         if(it==1) then

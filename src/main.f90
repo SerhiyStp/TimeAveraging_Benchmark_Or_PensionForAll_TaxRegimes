@@ -3580,6 +3580,7 @@ contains
 
         allocate(lfps(2,nk,nexp,na,nu,T,nfc))
         allocate(cs_lfp(2,nk,nexp,na,nu,T,nfc,2))
+        allocate(ns_lfp(2,nk,nexp,na,nu,T,nfc,2))
         allocate(ks_lfp(2,nk,nexp,na,nu,T,nfc,2))  
         allocate(vs_lfp(2,nk,nexp,na,nu,T,nfc,2))                 
 

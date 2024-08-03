@@ -23,7 +23,7 @@ module PolicyFunctions
     !real(8), dimension (:,:,:,:,:,:,:,:,:,:), allocatable :: v_spln_coefs, v_spln_coefs_kdim
     
     ! LFP regime specific functions for single
-    real(8), dimension (:,:,:,:,:,:,:,:), allocatable :: cs_lfp, ks_lfp, vs_lfp    
+    real(8), dimension (:,:,:,:,:,:,:,:), allocatable :: cs_lfp, ks_lfp, vs_lfp, ns_lfp  
     real(8), dimension (:,:,:,:,:,:,:), allocatable :: lfps    
 
     real(8), dimension (:,:,:,:,:,:,:), allocatable :: vs

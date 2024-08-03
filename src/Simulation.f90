@@ -614,7 +614,7 @@ contains
                     if (LFP_S_I == LFP_0) then
                         dum5 = 0d0
                     else                
-                        INTERP2D=ns(j,:,:,iam,ium,i,ifcm)
+                        INTERP2D=ns_lfp(j,:,:,iam,ium,i,ifcm,LFP_S_I)
                         dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                         dum5=max(dum5,0d0)
                         if(dum5<(minhours/2d0)) then
@@ -720,7 +720,8 @@ contains
                     if (LFP_S_I == LFP_0) then
                         dum5 = 0d0
                     else      
-                        INTERP2D=ns(j,:,:,iam,ium,i,ifc)
+                        !INTERP2D=ns(j,:,:,iam,ium,i,ifc)
+                        INTERP2D=ns_lfp(j,:,:,iam,ium,i,ifc,LFP_S_I)
                         dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                         dum5=max(dum5,0d0)
                         if(dum5<(minhours/2d0)) then
@@ -1172,7 +1173,8 @@ contains
                     if (LFP_S_I == LFP_0) then
                         dum5 = 0d0
                     else                
-                        INTERP2D=ns_ret(irm,j,:,:,iam,ium,i,ifcm)
+                        !INTERP2D=ns_ret(irm,j,:,:,iam,ium,i,ifcm)
+                        INTERP2D=ns_ret_lfp(irm,j,:,:,iam,ium,i,ifcm,LFP_S_I)
                         SimR1m(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(1,a(1,iam),dble(ixm),u(1,ium))/(1d0+t_employer)
                         dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                         dum5=max(dum5,0d0)
@@ -1328,7 +1330,8 @@ contains
                     if (LFP_S_I == LFP_0) then
                         dum5 = 0d0
                     else      
-                        INTERP2D=ns_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                        !INTERP2D=ns_ret(ir,j,:,:,iaf,iuf,i,ifc)
+                        INTERP2D=ns_ret_lfp(ir,j,:,:,iaf,iuf,i,ifc,LFP_S_I)
                         SimR1f(ik,it2,i,4) = (1d0/(1d0+exp(kappa*(44+i-(agestart-1)))))*wage(2,a(2,iaf),dble(ix),u(2,iuf))/(1d0+t_employer)
                         dum5=bilin_interp(k_grid, exp_grid_dum, INTERP2D, nk, nexp, pnt1)
                         dum5=max(dum5,0d0)

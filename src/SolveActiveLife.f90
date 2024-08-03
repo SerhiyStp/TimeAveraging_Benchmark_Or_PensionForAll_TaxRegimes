@@ -639,6 +639,7 @@ subroutine SolveActiveLife(counter)
         cs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=P2
         ks_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum2
         vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=V2
+        ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum4
 
 
         !If female unemployed
@@ -721,7 +722,8 @@ subroutine SolveActiveLife(counter)
 
         cs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=P2
         ks_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=dum2
-        vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=V2          
+        vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=V2      
+        ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=0d0
         
 
         if (ves >= vus) then
@@ -837,6 +839,7 @@ subroutine SolveActiveLife(counter)
         cs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=P2
         ks_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum2
         vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=V2
+        ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum4
 
         !If male unemployed
 
@@ -916,7 +919,8 @@ subroutine SolveActiveLife(counter)
         
         cs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=P2
         ks_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=dum2   
-        vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=V2          
+        vs_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=V2    
+        ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_0)=0d0
 
 
         if (ves >= vus) then

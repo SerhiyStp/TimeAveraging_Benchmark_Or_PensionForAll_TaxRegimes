@@ -557,7 +557,8 @@ subroutine Solvelastactive(counter)
         
         cs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=P2
         ks_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum2    
-        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=V2         
+        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=V2
+        ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum4
 
         !If single female unemployed
         !Print *,'ix is',ix
@@ -622,7 +623,8 @@ subroutine Solvelastactive(counter)
         
         cs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=P2
         ks_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=dum2  
-        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=V2          
+        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=V2  
+        ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=0d0
 
         if (ves >= vus) then
             vs(j,ik,ix,iam,ium,T,ifc)=ves
@@ -732,7 +734,8 @@ subroutine Solvelastactive(counter)
         
         cs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=P2
         ks_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum2  
-        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=V2           
+        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=V2     
+        ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum4
 
 
         !If single male unemployed
@@ -799,7 +802,8 @@ subroutine Solvelastactive(counter)
         
         cs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=P2
         ks_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=dum2  
-        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=V2         
+        vs_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=V2  
+        ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_0)=0d0
 
         if (ves >= vus) then
             vs(j,ik,ix,iam,ium,T,ifc)=ves
