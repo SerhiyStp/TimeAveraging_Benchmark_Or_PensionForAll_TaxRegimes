@@ -3,6 +3,7 @@ program Laffer
     use Utilities
     use Model_Parameters
     use PolicyFunctions
+    use SolveRetirement
     use Tauchen
     use PolicyFunctions_obj, only: update_ev_aux, update_ret_policies, update_lfp_policies
     use Simulations_mod
@@ -82,7 +83,7 @@ program Laffer
                 !$OMP PARALLEL PRIVATE(counter)
                 !$OMP DO SCHEDULE(DYNAMIC)
                 do counter=1,nk*nexp*na
-                    call SolveInRetirement(counter)
+                    call SolveInRetirement(counter, pension_for_all)
                 end do
                 !$OMP END DO    
                 !$OMP END PARALLEL
@@ -90,7 +91,7 @@ program Laffer
                 !$OMP PARALLEL PRIVATE(counter)
                 !$OMP DO SCHEDULE(DYNAMIC)
                 do counter=1,nk*nexp*na*nu
-                    call SolveInRetirement2(counter)
+                    call SolveInRetirement2(counter, pension_for_all)
                 end do
                 !$OMP END DO    
                 !$OMP END PARALLEL
@@ -98,7 +99,7 @@ program Laffer
                 !$OMP PARALLEL PRIVATE(counter)
                 !$OMP DO SCHEDULE(DYNAMIC)
                 do counter=1,nk*nexp*na*nu
-                    call SolveInRetirement3(counter)
+                    call SolveInRetirement3(counter, pension_for_all)
                 end do
                 !$OMP END DO    
                 !$OMP END PARALLEL

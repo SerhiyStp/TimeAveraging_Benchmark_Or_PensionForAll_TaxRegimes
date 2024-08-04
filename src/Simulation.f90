@@ -1060,18 +1060,18 @@ contains
                     
                     
                     !Social Security
-                    !if(irm==2) then
-                    !    SimR1m(ik,it2,i,14)=0d0
-                    !else
+                    if(irm==2 .and. pension_for_all == 0) then
+                       SimR1m(ik,it2,i,14)=0d0
+                    else
                         !Pension depends on expected wage conditional on ability and experience
                         SimR1m(ik,it2,i,14)=(psi0+psi1*av_earnings(1,1,iam)*min(1d0,dble(ixm)/35d0))*(1d0-t_const)
-                    !end if
+                    end if
 
-                    !if(ir==2) then
-                    !    SimR1f(ik,it3,i,14)=0d0
-                    !else
+                    if(ir==2 .and. pension_for_all == 0) then
+                       SimR1f(ik,it3,i,14)=0d0
+                    else
                         SimR1f(ik,it3,i,14)=(psi0+psi1*av_earnings(2,1,iaf)*min(1d0,dble(ix)/35d0))*(1d0-t_const)
-                    !end if
+                    end if
 
                     !Budget
                     if(SimR1m(ik,it2,i,7)>0.001d0) then
@@ -1225,18 +1225,18 @@ contains
                     end if
 
 
-                    !if(irm==2) then
-                    !    SimR1m(ik,it2,i,14)=0d0
-                    !    if(SimR1m(ik,it2,i,7)>0.0001d0) then
-                    !        y=SimR1m(ik,it2,i,7)
-                    !        SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !    else
-                    !        SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !    end if
-                    !else
+                    if(irm==2 .and. pension_for_all == 0) then
+                       SimR1m(ik,it2,i,14)=0d0
+                       if(SimR1m(ik,it2,i,7)>0.0001d0) then
+                           y=SimR1m(ik,it2,i,7)
+                           SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                       else
+                           SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                       end if
+                    else
                         SimR1m(ik,it2,i,14)=(psi0+psi1*av_earnings(1,2,iam)*min(1d0,dble(ixm)/35d0))*(1d0-t_const)
                         SimR1m(ik,it2,i,18)=SimR1m(ik,it2,i+1,1)-((SimR1m(ik,it2,i,1)+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1m(ik,it2,i,14)+lumpsum*0.5d0+(SimR1m(ik,it2,i,7)*(1d0-t_employee)-SimR1m(ik,it2,i,8))-SimR1m(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !end if
+                    end if
 
                     !Social welfare
                     INTERP2D=vs_ret(irm,j,:,:,iam,ium,i,ifcm)
@@ -1384,26 +1384,24 @@ contains
                     !Social security and budget constraint
 
                     
-                    !if(ir==2) then
-                    !    !expR1f(ik,it2,i+1,3)=2
-                    !    SimR1f(ik,it2,i,14)=0d0
-                    !    !Budget Constraint
-                    !    if(SimR1f(ik,it2,i,7)>0.0001d0) then
-                    !        y=SimR1f(ik,it2,i,6)
-                    !        !SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !        !test1=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !        SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !    else
-                    !        SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !    end if
-                    !        
-                    !        
-                    !else
+                    if(ir==2 .and. pension_for_all == 0) then
+                       !expR1f(ik,it2,i+1,3)=2
+                       SimR1f(ik,it2,i,14)=0d0
+                       !Budget Constraint
+                       if(SimR1f(ik,it2,i,7)>0.0001d0) then
+                           y=SimR1f(ik,it2,i,6)
+                           !SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+y*(1d0-t_const)*(1d0-tax_labors(y)-tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                           !test1=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                           SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk))+lumpsum*0.5d0+(1d0-t_const)*(after_tax_labor_inc_single(y)-y*tSS_employee(y))-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                       else
+                           SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
+                       end if
+                    else
                         !expR1f(ik,it2,i+1,3)=1
                         SimR1f(ik,it2,i,14)=(psi0+psi1*av_earnings(2,2,iaf)*min(1d0,dble(ix)/35d0))*(1d0-t_const)
                         !Budget Constraint
                         SimR1f(ik,it2,i,18)=SimR1f(ik,it2,i+1,1)-((dum2+Gamma_redistr*0.5d0)*(1d0+r_ret*(1d0-tk)) + SimR1f(ik,it2,i,14)+lumpsum*0.5d0-SimR1f(ik,it2,i,2)*(1d0+tc))/(1d0+mu)
-                    !end if
+                    end if
 
                     !Social welfare
                     INTERP2D=vs_ret(ir,j,:,:,iaf,iuf,i,ifc)
