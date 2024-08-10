@@ -3,7 +3,8 @@ module Model_Parameters
     implicit none
         
     integer, parameter :: testing = 0
-    integer, parameter :: pension_for_all = 0
+    integer, parameter :: pension_for_all = 1
+    character(len=100) :: results_folder
     !integer, parameter :: Tret = 5*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)
     integer, parameter :: Tret = 2*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)
     integer, parameter :: T = 6*testing + 45*(1-testing) !45         ! Years of active life (20-64)
@@ -14,7 +15,7 @@ module Model_Parameters
     real(8), parameter :: etaf    = 1d0/0.8d0  ! Inverse Frisch elasticity women
     real(8), parameter :: mu   = 0.02d0       ! The growth rate of the economy
     !real(8), parameter :: beta   = 0.97d0    !Discount factor
-    real(8), parameter :: beta   = 1.00711d0    !Discount factor
+    real(8), parameter :: beta   = 1.00723d0    !Discount factor
     integer, parameter :: nfc   = 1         ! Number of fixed costs
     integer, parameter :: nfcm   = 1         ! Number of fixed costs men
     real(8), parameter :: tc    = 0.05d0     ! Consumption tax
@@ -27,18 +28,18 @@ module Model_Parameters
     real(8), parameter :: alpha  = 1d0/3d0     ! Capital share
     real(8), parameter :: delta  = 0.0988d0-mu     ! Capital depreciation
     real(8), parameter :: deltaexp  = 0.000d0     !Depreciation of experience
-    real(8) :: chim= 17.13d0,    chims=39.95d0       ! Disutility from work men
-    real(8) :: chif= 5.94d0,   chifs= 12.90d0       ! Disutility from work women
+    real(8) :: chim= 17.15d0,    chims=42.05d0       ! Disutility from work men
+    real(8) :: chif= 5.95d0,   chifs= 13.60d0       ! Disutility from work women
     real(8), parameter :: sigma_um=0.32228727D0, rho_um=0.3959915D0 ! Parameters governing the process for the  idiosyncratic shock, men
     real(8), parameter :: sigma_am=0.31469361d0, rho_am=0D0     ! Stdev of ability, men
     real(8), parameter :: sigma_uf=0.31004311d0, rho_uf=0.339295 ! Parameters governing the process for the  idiosyncratic shock, women
     real(8), parameter :: sigma_af=0.38475527d0, rho_af=0d0    ! Stdev of ability, women
     real(8), parameter :: sigma_fcm=1.78d0, rho_fcm=0d0  !Stdev and persistence of fixed costs, married women
     real(8), parameter :: sigma_fcs=2.640d0, rho_fcs=0d0    !Stdev and persistence of fixed costs, single women
-    real(8), parameter :: mu_fcm=-1.5254d0, mu_fcs=-0.1469d0   ! Mean fixed cost of LFP, women
+    real(8), parameter :: mu_fcm=-1.5219d0, mu_fcs=-0.1540d0   ! Mean fixed cost of LFP, women
     real(8), parameter :: sigma_fcmm=0.435d0, rho_fcmm=0d0  !Stdev and persistence of fixed costs, married men
     real(8), parameter :: sigma_fcsm=1.168d0, rho_fcsm=0d0    !Stdev of fixed costs, single men
-    real(8), parameter :: mu_fcmm=-0.5070d0, mu_fcsm=0.3821d0   !Mean fixed cost of LFP, men
+    real(8), parameter :: mu_fcmm=-0.5073d0, mu_fcsm=0.3764d0   !Mean fixed cost of LFP, men
     real(8) :: gamma(2,3), gamma0, gamma0f  ! Returns to experience parameters
     real(8) :: AE                           ! Average earnings
     real(8) :: match=0.117d0                 ! Assortative mating parameter
@@ -68,7 +69,7 @@ module Model_Parameters
 
     real(8) :: Gamma_redistr = 0d0
     real(8) :: Psi0 = 0.1537d0, psi1=0.2447d0, w05=1.67124368097666d0, w2=4.49185427849007d0
-    real(8) :: Unemp_benefit, lumpsum=2d0*0.00890d0, lumpsumdum=2d0*0.09184923463949926d0
+    real(8) :: Unemp_benefit, lumpsum=2d0*0.008901023051240818d0, lumpsumdum=2d0*0.09184923463949926d0
 
     real(8), dimension (:), allocatable :: OmegaRet, OmegaRet2, OmegaActive, Probm, Probd !, Share_single
     real(8) :: Probm45(45), Probd45(45), OmegaRet36(36)

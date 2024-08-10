@@ -3713,8 +3713,8 @@ contains
         prob_a=0d0
         gamma(1,:) = (/ 0.0605927d0, -0.0010648d0, 0.0000093d0 /)
         gamma(2,:) = (/ 0.0784408d0, -0.0025596d0, 0.0000256d0 /)
-        gamma0=0.0680d0
-        gamma0f=-0.0691d0
+        gamma0=0.0676d0
+        gamma0f=-0.0685d0
 
         theta(:) = (/ 0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
         thetas(:) = (/ 0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
@@ -3899,6 +3899,7 @@ contains
         call InitSimulation()
 
 
+        
     end subroutine Initialize  
 
 

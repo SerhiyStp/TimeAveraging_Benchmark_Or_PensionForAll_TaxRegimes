@@ -2466,10 +2466,10 @@ contains
 
         !epsilon3=lumpsum-lumpsumdum
 
-        epsilon3=lumpsum-lumpsumdum
+        !epsilon3=lumpsum-lumpsumdum
 
-        !epsilon3=0d0
-        lumpsum=lumpsum-0.1d0*(lumpsum-lumpsumdum)
+        epsilon3=0d0
+        !lumpsum=lumpsum-0.1d0*(lumpsum-lumpsumdum)
 
 
         !Government Budget
