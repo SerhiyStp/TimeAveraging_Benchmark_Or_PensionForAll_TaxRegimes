@@ -409,7 +409,7 @@ program Laffer
 
     !Welfare of everyone
 
-    open(1,file=trim(results_folder)//'welfarepath_all.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepath_all.txt')
 
 
     do it2=1,T
@@ -456,7 +456,7 @@ program Laffer
 
     !Single female welfare
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_female.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female.txt')
 
 
     do it2=1,T
@@ -503,7 +503,7 @@ program Laffer
 
 !Single female welfare ability 1
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_female_a1.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a1.txt')
 
 
     do it2=1,T
@@ -554,7 +554,7 @@ program Laffer
     
 !Single female welfare ability 1 and 2
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_female_a12.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a12.txt')
 
 
     do it2=1,T
@@ -606,7 +606,7 @@ program Laffer
 
     !Married Female Welfare
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_female.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female.txt')
 
     do it2=1,T
         dum2=0.0d0
@@ -653,7 +653,7 @@ program Laffer
     
 !Married female welfare ability 1
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_female_a1.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a1.txt')
 
 
     do it2=1,T
@@ -704,7 +704,7 @@ program Laffer
     
 !Married female welfare ability 1 and 2
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_female_a12.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a12.txt')
 
 
     do it2=1,T
@@ -755,7 +755,7 @@ program Laffer
 
     !Single Male Welfare
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_male.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male.txt')
 
 
     do it2=1,T
@@ -803,7 +803,7 @@ program Laffer
     
 !Single male welfare ability 1
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_male_a1.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a1.txt')
 
 
     do it2=1,T
@@ -854,7 +854,7 @@ program Laffer
     
 !Single male welfare ability 1 and 2
 
-    open(1,file=trim(results_folder)//'welfarepathsingle_male_a12.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a12.txt')
 
 
     do it2=1,T
@@ -905,7 +905,7 @@ program Laffer
     
     
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_male.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male.txt')
 
     do it2=1,T
         dum2=0.0d0
@@ -952,7 +952,7 @@ program Laffer
 
 !Married male welfare ability 1
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_male_a1.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a1.txt')
 
 
     do it2=1,T
@@ -1003,7 +1003,7 @@ program Laffer
     
 !Married male welfare ability 1 and 2
 
-    open(1,file=trim(results_folder)//'welfarepathmarried_male_a12.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a12.txt')
 
 
     do it2=1,T
@@ -1054,7 +1054,7 @@ program Laffer
 
     
 
-    open(1,file=trim(results_folder)//'kpath.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'kpath.txt')
 
     do it2=1,T
         dum2=0d0
@@ -1090,7 +1090,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'earningspathm.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm.txt')
 
     do it2=1,T
         dum2=0d0
@@ -1107,7 +1107,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'earningspathm2.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm2.txt')
 
     do it2=1,T
         dum2=0d0
@@ -1126,7 +1126,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'earningspathf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathf.txt')
 
     do it2=1,T
         dum2=0d0
@@ -1143,7 +1143,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'cpathm.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'cpathm.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1169,7 +1169,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'cpathf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'cpathf.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1193,7 +1193,7 @@ program Laffer
         write (1,'(F8.3,F8.3)') it2*1d0, dum2
     end do
 
-    open(1,file=trim(results_folder)//'kpathm.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'kpathm.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1219,7 +1219,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'kpathf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'kpathf.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1245,7 +1245,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'npathm.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'npathm.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1260,7 +1260,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'npathf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'npathf.txt')
 
     do it2=1,T
         dum2=0.0
@@ -1275,7 +1275,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'lfppathsingle.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle.txt')
 
 
     do it2=1,T
@@ -1324,7 +1324,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'lfppathmarried.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried.txt')
 
     do it2=1,T
         dum2=0.0d0
@@ -1371,7 +1371,7 @@ program Laffer
 
 
 
-    open(1,file=trim(results_folder)//'lfppathsingle_male.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male.txt')
 
     do i=1,T
 
@@ -1420,7 +1420,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'lfppathmarried_male.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male.txt')
 
     do i=1,T
 
@@ -1479,7 +1479,7 @@ program Laffer
 
     !Single Females
 
-    open(1,file=trim(results_folder)//'lfppathsinglefc.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglefc.txt')
 
     do it6=1,nfc
 
@@ -1543,7 +1543,7 @@ program Laffer
 
     !Married Females
 
-    open(1,file=trim(results_folder)//'lfppathmarriedfc.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedfc.txt')
 
     do it6=1,nfc
 
@@ -1607,7 +1607,7 @@ program Laffer
 
     !Single Males
 
-    open(1,file=trim(results_folder)//'lfppathsinglemalefc.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemalefc.txt')
 
     do it6=1,nfcm
 
@@ -1671,7 +1671,7 @@ program Laffer
 
     !Married Males
 
-    open(1,file=trim(results_folder)//'lfppathmarriedmalefc.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmalefc.txt')
 
     do it6=1,nfcm
 
@@ -1734,7 +1734,7 @@ program Laffer
 
     !Single Females
 
-    open(1,file=trim(results_folder)//'lfppathsingle_auf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_auf.txt')
 
     do it8=1,nfc
 
@@ -1834,7 +1834,7 @@ program Laffer
 
     !Single Males
 
-    open(1,file=trim(results_folder)//'lfppathsinglemale_auf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_auf.txt')
 
     do it8=1,nfcm
 
@@ -1934,7 +1934,7 @@ program Laffer
 
     !Married Females
 
-    open(1,file=trim(results_folder)//'lfppathmarried_auf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_auf.txt')
 
     do it8=1,nfc
 
@@ -2034,7 +2034,7 @@ program Laffer
 
     !Married Males
 
-    open(1,file=trim(results_folder)//'lfppathmarriedmale_auf.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_auf.txt')
 
     do it8=1,nfcm
 
@@ -2138,7 +2138,7 @@ program Laffer
 
     !Single Females
 
-    open(1,file=trim(results_folder)//'lfppathsingle_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_a.txt')
 
 
     do it7=1,na
@@ -2219,7 +2219,7 @@ program Laffer
 
     !Single Males
 
-    open(1,file=trim(results_folder)//'lfppathsinglemale_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_a.txt')
 
     do it7=1,na
 
@@ -2302,7 +2302,7 @@ program Laffer
 
     !Married Females
 
-    open(1,file=trim(results_folder)//'lfppathmarried_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_a.txt')
 
     do it7=1,na
 
@@ -2385,7 +2385,7 @@ program Laffer
 
     !Married Males
 
-    open(1,file=trim(results_folder)//'lfppathmarriedmale_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_a.txt')
 
     do it7=1,na
 
@@ -2468,7 +2468,7 @@ program Laffer
 
     !Single Females
 
-    open(1,file=trim(results_folder)//'lfppath_females_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_females_a.txt')
 
 
     do it7=1,na
@@ -2544,7 +2544,7 @@ program Laffer
 
     !Single Males
 
-    open(1,file=trim(results_folder)//'lfppath_males_a.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_males_a.txt')
 
     do it7=1,na
 
@@ -2622,9 +2622,9 @@ program Laffer
 
     !Earners in couples
 
-    open(1,file=trim(results_folder)//'earners_in_couples.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'earners_in_couples.txt')
 
-    open(2,file=trim(results_folder)//'ability_couple_f_works.txt')
+    open(2,file=trim(results_folder)//trim(tax_folder)//'ability_couple_f_works.txt')
 
     do it2=1,T
 
@@ -2725,7 +2725,7 @@ program Laffer
 
     !Persistence of Employment
 
-    open(1,file=trim(results_folder)//'lfppathsingle2.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle2.txt')
 
 
     do it2=4,T
@@ -2905,7 +2905,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'lfppathmarried2.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried2.txt')
 
 
     do it2=4,T
@@ -3090,7 +3090,7 @@ program Laffer
 
 
 
-    open(1,file=trim(results_folder)//'lfppathsingle_male2.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male2.txt')
 
     do it2=4,T
         dum2=0.0d0
@@ -3268,7 +3268,7 @@ program Laffer
 
     close(1)
 
-    open(1,file=trim(results_folder)//'lfppathmarried_male2.txt')
+    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male2.txt')
 
     do it2=4,T
         dum2=0.0d0
@@ -3449,7 +3449,7 @@ program Laffer
 
     !Variables are age, ID number, gender, marital status, asset holdings, labor supply, experience, consumption, social security, ability
 
-    !open(1, file=trim(results_folder)//'Simulated_wealth_data.txt')
+    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_wealth_data.txt')
     !
     !do it2=T-5,T
     !    !it2=T
@@ -3498,7 +3498,7 @@ program Laffer
 
     !Variables are age, ID number, earnings
     
-    !open(1, file=trim(results_folder)//'Simulated_earnings_single_male.txt')
+    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_male.txt')
     !
     !do it2=1,T
     !    do it3=1,nsim2
@@ -3517,7 +3517,7 @@ program Laffer
     
     !Variables are age, ID number, earnings
     
-    !open(1, file=trim(results_folder)//'Simulated_earnings_single_female.txt')
+    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_female.txt')
     !
     !do it2=1,T
     !    do it3=1,nsim2
@@ -3536,7 +3536,7 @@ program Laffer
     
     !Variables are age, male ID number, household earnings
     
-    !open(1, file=trim(results_folder)//'Simulated_earnings_married.txt')
+    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_married.txt')
     !
     !do it2=1,T
     !    do it3=1,nsim2
@@ -3569,7 +3569,17 @@ contains
             results_folder = 'benchmark/'    
         end if
         
-        open(81, file=trim(results_folder)//'test.txt')
+        if (tax_regime == 1) then
+            tax_folder = 'benchmark/'
+            Deduct_Cutoff = 0d0
+            Deduct_Cutoff_Mar = Deduct_Cutoff
+        else if (tax_regime == 2) then
+            tax_folder = 'nit/'
+            Deduct_Cutoff = 0.1d0
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+        end if
+        
+        open(81, file=trim(results_folder)//trim(tax_folder)//'test.txt')
         write(81, '(i0)') testing 
         write(81, '(i0)') pension_for_all
         close(81)        

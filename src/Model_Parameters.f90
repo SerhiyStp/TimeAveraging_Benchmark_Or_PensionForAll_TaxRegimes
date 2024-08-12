@@ -4,12 +4,28 @@ module Model_Parameters
         
     integer, parameter :: testing = 1
     integer, parameter :: pension_for_all = 0
+    integer, parameter :: tax_regime = 1 ! Baseline = 1, NIT w Deduction = 2    
+    
     character(len=100) :: results_folder
+    character(len=100) :: tax_folder
+    
     !integer, parameter :: Tret = 5*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)
     integer, parameter :: Tret = 2*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)
     integer, parameter :: T = 6*testing + 45*(1-testing) !45         ! Years of active life (20-64)
-    real(8), parameter :: Deduct_Cutoff = 0d0 !0.8d0        
-    real(8), parameter :: Deduct_Cutoff_Mar = Deduct_Cutoff
+
+    ! Taxation
+    real(8) :: Deduct_Cutoff != 0d0 !0.8d0        
+    real(8) :: Deduct_Cutoff_Mar != Deduct_Cutoff
+    !NIT 
+    !real(8), parameter :: Deduct_Cutoff = 0.1d0 !0.8d0        
+    !real(8), parameter :: Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff    
+    real(8), parameter :: yhat = 0.50d0
+    real(8), parameter :: yhat_mar = 1.00d0
+    real(8), parameter :: s_nit = 0.10d0
+    real(8), parameter :: b_nit = s_nit*yhat
+    real(8), parameter :: b_nit_mar = s_nit*yhat_mar
+    real(8) :: tau_L  = 0.13d0
+    
         
     real(8), parameter :: etam    = 1d0/0.4d0  ! Inverse Frisch elasticity men
     real(8), parameter :: etaf    = 1d0/0.8d0  ! Inverse Frisch elasticity women
