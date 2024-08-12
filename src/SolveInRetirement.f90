@@ -1415,7 +1415,9 @@ contains
 
                                 !Female not working but not retiring
                                 P1=0.001d0
-                                P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+(wagem)*(1d0-tax_labor(wagem)-tSS_employee(wagem)))/(1d0+tc))
+                                nonlab_inc = (k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit
+                                !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+(wagem)*(1d0-tax_labor(wagem)-tSS_employee(wagem)))/(1d0+tc))
+                                P4 = min( k_grid(nk)-0.001d0, nonlab_inc + (1d0-t_const)*(after_tax_labor_inc_married(wagem) - wagem*t_employee)) /(1d0+tc)
                                 do
                                     P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                                     P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
@@ -1423,7 +1425,8 @@ contains
                                     pnt1 = (/P2, wagem/)
                                     dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
                                     y=dum4*wagem
-                                    dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P2*(1d0+tc))/(1d0+mu)
+                                    !dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P2*(1d0+tc))/(1d0+mu)
+                                    dum2 = (nonlab_inc + (1d0-t_const)*(after_tax_labor_inc_married(y) - y*t_employee) -P2*(1d0+tc))/(1d0+mu)
                                     if(dum2<0.0001d0) then
                                         V2=-999999999d0
                                     elseif(dum2>k_grid(nk)-0.001d0) then
@@ -1440,8 +1443,6 @@ contains
                                         nk,nexp,nexp,kx,ky,kz,&
                                         ev_ret_bspl(2,2,iam,ium,iaf,iuf,ifc,ifcm)%coefs,vnext,iflag,&
                                         inbvx,inbvy,inbvz,iloy,iloz,ww2,ww1,ww0,extrap=.false.)
-
-                                        !vnext = D_BS3VL(dum2, exp_grid(ix,T+Tret+1-it), exp_grid(ixm,T+Tret+1-it), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+Tret-it+2),EXP_KNOT(:,T+Tret-it+2), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,Tret+2-it,ifc,ifcm))
                                         V2=V2+beta*OmegaRet(Tret-it+1)*vnext
 
                                     end if
@@ -1449,13 +1450,12 @@ contains
                                     pnt1 = (/P3, wagem/)
                                     dum4 = min(max(bilin_interp(c_grid, wage_grid, labormwork, nc, nw, pnt1),0d0),1d0)
                                     y=dum4*wagem
-                                    dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
+                                    !dum2=((k_grid(ik)+Gamma_redistr)*(1d0+r_ret*(1d0-tk))+lumpsum+(Psi_pension+Psi_pensionf)*p4a+Unemp_benefit+y*(1d0-t_const)*(1d0-tax_labor(y)-tSS_employee(y))-P3*(1d0+tc))/(1d0+mu)
+                                    dum2 = (nonlab_inc + (1d0-t_const)*(after_tax_labor_inc_married(y) - y*t_employee) - P3*(1d0+tc))/(1d0+mu)
                                     if(dum2<0.0001d0) then
                                         V3=-999999999d0
                                     elseif(dum2>k_grid(nk)-0.001d0) then
                                         V3=Uc(P3)+Ul(dum4,0d0)-fcm(1,ifcm)
-                                        !V2=V2+beta*OmegaActive(T-it)*(1d0-Probm(T-it))*D_CSVAL(dum2,BREAK,evs_spln_coefs(j,:,:,ix+1,iam,ium,T+1-it,ifc))
-
                                         pnt2=(/dum2, exp_grid(ix,T+Tret-it), exp_grid(ixm,T+Tret-it)+1d0/)
                                         INTERP3D=ev_ret(2,2,:,:,:,iam,ium,iaf,iuf,Tret+2-it,ifc,ifcm)
                                         vnext = trilin_interp(k_grid, exp_grid_dum, exp_grid_dum, INTERP3D, nk, nexp, nexp, pnt2)
