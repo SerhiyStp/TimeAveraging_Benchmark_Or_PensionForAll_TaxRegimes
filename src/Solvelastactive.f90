@@ -82,13 +82,9 @@ subroutine Solvelastactive(counter)
             do iaf = 1, na
                 do iuf = 1, nu
                     do ixm = 1, nexp
-                        !Print *,'ix is',ix
-                        !Finding optimal capital by golden search
                         wagem = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(1,a(1,iam),exp_grid(ixm,T),u(1,ium))/(1d0+t_employer)
                         wagef = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(2,a(2,iaf),exp_grid(ix,T),u(2,iuf))/(1d0+t_employer)
                         P1=0.001d0
-                        !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+(wagem+wagef)*(1d0-t_const)*(1d0-tax_labor(wagem+wagef)-tSS_employee(wagem+wagef)))/(1d0+tc))
-
                         nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem+wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem+wagef)*t_employee))/(1d0+tc))                   
@@ -114,7 +110,6 @@ subroutine Solvelastactive(counter)
                                 V2=V2+beta*OmegaActive(T)*vnext
                             else
                                 V2=Uc(P2)+Ul(dum4,dum5)-fc(1,ifc)-fcm(1,ifcm)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)+1d0, exp_grid(ixm,T)+1d0, KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)+1d0, exp_grid(ixm,T)+1d0,idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -178,14 +173,9 @@ subroutine Solvelastactive(counter)
                         v_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M1,LFP_F1,MEN)=V2
                         v_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M1,LFP_F1,WOMEN)=V2                        
                         
-                        
-
 
                         !If female unemployed
-
                         P1=0.001d0
-                        !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit+(wagem)*(1d0-t_const)*(1d0-tax_labor(wagem)-tSS_employee(wagem)))/(1d0+tc))
-
                         nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagem*t_employee))/(1d0+tc))                   
@@ -273,10 +263,7 @@ subroutine Solvelastactive(counter)
                         
                         
                         !If male unemployed
-
                         P1=0.001d0
-                        !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit+(wagef)*(1d0-t_const)*(1d0-tax_labor(wagef)-tSS_employee(wagef)))/(1d0+tc))
-
                         nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
                         aftertax_lab_inc = after_tax_labor_inc_married(wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))                 
@@ -301,7 +288,6 @@ subroutine Solvelastactive(counter)
                                 V2=V2+beta*OmegaActive(T)*vnext
                             else
                                 V2=Uc(P2)+Ul(0d0,dum4)-fc(1,ifc)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)+1d0, exp_grid(ixm,T)*(1d0-deltaexp), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)+1d0,exp_grid(ixm,T)*(1d0-deltaexp),idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -364,17 +350,15 @@ subroutine Solvelastactive(counter)
                         v_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M0,LFP_F1,WOMEN)=V2                        
 
                         
-
-
                         !If both spouses unemployed
-
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0)
                         P1=0.001d0
-                        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit)/(1d0+tc))
+                        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/ (1d0+tc)
                         do
                             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-                            dum2=((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+                            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
                             if(dum2<0.0001d0) then
                                 V2=-999999999d0
                             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -385,7 +369,6 @@ subroutine Solvelastactive(counter)
                                 V2=V2+beta*OmegaActive(T)*vnext
                             else
                                 V2=Uc(P2)+Ul(0d0,0d0)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), exp_grid(ixm,T)*(1d0-deltaexp), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)*(1d0-deltaexp),exp_grid(ixm,T)*(1d0-deltaexp),idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -394,7 +377,7 @@ subroutine Solvelastactive(counter)
                                 V2=V2+beta*OmegaActive(T)*vnext
                             end if
 
-                            dum2=((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+                            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
                             if(dum2<0.0001d0) then
                                 V3=-999999999d0
                             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -405,7 +388,6 @@ subroutine Solvelastactive(counter)
                                 V3=V3+beta*OmegaActive(T)*vnext
                             else
                                 V3=Uc(P3)+Ul(0d0,0d0)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), exp_grid(ixm,T)*(1d0-deltaexp), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)*(1d0-deltaexp),exp_grid(ixm,T)*(1d0-deltaexp),idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -438,9 +420,6 @@ subroutine Solvelastactive(counter)
                         nf_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M0,LFP_F0)=0d0   
                         v_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M0,LFP_F0,MEN)=V2
                         v_lfp(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm,LFP_M0,LFP_F0,WOMEN)=V2                        
-
-                        
-
 
                         if (ve >= vu) then
                             v(ik,ix,ixm,iam,ium,iaf,iuf,T,ifc,ifcm)=ve
@@ -475,19 +454,11 @@ subroutine Solvelastactive(counter)
     !Singles    
     j=2
     do ifc=1,nfc
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
         wagef = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(2,a(2,iam),exp_grid(ix,T),u(2,ium))/(1d0+t_employer)
         P1=0.001d0
-        !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+wagef*(1d0-t_const)*(1d0-tax_labors(wagef)-tSS_employee(wagef)))/(1d0+tc))
-
         nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
         aftertax_lab_inc = after_tax_labor_inc_single(wagef)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))
-        !if (abs(P4-P4_test)>1d-5) then
-        !    print *, 'WARNING: p4 != p4_test'
-        !end if                    
-
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
@@ -561,15 +532,14 @@ subroutine Solvelastactive(counter)
         ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum4
 
         !If single female unemployed
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
         P1=0.001d0
-        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
 
             if(dum2<0.0001d0) then
                 V2=-999999999d0
@@ -580,7 +550,6 @@ subroutine Solvelastactive(counter)
                 V2=Uc(P2)
                 V2=V2+beta*OmegaActive(T)*vnext
             else
-                !vnext = D_BS2VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1), nk, nexp,evs_ret_spln_coefs(2,j,:,:,iam,ium,1,ifc))
                 call db2val(dum2,exp_grid(ix,T)*(1d0-deltaexp),idx,idy,&
                     tx,ty(:,T+1),nk,nexp,kx,ky,&
                     evs_ret_bspl(2,j,iam,ium,ifc)%coefs,vnext,iflag,&
@@ -589,7 +558,7 @@ subroutine Solvelastactive(counter)
                 V2=V2+beta*OmegaActive(T)*vnext
             end if
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
             if(dum2<0.0001d0) then
                 V3=-999999999d0
             elseif(dum2>k_grid(nk)) then
@@ -599,7 +568,6 @@ subroutine Solvelastactive(counter)
                 V3=Uc(P3)
                 V3=V3+beta*OmegaActive(T)*vnext
             else
-                !vnext = D_BS2VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1), nk, nexp,evs_ret_spln_coefs(2,j,:,:,iam,ium,1,ifc))
                 call db2val(dum2,exp_grid(ix,T)*(1d0-deltaexp),idx,idy,&
                     tx,ty(:,T+1),nk,nexp,kx,ky,&
                     evs_ret_bspl(2,j,iam,ium,ifc)%coefs,vnext,iflag,&
@@ -651,19 +619,11 @@ subroutine Solvelastactive(counter)
     !Men   
     j=1
     do ifc=1,nfcm
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
         wagem = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(1,a(1,iam),exp_grid(ix,T),u(1,ium))/(1d0+t_employer)
         P1=0.001d0
-        !P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+wagem*(1d0-t_const)*(1d0-tax_labors(wagem)-tSS_employee(wagem)))/(1d0+tc))
-
         nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
         aftertax_lab_inc = after_tax_labor_inc_single(wagem)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem)*t_employee))/(1d0+tc))
-        !if (abs(P4-P4_test)>1d-5) then
-        !    print *, 'WARNING: p4 != p4_test'
-        !end if                    
-
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
@@ -739,15 +699,14 @@ subroutine Solvelastactive(counter)
 
 
         !If single male unemployed
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
         P1=0.001d0
-        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
 
             if(dum2<0.0001d0) then
                 V2=-999999999d0
@@ -758,7 +717,6 @@ subroutine Solvelastactive(counter)
                 V2=Uc(P2)
                 V2=V2+beta*OmegaActive(T)*vnext
             else
-                !vnext = D_BS2VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1), nk, nexp,evs_ret_spln_coefs(2,j,:,:,iam,ium,1,ifc))
                 call db2val(dum2,exp_grid(ix,T)*(1d0-deltaexp),idx,idy,&
                     tx,ty(:,T+1),nk,nexp,kx,ky,&
                     evs_ret_bspl(2,j,iam,ium,ifc)%coefs,vnext,iflag,&
@@ -767,7 +725,7 @@ subroutine Solvelastactive(counter)
                 V2=V2+beta*OmegaActive(T)*vnext
             end if
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
 
             if(dum2<0.0001d0) then
                 V3=-999999999d0
@@ -778,7 +736,6 @@ subroutine Solvelastactive(counter)
                 V3=Uc(P3)
                 V3=V3+beta*OmegaActive(T)*vnext
             else
-                !vnext = D_BS2VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), KORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1), nk, nexp,evs_ret_spln_coefs(2,j,:,:,iam,ium,1,ifc))
                 call db2val(dum2,exp_grid(ix,T)*(1d0-deltaexp),idx,idy,&
                     tx,ty(:,T+1),nk,nexp,kx,ky,&
                     evs_ret_bspl(2,j,iam,ium,ifc)%coefs,vnext,iflag,&
