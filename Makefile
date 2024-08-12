@@ -8,7 +8,7 @@ DEXE    = ./
 LIBS    =
 FC      = ifort
 OPTSC   = -c -qopenmp -module mod
-OPTSL   = -qopenmp -module mod
+OPTSL   =  -oqpenmp -module mod
 VPATH   = $(DSRC) $(DOBJ) $(DMOD)
 MKDIRS  = $(DOBJ) $(DMOD) $(DEXE)
 LCEXES  = $(shell echo $(EXES) | tr '[:upper:]' '[:lower:]')
@@ -25,7 +25,6 @@ $(DEXE)MAIN: $(MKDIRS) $(DOBJ)main.o \
 	$(DOBJ)partest.o \
 	$(DOBJ)solveactivelife.o \
 	$(DOBJ)solvefirstactive.o \
-	$(DOBJ)solveinretirement.o \
 	$(DOBJ)solvelastactive.o
 	@rm -f $(filter-out $(DOBJ)main.o,$(EXESOBJ))
 	@echo $(LITEXT)
@@ -72,6 +71,7 @@ $(DOBJ)main.o: src/main.f90 \
 	$(DOBJ)utilities.o \
 	$(DOBJ)model_parameters.o \
 	$(DOBJ)policyfunctions.o \
+	$(DOBJ)solveinretirement.o \
 	$(DOBJ)tauchen.o \
 	$(DOBJ)policyfunctions_obj.o \
 	$(DOBJ)simulation.o \
