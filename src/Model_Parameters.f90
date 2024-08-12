@@ -2,8 +2,8 @@ module Model_Parameters
         
     implicit none
         
-    integer, parameter :: testing = 0
-    integer, parameter :: pension_for_all = 1
+    integer, parameter :: testing = 1
+    integer, parameter :: pension_for_all = 0
     character(len=100) :: results_folder
     !integer, parameter :: Tret = 5*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)
     integer, parameter :: Tret = 2*testing + 36*(1-testing) !36         ! Years in retirement  (65-100)

@@ -71,7 +71,7 @@ contains
                     if(it==1) then
                         ! Solve the very last period problem:
                         k_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = 0d0
-                        c_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = ((k_grid(ik) + Gamma_redistr)*(1d0 + r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc)
+                        c_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = ((k_grid(ik) + Gamma_redistr)*(1d0 + r_ret*(1d0-tk)) + Psi_pension + Psi_pensionf + lumpsum)/(1d0+tc)
                         Uprime_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:) = dUc(((k_grid(ik) + Gamma_redistr)*(1d0 + r_ret*(1d0-tk)) + Psi_pension+Psi_pensionf+lumpsum)/(1d0+tc))
                         nf_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=0d0
                         nm_ret(1,1,ik,ix,ixm,iam,:,iaf,:,Tret,:,:)=0d0
