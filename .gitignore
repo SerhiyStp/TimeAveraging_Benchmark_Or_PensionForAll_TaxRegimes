@@ -1,6 +1,9 @@
 *.txt
 x64/
 Debug/
+mod/
+obj/
+MAIN
 *.suo
 *.sln
 *.vfproj
