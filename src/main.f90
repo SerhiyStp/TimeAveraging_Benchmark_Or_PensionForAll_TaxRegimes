@@ -3449,34 +3449,34 @@ program Laffer
 
     !Variables are age, ID number, gender, marital status, asset holdings, labor supply, experience, consumption, social security, ability
 
-    open(1, file=trim(results_folder)//'Simulated_wealth_data.txt')
-
-    do it2=T-5,T
-        !it2=T
-        do it3=1,nsim2
-            do it4=1,nsim
-                it7=exp1m(it3,it4,it2,2)
-                write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,it2,10),A(1,it7)
-                it7=exp1m(it3,it4,it2,2)
-                write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,it2,10),A(2,it7)
-            end do
-        end do
-    end do
-
-    do it2=1,5
-        !it2=1
-        !ium=int(weightret(it2)*nsim)
-        do it3=1,nsim2
-            do it4=1,nsim
-                it7=expR1m(it3,it4,it2,1)
-                write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,T,10),A(1,it7)
-                it7=expR1f(it3,it4,it2,1)
-                write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,T,10),A(2,it7)
-            end do
-        end do
-    end do
-
-    close(1)
+    !open(1, file=trim(results_folder)//'Simulated_wealth_data.txt')
+    !
+    !do it2=T-5,T
+    !    !it2=T
+    !    do it3=1,nsim2
+    !        do it4=1,nsim
+    !            it7=exp1m(it3,it4,it2,2)
+    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,it2,10),A(1,it7)
+    !            it7=exp1m(it3,it4,it2,2)
+    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,it2,10),A(2,it7)
+    !        end do
+    !    end do
+    !end do
+    !
+    !do it2=1,5
+    !    !it2=1
+    !    !ium=int(weightret(it2)*nsim)
+    !    do it3=1,nsim2
+    !        do it4=1,nsim
+    !            it7=expR1m(it3,it4,it2,1)
+    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,T,10),A(1,it7)
+    !            it7=expR1f(it3,it4,it2,1)
+    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,T,10),A(2,it7)
+    !        end do
+    !    end do
+    !end do
+    !
+    !close(1)
 
     !open(1, file='Share_single.txt')
     !do it2=1,T
@@ -3498,60 +3498,60 @@ program Laffer
 
     !Variables are age, ID number, earnings
     
-    open(1, file=trim(results_folder)//'Simulated_earnings_single_male.txt')
-
-    do it2=1,T
-        do it3=1,nsim2
-            do it4=1,nsim
-                if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                    it7=exp1m(it3,it4,it2,2)
-                    !if(it7==1) then
-                        write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,5)
-                    !end if
-                end if
-            end do
-        end do
-    end do
-    
-    close(1)
+    !open(1, file=trim(results_folder)//'Simulated_earnings_single_male.txt')
+    !
+    !do it2=1,T
+    !    do it3=1,nsim2
+    !        do it4=1,nsim
+    !            if(Sim1m(it4,it3,it2,10)<0.5d0) then
+    !                it7=exp1m(it3,it4,it2,2)
+    !                !if(it7==1) then
+    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,5)
+    !                !end if
+    !            end if
+    !        end do
+    !    end do
+    !end do
+    !
+    !close(1)
     
     !Variables are age, ID number, earnings
     
-    open(1, file=trim(results_folder)//'Simulated_earnings_single_female.txt')
-
-    do it2=1,T
-        do it3=1,nsim2
-            do it4=1,nsim
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    it7=exp1f(it3,it4,it2,2)
-                    !if(it7==1) then
-                        write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1f(it3,it4,it2,5)
-                    !end if
-                end if
-            end do
-        end do
-    end do
-    
-    close(1)
+    !open(1, file=trim(results_folder)//'Simulated_earnings_single_female.txt')
+    !
+    !do it2=1,T
+    !    do it3=1,nsim2
+    !        do it4=1,nsim
+    !            if(Sim1f(it4,it3,it2,10)<0.5d0) then
+    !                it7=exp1f(it3,it4,it2,2)
+    !                !if(it7==1) then
+    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1f(it3,it4,it2,5)
+    !                !end if
+    !            end if
+    !        end do
+    !    end do
+    !end do
+    !
+    !close(1)
     
     !Variables are age, male ID number, household earnings
     
-    open(1, file=trim(results_folder)//'Simulated_earnings_married.txt')
-
-    do it2=1,T
-        do it3=1,nsim2
-            do it4=1,nsim
-                if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                    it7=exp1m(it3,it4,it2,4)                
-                    !if((exp1m(it3,it4,it2,2)==1).AND.(exp1f(it3,it7,it2,2)==1)) then
-                        write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,6)
-                    !end if
-                end if
-            end do
-        end do
-    end do
-    
-    close(1)
+    !open(1, file=trim(results_folder)//'Simulated_earnings_married.txt')
+    !
+    !do it2=1,T
+    !    do it3=1,nsim2
+    !        do it4=1,nsim
+    !            if(Sim1m(it4,it3,it2,10)>0.5d0) then
+    !                it7=exp1m(it3,it4,it2,4)                
+    !                !if((exp1m(it3,it4,it2,2)==1).AND.(exp1f(it3,it7,it2,2)==1)) then
+    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,6)
+    !                !end if
+    !            end if
+    !        end do
+    !    end do
+    !end do
+    !
+    !close(1)
     
     
     

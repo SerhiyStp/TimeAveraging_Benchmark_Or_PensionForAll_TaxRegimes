@@ -2,8 +2,8 @@ module Simulations_mod
     
     implicit none
     
-    integer, parameter :: nsim   = 12000 !12000 !10 !10000         ! Number of households used for simulation
-    integer, parameter :: nsim2   = 80 !80         ! Number of simulations    
+    integer, parameter :: nsim   = 1000 !12000 !12000 !10 !10000         ! Number of households used for simulation
+    integer, parameter :: nsim2   = 1 !80         ! Number of simulations    
     
     real(8), dimension (:,:,:,:), allocatable :: Sim1m,Sim1f,exp2m,exp2f ! Array to hold simulation results
     integer, dimension (:,:,:,:), allocatable :: exp1m,exp1f,expR1f,expR1m ! Array to hold simulation results
