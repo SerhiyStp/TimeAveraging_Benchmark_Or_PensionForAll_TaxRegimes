@@ -407,9 +407,9 @@ subroutine SolveActiveLife(counter)
                         
 
                         !If both spouses unemployed
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit 
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0)
                         P1=0.001d0
-                        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit)/(1d0+tc))
+                        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/ (1d0+tc)
                         
                         exp_f_prime = exp_grid(ix,T-it)*(1d0-deltaexp)
                         exp_m_prime = exp_grid(ixm,T-it)*(1d0-deltaexp)                          
@@ -418,7 +418,7 @@ subroutine SolveActiveLife(counter)
                             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
                             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-                            dum2=((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+                            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
                             if(dum2<0.0001d0) then
                                 V2=-999999999d0
                             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -437,7 +437,7 @@ subroutine SolveActiveLife(counter)
                                 V2=V2+beta*OmegaActive(T-it)*vnext
                             end if
 
-                            dum2=((k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+2d0*Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+                            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
                             if(dum2<0.0001d0) then
                                 V3=-999999999d0
                             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -635,16 +635,14 @@ subroutine SolveActiveLife(counter)
 
 
         !If female unemployed
-
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
         P1=0.001d0
-        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
 
             if(dum2<0.0001d0) then
                 V2=-999999999d0
@@ -671,7 +669,7 @@ subroutine SolveActiveLife(counter)
                 V2=V2+beta*OmegaActive(T-it)*Probm(T-it)*vnext
             end if
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
             if(dum2<0.0001d0) then
                 V3=-999999999d0
             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -735,10 +733,7 @@ subroutine SolveActiveLife(counter)
 
     !Men   
     j=1
-
     do ifc=1,nfcm
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
         wagem = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(1,a(1,iam),exp_grid(ix,T-it),u(1,ium))/(1d0+t_employer)
         P1=0.001d0
         nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
@@ -834,15 +829,13 @@ subroutine SolveActiveLife(counter)
         ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum4
 
         !If male unemployed
-
-        !Print *,'ix is',ix
-        !Finding optimal capital by golden search
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
         P1=0.001d0
-        P4=min((k_grid(nk)-0.001d0)/(1d0+tc),((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit)/(1d0+tc))
+        P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
             P2 = P1 + ((3.0-sqrt(5.0))/2.0)*(P4-P1)
             P3 = P1 + ((sqrt(5.0)-1.0)/2.0)*(P4-P1)
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P2*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P2*(1d0+tc))/(1d0+mu)
             if(dum2<0.0001d0) then
                 V2=-999999999d0
             elseif(dum2>k_grid(nk)-0.001d0) then
@@ -868,7 +861,7 @@ subroutine SolveActiveLife(counter)
                 V2=V2+beta*OmegaActive(T-it)*Probm(T-it)*vnext
             end if
 
-            dum2=((k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+Unemp_benefit-P3*(1d0+tc))/(1d0+mu)
+            dum2 = (nonlab_inc - P3*(1d0+tc))/(1d0+mu)
             if(dum2<0.0001d0) then
                 V3=-999999999d0
             elseif(dum2>k_grid(nk)-0.001d0) then
