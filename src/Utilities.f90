@@ -59,24 +59,6 @@ contains
         
     end function wage
 
-    !function tax_labor(y)
-    !    real(8) :: y
-    !    real(8) :: tax_labor
-    !
-    !    tax_labor = 1d0-theta(1)*(y/AE)**(-theta(2))
-    !
-    !
-    !end function tax_labor
-    !
-    !function tax_labors(y)
-    !    real(8) :: y
-    !    real(8) :: tax_labors
-    !
-    !    tax_labors = 1d0-thetas(1)*(y/AE)**(-thetas(2))
-    !    !tax_labors = 0.2d0
-    !
-    !end function tax_labors
-
     function tSS_employer(y)
         real(8) :: y
         real(8) :: tSS_employer
