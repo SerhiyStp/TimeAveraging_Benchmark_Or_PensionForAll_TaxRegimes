@@ -18,6 +18,7 @@ program Laffer
     integer :: i_k, i
     integer :: istat
     logical :: solve_lifecycle
+    integer :: short_testing
 
     !call OMP_SET_NUM_THREADS(106)
     
@@ -374,6 +375,7 @@ program Laffer
         !end do
 
         call Statistics(file_id=61)
+        if (short_testing == 1) STOP
 
     end do
 
