@@ -18,6 +18,7 @@ program Laffer
     integer :: i_k, i
     integer :: istat
     logical :: solve_lifecycle
+    integer :: short_testing
 
     !call OMP_SET_NUM_THREADS(106)
     
@@ -43,7 +44,7 @@ program Laffer
     !P4=tax_level_scale+0.15d0
     !P1=tax_level_scale-0.15d0
 
-
+    short_testing = 1
     do while(abs(epsilon3)>0.0001d0)
 
 
@@ -374,6 +375,7 @@ program Laffer
         !end do
 
         call Statistics(file_id=61)
+        if (short_testing == 1) STOP
 
     end do
 
