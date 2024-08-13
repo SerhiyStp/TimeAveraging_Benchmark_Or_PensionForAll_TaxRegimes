@@ -7,7 +7,7 @@ DMOD    = mod/
 DEXE    = ./
 LIBS    =
 FC      = ifort
-OPTSC   = -c -qopenmp -module mod -O3
+OPTSC   = -c -qopenmp -module mod
 OPTSL   = -qopenmp -module mod
 VPATH   = $(DSRC) $(DOBJ) $(DMOD)
 MKDIRS  = $(DOBJ) $(DMOD) $(DEXE)
@@ -21,7 +21,6 @@ LITEXT  = "Assembling $@"
 
 #building rules
 $(DEXE)MAIN: $(MKDIRS) $(DOBJ)main.o \
-	$(DOBJ)lsupply.o \
 	$(DOBJ)partest.o \
 	$(DOBJ)solveactivelife.o \
 	$(DOBJ)solvefirstactive.o \
@@ -58,7 +57,7 @@ $(DOBJ)kind_module.o: src/kind_module.f90
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lsupply.o: src/lsupply.f90 \
+$(DOBJ)laborsupply.o: src/LaborSupply.f90 \
 	$(DOBJ)model_parameters.o \
 	$(DOBJ)policyfunctions.o \
 	$(DOBJ)glob0.o \
@@ -75,7 +74,8 @@ $(DOBJ)main.o: src/main.f90 \
 	$(DOBJ)tauchen.o \
 	$(DOBJ)policyfunctions_obj.o \
 	$(DOBJ)simulation.o \
-	$(DOBJ)statistics.o
+	$(DOBJ)statistics.o \
+	$(DOBJ)laborsupply.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 

@@ -8,6 +8,7 @@ program Laffer
     use PolicyFunctions_obj, only: update_ev_aux, update_ret_policies, update_lfp_policies
     use Simulations_mod
     use Summarize_Simulation
+    use LaborSupply
     use, intrinsic :: iso_fortran_env, only: output_unit
 
     implicit none
@@ -66,14 +67,16 @@ program Laffer
             !dum2= 1.5d0*wage(1,a(1,5),dble(T),u(1,5))/(1d0+t_employer)
             dum2= 1.5d0*wage(1,a(1,na),dble(T),u(1,nu))/(1d0+t_employer)
             call MakeGrid(nw,wage_grid,0.01d0,dum2,2d0)
-
-            !$OMP PARALLEL PRIVATE(ik)
-            !$OMP DO SCHEDULE(DYNAMIC)
-            do ik=1,nc
-                call lsupply(ik)
-            end do
-            !$OMP END DO    
-            !$OMP END PARALLEL
+            
+            !!$OMP PARALLEL PRIVATE(ik)
+            !!$OMP DO SCHEDULE(DYNAMIC)
+            !do ik=1,nc
+            !    call lsupply(ik)
+            !end do
+            !!$OMP END DO    
+            !!$OMP END PARALLEL
+            
+            call Solve_Hours(tax_regime)
             
             if (solve_lifecycle == .true.) then
             
