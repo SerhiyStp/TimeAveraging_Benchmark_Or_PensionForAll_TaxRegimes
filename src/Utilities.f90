@@ -57,48 +57,25 @@ contains
             wage = w*exp(gamma0f+gamma(gender,1)*xdum + gamma(gender,2)*xdum**2d0 + gamma(gender,3)*xdum**3d0 + aval + uval)
         end if
         
-        !if(gender==1) then
-        !    if(x<T) then
-        !        wage = w*exp(gamma0+gamma(gender,1)*x + gamma(gender,2)*x**2d0 + gamma(gender,3)*x**3d0 + aval + uval)
-        !    else
-        !        xdum=(T-1)*1d0
-        !        w1 = gamma0+gamma(gender,1)*xdum + gamma(gender,2)*xdum**2d0 + gamma(gender,3)*xdum**3d0
-        !        xdum=(T-2)*1d0
-        !        w2 = gamma0+gamma(gender,1)*xdum + gamma(gender,2)*xdum**2d0 + gamma(gender,3)*xdum**3d0
-        !        xdum=w1+(w1-w2)*(x+1-T)
-        !        wage=w*exp(xdum + aval + uval)
-        !    end if
-        !else
-        !    if(x<T) then
-        !        wage = w*exp(gamma0f+gamma(gender,1)*x + gamma(gender,2)*x**2d0 + gamma(gender,3)*x**3d0 + aval + uval)
-        !    else
-        !        xdum=(T-1)*1d0
-        !        w1 = gamma0f+gamma(gender,1)*xdum + gamma(gender,2)*xdum**2d0 + gamma(gender,3)*xdum**3d0
-        !        xdum=(T-2)*1d0
-        !        w2 = gamma0f+gamma(gender,1)*xdum + gamma(gender,2)*xdum**2d0 + gamma(gender,3)*xdum**3d0
-        !        wage=w*exp(xdum + aval + uval)
-        !    end if
-        !end if
-        
     end function wage
 
-    function tax_labor(y)
-        real(8) :: y
-        real(8) :: tax_labor
-
-        tax_labor = 1d0-theta(1)*(y/AE)**(-theta(2))
-
-
-    end function tax_labor
-
-    function tax_labors(y)
-        real(8) :: y
-        real(8) :: tax_labors
-
-        tax_labors = 1d0-thetas(1)*(y/AE)**(-thetas(2))
-        !tax_labors = 0.2d0
-
-    end function tax_labors
+    !function tax_labor(y)
+    !    real(8) :: y
+    !    real(8) :: tax_labor
+    !
+    !    tax_labor = 1d0-theta(1)*(y/AE)**(-theta(2))
+    !
+    !
+    !end function tax_labor
+    !
+    !function tax_labors(y)
+    !    real(8) :: y
+    !    real(8) :: tax_labors
+    !
+    !    tax_labors = 1d0-thetas(1)*(y/AE)**(-thetas(2))
+    !    !tax_labors = 0.2d0
+    !
+    !end function tax_labors
 
     function tSS_employer(y)
         real(8) :: y
