@@ -83,7 +83,7 @@ program Laffer
             
             do it=1,Tret
 
-                Print *,'t is',T+Tret+1-it
+                print *, 't is',T+Tret+1-it
 
                 !$OMP PARALLEL PRIVATE(counter)
                 !$OMP DO SCHEDULE(DYNAMIC)
@@ -143,7 +143,7 @@ program Laffer
             !$OMP END PARALLEL
 
             it=0
-            Print *,'t is',T-it
+            print *, 't is',T-it
 
             !$OMP PARALLEL PRIVATE(counter)
             !$OMP DO SCHEDULE(DYNAMIC)
@@ -212,7 +212,7 @@ program Laffer
             !Compute optimal policies for age 2-63
             do it=1,T-2
 
-                Print *,'t is',T-it
+                print *, 't is',T-it
                 call update_lfp_policies(i_age=T-it+1)
                 call update_ev_aux(i_age=T-it+1)                
 
@@ -292,7 +292,7 @@ program Laffer
 
             it=T-1               
 
-            Print *,'t is',T-it
+            print *, 't is',T-it
             call update_lfp_policies(i_age=T-it+1)
             call update_ev_aux(i_age=T-it+1)             
 
@@ -336,7 +336,7 @@ program Laffer
 
             epsilon_ratio=ratiodum-ratio
 
-            Print *,'epsilon_ratio is',epsilon_ratio
+            print *, 'epsilon_ratio is',epsilon_ratio
 
             ! --------------- Prepare for next iteration
 
@@ -353,8 +353,8 @@ program Laffer
             !epsilon_ratio=0d0
         end do
 
-        Print *,'********epsilon3 is',epsilon3
-        Print *,'tax_level_scale is',tax_level_scale
+        print *, '********epsilon3 is',epsilon3
+        print *, 'tax_level_scale is',tax_level_scale
         !STOP
 
         !t_const = t_const + 0.01d0
@@ -405,10 +405,10 @@ program Laffer
     !
     !STOP
 
-    Print *,'av_earnings(1,1,:) is',av_earnings(1,1,:)
-    Print *,'av_earnings(1,2,:) is',av_earnings(1,2,:)
-    Print *,'av_earnings(2,1,:) is',av_earnings(2,1,:)
-    Print *,'av_earnings(2,2,:) is',av_earnings(2,2,:)
+    print *, 'av_earnings(1,1,:) is',av_earnings(1,1,:)
+    print *, 'av_earnings(1,2,:) is',av_earnings(1,2,:)
+    print *, 'av_earnings(2,1,:) is',av_earnings(2,1,:)
+    print *, 'av_earnings(2,2,:) is',av_earnings(2,2,:)
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WELFARE BY AGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

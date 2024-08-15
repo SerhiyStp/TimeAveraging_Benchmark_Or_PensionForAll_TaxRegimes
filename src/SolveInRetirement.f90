@@ -400,7 +400,7 @@ contains
                                 aftertax_lab_inc = after_tax_labor_inc_married(y)
                                 dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu)     
                                 !if (abs(dum2 - dum2_test) > 1d-6) then
-                                !    print *, 'WARNING: dum2 != dum2_test'
+                                !    write(file_id,*) 'WARNING: dum2 != dum2_test'
                                 !end if                        
 
                                 if(dum2<0.0001d0) then
@@ -652,7 +652,7 @@ contains
                                 dum2 = (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc-y*t_employee)-P3*(1d0+tc))/(1d0+mu) 
 
                                 !if (abs(dum2 - dum2_test) > 1d-6) then
-                                !    print *, 'WARNING: dum2 != dum2_test'
+                                !    write(file_id,*) 'WARNING: dum2 != dum2_test'
                                 !end if
 
 
