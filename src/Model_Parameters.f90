@@ -2,7 +2,7 @@ module Model_Parameters
         
     implicit none
         
-    integer, parameter :: testing = 1
+    integer, parameter :: testing = 0
     integer, parameter :: pension_for_all = 0
     integer, parameter :: tax_regime = 1 ! Baseline = 1, NIT w Deduction = 2    
     
