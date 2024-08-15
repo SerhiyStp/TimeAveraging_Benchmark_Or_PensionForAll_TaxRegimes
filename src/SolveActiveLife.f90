@@ -537,7 +537,7 @@ subroutine SolveActiveLife(counter)
     j=2
 
     do ifc=1,nfc
-        !Print *,'ix is',ix
+        !write(file_id,*)'ix is',ix
         !Finding optimal capital by golden search
         wagef = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(2,a(2,iam),exp_grid(ix,T-it),u(2,ium))/(1d0+t_employer)
         P1=0.001d0

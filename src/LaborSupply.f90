@@ -132,7 +132,7 @@ contains
 
                                 call zeroin(mar_hours_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if
 
                                 hf_d = hsol !h_b
@@ -164,7 +164,7 @@ contains
 
                                 call zeroin(mar_hours_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if                            
 
                                 hm_d = hsol !h_b
@@ -217,7 +217,7 @@ contains
 
                                 call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if                            
                                 h_b = hsol  
                             else
@@ -263,7 +263,7 @@ contains
 
                                         call zeroin(foc_hrs_mar_above_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                         ! if (abs(h_b-xsol_test) > 1d-5) then
-                                        !     print *, 'warning'
+                                        !     write(file_id,*) 'warning'
                                         ! end if
                                         h_b = hsol
                                     else
@@ -294,7 +294,7 @@ contains
 
                                         call zeroin(foc_hrs_mar_above_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                         ! if (abs(h_b-xsol_test) > 1d-5) then
-                                        !     print *, 'warning'
+                                        !     write(file_id,*) 'warning'
                                         ! end if
                                         h_b = hsol
                                     else
@@ -331,7 +331,7 @@ contains
 
                                     call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                     ! if (abs(h_b-xsol_test) > 1d-5) then
-                                    !     print *, 'warning'
+                                    !     write(file_id,*) 'warning'
                                     ! end if
                                     h_b = hsol
                                 else
@@ -362,7 +362,7 @@ contains
 
                                     call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                     ! if (abs(h_b-xsol_test) > 1d-5) then
-                                    !     print *, 'warning'
+                                    !     write(file_id,*) 'warning'
                                     ! end if
                                     h_b = hsol
                                 else
@@ -429,7 +429,7 @@ contains
 
                                 call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if
                                 h_b = hsol
                             else
@@ -450,7 +450,7 @@ contains
 
                                 call zeroin(foc_hrs_mar_above_deduct_1w, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if
                                 h_b = hsol
                             else
@@ -473,7 +473,7 @@ contains
 
                                 call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                                 ! if (abs(h_b-xsol_test) > 1d-5) then
-                                !     print *, 'warning'
+                                !     write(file_id,*) 'warning'
                                 ! end if
                                 h_b = hsol
                             else
@@ -540,7 +540,7 @@ contains
 
                             call zeroin(foc_hrs_mar_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                             ! if (abs(h_b-xsol_test) > 1d-5) then
-                            !     print *, 'warning'
+                            !     write(file_id,*) 'warning'
                             ! end if
                             h_sol = hsol !h_b
                         else if (test_h_cutoff2 > 0d0) then
@@ -554,7 +554,7 @@ contains
 
                             call zeroin(foc_hrs_single_above_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                             ! if (abs(h_b-xsol_test) > 1d-5) then
-                            !     print *, 'warning'
+                            !     write(file_id,*) 'warning'
                             ! end if
                             h_sol = hsol !h_b
                         else
@@ -570,7 +570,7 @@ contains
 
                             call zeroin(foc_hrs_single_below_deduct, h_a, h_b, tol=1d-8, xzero=hsol, fzero=fsol_test, iflag=ic)
                             ! if (abs(h_b-xsol_test) > 1d-5) then
-                            !     print *, 'warning'
+                            !     write(file_id,*) 'warning'
                             ! end if
                             h_sol = hsol !h_b
                         else

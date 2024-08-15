@@ -404,7 +404,7 @@ contains
 
             do it2=1,nsim
 
-                !print *, it2, nsim
+                !write(file_id,*) it2, nsim
 
                 if(Sim1m(ik,it2,i,10)>0.5d0) then
 

@@ -53,7 +53,7 @@ contains
         end do
 
 
-        Print *,'Average male earnings above 65 is',dum2/dum3
+        write(file_id,*)'Average male earnings above 65 is',dum2/dum3
 
 
         dum2=0d0
@@ -72,7 +72,7 @@ contains
 
         end do
 
-        Print *,'Average female earnings above 65 is',dum2/dum3
+        write(file_id,*)'Average female earnings above 65 is',dum2/dum3
 
 
         dum2=0d0
@@ -109,7 +109,7 @@ contains
         population_mass=dum3
         dum2=dum2/dum3
 
-        Print *,'Population Labor Supply is',dum2
+        write(file_id,*)'Population Labor Supply is',dum2
 
         dum4=dum2
 
@@ -152,9 +152,9 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Population Employment rate is',dum2
+        write(file_id,*)'Population Employment rate is',dum2
 
-        Print *,'Population Intensive margin is',dum4/dum2
+        write(file_id,*)'Population Intensive margin is',dum4/dum2
 
 
         dum2=0d0
@@ -181,7 +181,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Employment rate 65+ is',dum2  
+        write(file_id,*)'Employment rate 65+ is',dum2  
 
         dum2=0d0
         dum3=0d0
@@ -206,7 +206,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Employment rate below 65 is',dum2
+        write(file_id,*)'Employment rate below 65 is',dum2
 
         !Labor Supply before 65
 
@@ -230,7 +230,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply below 65 is',dum2
+        write(file_id,*)'Labor supply below 65 is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -250,7 +250,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of males 65+ is',dum2
+        write(file_id,*)'Labor supply of males 65+ is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -272,7 +272,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of males 65+ is',dum2
+        write(file_id,*)'LFP of males 65+ is',dum2
 
         !Single male labor force participation at age 65
 
@@ -296,7 +296,7 @@ contains
 
         !dum10=dum10+((dum2-0.2)/0.2)**2
 
-        Print *,'LFP of single males at age 65 is',dum2
+        write(file_id,*)'LFP of single males at age 65 is',dum2
 
         !Single male labor force participation after 65
 
@@ -320,7 +320,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of single males 65+ is',dum2
+        write(file_id,*)'LFP of single males 65+ is',dum2
 
         !Single male labor supply after 65
 
@@ -342,7 +342,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of single males 65+ is',dum2
+        write(file_id,*)'Labor supply of single males 65+ is',dum2
 
         !Single male labor force participation by age after 65
 
@@ -367,7 +367,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'LFP of single males at age', 64+i, dum2
+        !write(file_id,*)'LFP of single males at age', 64+i, dum2
         !
         !end do
 
@@ -393,7 +393,7 @@ contains
 
         !dum10=dum10+((dum2-0.2)/0.2)**2
 
-        Print *,'LFP of married males at age 65 is',dum2
+        write(file_id,*)'LFP of married males at age 65 is',dum2
 
         !Married male labor force participation after 65
 
@@ -417,7 +417,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of married males 65+ is',dum2
+        write(file_id,*)'LFP of married males 65+ is',dum2
 
         !Married male labor supply after 65
 
@@ -439,7 +439,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of married males 65+ is',dum2
+        write(file_id,*)'Labor supply of married males 65+ is',dum2
 
         !!Married male labor force participation by age after 65
         !
@@ -461,7 +461,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'LFP of married males at age', 64+i, dum2
+        !write(file_id,*)'LFP of married males at age', 64+i, dum2
         !
         !end do
 
@@ -486,7 +486,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Male retirement age is',dum2+64d0
+        !write(file_id,*)'Male retirement age is',dum2+64d0
 
         !!Single male retirement age
         !
@@ -510,7 +510,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single male retirement age is',dum2+65d0
+        !write(file_id,*)'Single male retirement age is',dum2+65d0
 
         !!Single male retirement by age
         !
@@ -532,7 +532,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single male retirement at age',i+64,dum2
+        !write(file_id,*)'Single male retirement at age',i+64,dum2
         !
         !end do
 
@@ -558,7 +558,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Married male retirement age is',dum2+65d0
+        !write(file_id,*)'Married male retirement age is',dum2+65d0
 
         !Married male retirement by age
 
@@ -580,7 +580,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single male retirement at age',i+64,dum2
+        !write(file_id,*)'Single male retirement at age',i+64,dum2
         !
         !end do
 
@@ -604,7 +604,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of females 65+ is',dum2
+        write(file_id,*)'Labor supply of females 65+ is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -626,7 +626,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of females 65+ is',dum2
+        write(file_id,*)'LFP of females 65+ is',dum2
 
         !Single female labor force participation after 65
 
@@ -650,7 +650,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of single females 65+ is',dum2
+        write(file_id,*)'LFP of single females 65+ is',dum2
 
         !Single female labor supply after 65
 
@@ -672,7 +672,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of single females 65+ is',dum2
+        write(file_id,*)'Labor supply of single females 65+ is',dum2
 
         !Single female labor force participation by age after 65
 
@@ -697,7 +697,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'LFP of single females at age', 64+i, dum2
+        !write(file_id,*)'LFP of single females at age', 64+i, dum2
         !
         !end do
 
@@ -723,7 +723,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'LFP of married females 65+ is',dum2
+        write(file_id,*)'LFP of married females 65+ is',dum2
 
         !Married female labor supply after 65
 
@@ -745,7 +745,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Labor supply of married females 65+ is',dum2
+        write(file_id,*)'Labor supply of married females 65+ is',dum2
 
         !!Married female labor force participation by age after 65
         !
@@ -767,7 +767,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'LFP of married females at age', 64+i, dum2
+        !write(file_id,*)'LFP of married females at age', 64+i, dum2
         !
         !end do
 
@@ -792,7 +792,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Female retirement age is',dum2+65d0
+        !write(file_id,*)'Female retirement age is',dum2+65d0
 
         !!Single female retirement age
         !
@@ -816,7 +816,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single female retirement age is',dum2+65d0
+        !write(file_id,*)'Single female retirement age is',dum2+65d0
 
         !!Single female retirement by age
         !
@@ -838,7 +838,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single female retirement at age',i+64,dum2
+        !write(file_id,*)'Single female retirement at age',i+64,dum2
         !
         !end do
 
@@ -864,7 +864,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Married female retirement age is',dum2+65d0
+        !write(file_id,*)'Married female retirement age is',dum2+65d0
 
         !Married female retirement by age
 
@@ -886,7 +886,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Single female retirement at age',i+64,dum2
+        !write(file_id,*)'Single female retirement at age',i+64,dum2
         !
         !end do
 
@@ -914,7 +914,7 @@ contains
         !
         !dum2=dum2/dum3
         !
-        !Print *,'Average welfare of single women +65 is',dum2
+        !write(file_id,*)'Average welfare of single women +65 is',dum2
 
         !variance of welfare
 
@@ -932,9 +932,9 @@ contains
 
         !dum4=dum4/dum3
         !
-        !Print *,'Variance of welfare single women +65 is',dum4
+        !write(file_id,*)'Variance of welfare single women +65 is',dum4
         !
-        !Print *,'Coefficient of variation welfare single women +65 is',SQRT(dum4)/dum2
+        !write(file_id,*)'Coefficient of variation welfare single women +65 is',SQRT(dum4)/dum2
 
         !Consumption of married women after 65
 
@@ -958,7 +958,7 @@ contains
 
         !dum2=dum2/dum3
         !
-        !Print *,'Average welfare of narried women +65 is',dum2
+        !write(file_id,*)'Average welfare of narried women +65 is',dum2
 
         !variance of consumption
 
@@ -976,9 +976,9 @@ contains
 
         !dum4=dum4/dum3
         !
-        !Print *,'Variance of welfare married women +65 is',dum4
+        !write(file_id,*)'Variance of welfare married women +65 is',dum4
         !
-        !Print *,'Coefficient of variation of welfare married women +65 is',SQRT(dum4)/dum2
+        !write(file_id,*)'Coefficient of variation of welfare married women +65 is',SQRT(dum4)/dum2
 
 
         dum2=0d0
@@ -999,7 +999,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Male labor supply is',dum2
+        write(file_id,*)'Male labor supply is',dum2
 
         !Single Male Labor Supply
 
@@ -1021,7 +1021,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Single Male labor supply is',dum2
+        write(file_id,*)'Single Male labor supply is',dum2
 
         dum10=((dum2-0.281917216)/0.281917216)**2
 
@@ -1049,7 +1049,7 @@ contains
 
         dum10=dum10+((dum2-0.799)/0.799)**2
 
-        Print *,'Single male labor force participation is',dum2
+        write(file_id,*)'Single male labor force participation is',dum2
 
         !YVAR=sqrt(-1.0)
         !XVARS=sqrt(-1.0)
@@ -1081,9 +1081,9 @@ contains
 
         !dum10=dum10+((dum2-0.4081)/0.4081)**2
 
-        !Print *,'BREG is',BREG
+        !write(file_id,*)'BREG is',BREG
 
-        !Print *,'Single male LFP R2 is',dum2
+        !write(file_id,*)'Single male LFP R2 is',dum2
 
 
         !Married Male Labor Supply
@@ -1106,7 +1106,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Married Male labor supply is',dum2
+        write(file_id,*)'Married Male labor supply is',dum2
 
         dum10=dum10+((dum2-0.359934432)/0.359934432)**2
 
@@ -1135,7 +1135,7 @@ contains
 
         dum10=dum10+((dum2-0.879)/0.879)**2
 
-        Print *,'Married male labor force participation is',dum2
+        write(file_id,*)'Married male labor force participation is',dum2
 
         !YVAR=sqrt(-1.0)
         !XVARS=sqrt(-1.0)
@@ -1167,9 +1167,9 @@ contains
 
         !dum10=dum10+((dum2-0.4573)/0.4573)**2
 
-        !Print *,'BREG is',BREG
+        !write(file_id,*)'BREG is',BREG
 
-        !Print *,'Married male LFP R2 is',dum2
+        !write(file_id,*)'Married male LFP R2 is',dum2
 
 
         !Female labor supply
@@ -1190,7 +1190,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Female labor supply is',dum2
+        write(file_id,*)'Female labor supply is',dum2
 
         !Single female labor supply
 
@@ -1213,7 +1213,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Single female labor supply is',dum2
+        write(file_id,*)'Single female labor supply is',dum2
 
         dum10=dum10+((dum2-0.25116337)/0.25116337)**2
 
@@ -1233,7 +1233,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Stdev single female labor supply is',SQRT(dum4)
+        write(file_id,*)'Stdev single female labor supply is',SQRT(dum4)
 
 
         !!Variance of single female hours
@@ -1249,7 +1249,7 @@ contains
 
         !dum4=dum4/dum3
 
-        !Print *,'Stdev single female labor supply at age 30 is',SQRT(dum4)
+        !write(file_id,*)'Stdev single female labor supply at age 30 is',SQRT(dum4)
 
         !Married female labor supply
 
@@ -1270,7 +1270,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Married female labor supply is',dum2
+        write(file_id,*)'Married female labor supply is',dum2
 
         dum10=dum10+((dum2-0.224398901)/0.224398901)**2
 
@@ -1290,7 +1290,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Stdev married female labor supply is',SQRT(dum4)
+        write(file_id,*)'Stdev married female labor supply is',SQRT(dum4)
 
 
         !Female labor force participation
@@ -1313,7 +1313,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Female labor force participation is',dum2
+        write(file_id,*)'Female labor force participation is',dum2
 
         !Single female labor force participation
 
@@ -1337,7 +1337,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Single female labor force participation is',dum2
+        write(file_id,*)'Single female labor force participation is',dum2
 
         dum10=dum10+((dum2-0.7600114)/0.7600114)**2
 
@@ -1370,7 +1370,7 @@ contains
         !dum2=1d0-SSE/SST
         !
         !
-        !Print *,'Single female LFP R2 is',dum2
+        !write(file_id,*)'Single female LFP R2 is',dum2
 
 
         !Married female labor force participation
@@ -1395,7 +1395,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Married female labor force participation is',dum2
+        write(file_id,*)'Married female labor force participation is',dum2
 
         dum10=dum10+((dum2-0.6755489)/0.6755489)**2
 
@@ -1429,9 +1429,9 @@ contains
 
         !dum10=dum10+((dum2-0.5532)/0.5532)**2
 
-        !Print *,'BREG is',BREG
+        !write(file_id,*)'BREG is',BREG
 
-        !Print *,'Married female LFP R2 is',dum2
+        !write(file_id,*)'Married female LFP R2 is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -1451,7 +1451,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Female intensive margin is',dum2
+        write(file_id,*)'Female intensive margin is',dum2
 
         !Variance of log male earnings
 
@@ -1487,7 +1487,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Variance of log male earnings is',dum4
+        write(file_id,*)'Variance of log male earnings is',dum4
 
         dum2=0d0
         dum3=0d0
@@ -1524,7 +1524,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Variance of log female earnings is',dum4
+        write(file_id,*)'Variance of log female earnings is',dum4
 
         !Variance of log male wage
 
@@ -1557,7 +1557,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Variance of log male wage is',dum4
+        write(file_id,*)'Variance of log male wage is',dum4
 
         dum2=0d0
         dum3=0d0
@@ -1590,7 +1590,7 @@ contains
 
         dum4=dum4/dum3
 
-        Print *,'Variance of log female wage is',dum4
+        write(file_id,*)'Variance of log female wage is',dum4
 
         !Male experience
 
@@ -1607,7 +1607,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Male experience at age 65 is',dum2
+        write(file_id,*)'Male experience at age 65 is',dum2
 
         !Female experience
 
@@ -1624,7 +1624,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Female experience at age 65 is',dum2
+        write(file_id,*)'Female experience at age 65 is',dum2
 
         !Male experience at age 99
 
@@ -1641,7 +1641,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Male experience at age 99 is',dum2    
+        write(file_id,*)'Male experience at age 99 is',dum2    
 
         !Female experience at age 99
 
@@ -1658,7 +1658,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Female experience at age 99 is',dum2    
+        write(file_id,*)'Female experience at age 99 is',dum2    
 
 
         !Male wage
@@ -1681,7 +1681,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Average male wage is',dum2
+        write(file_id,*)'Average male wage is',dum2
 
         dum7=dum2
 
@@ -1705,9 +1705,9 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Average female wage is',dum2
+        write(file_id,*)'Average female wage is',dum2
 
-        Print *,'Male_wage/Female_wage is',dum7/dum2
+        write(file_id,*)'Male_wage/Female_wage is',dum7/dum2
 
 
         !Wages at 0.5AE and 2AE
@@ -1777,8 +1777,8 @@ contains
 
         end do
 
-        Print *,'Wage rate of people making 0.5AE is',dum2/dum3
-        Print *,'Wage rate of people making 2AE is',dum4/dum5
+        write(file_id,*)'Wage rate of people making 0.5AE is',dum2/dum3
+        write(file_id,*)'Wage rate of people making 2AE is',dum4/dum5
 
         !Male earnings
 
@@ -1800,7 +1800,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Average married male earnings is',dum2
+        write(file_id,*)'Average married male earnings is',dum2
 
         dum7=dum2
 
@@ -1826,9 +1826,9 @@ contains
 
         dum7=dum7/dum2
 
-        Print *,'Average married female earnings is',dum2
+        write(file_id,*)'Average married female earnings is',dum2
 
-        Print *,'Male_earnings/Female_earnings is',dum7
+        write(file_id,*)'Male_earnings/Female_earnings is',dum7
 
         dum10=dum10+((dum7-1.5689894)/1.5689894)**2
 
@@ -1873,8 +1873,8 @@ contains
 
         !CALL D_CORVC(NVAR, Spousewage, COV, ICOPT=ICOPT)
         test_corr = corr_xy(Spousewage(:,1), Spousewage(:,2), it4)
-        !Print *,'Correlation of spousal ability is',COV(1,2)
-        Print *, 'Correlation of spousal ability is', test_corr
+        !write(file_id,*)'Correlation of spousal ability is',COV(1,2)
+        write(file_id,*) 'Correlation of spousal ability is', test_corr
 
         dum10=dum10+((test_corr-0.646)/0.646)**2
 
@@ -1921,8 +1921,8 @@ contains
         !CALL D_CORVC(NVAR, Spousewage2, COV, ICOPT=ICOPT)
         test_corr = corr_xy(Spousewage2(:,1), Spousewage2(:,2), it4)
 
-        !Print *,'Correlation of spousal wages is',COV(1,2)
-        Print *,'Correlation of spousal wages is', test_corr
+        !write(file_id,*)'Correlation of spousal wages is',COV(1,2)
+        write(file_id,*)'Correlation of spousal wages is', test_corr
 
 
         !dum10=dum10+((test_corr-0.4070)/0.4070)**2
@@ -1982,13 +1982,13 @@ contains
 
         end do
 
-        Print *,'Labor income tax rate including TSS is',dum4/dum2
+        write(file_id,*)'Labor income tax rate including TSS is',dum4/dum2
 
-        Print *,'Tax revenue per capita including TSS is',dum3/dum5
+        write(file_id,*)'Tax revenue per capita including TSS is',dum3/dum5
 
-        !Print *,'Labor Income tax per capita is',dum7/dum5
+        !write(file_id,*)'Labor Income tax per capita is',dum7/dum5
 
-        !Print *,'Social security tax per capita is',dum15/dum5
+        !write(file_id,*)'Social security tax per capita is',dum15/dum5
 
         !Individual tax rates
 
@@ -1996,14 +1996,14 @@ contains
 
         dum2=max(dum2,maxval(SimR1m(:,:,:,15)),maxval(SimR1f(:,:,:,15)))
 
-        Print *,'Max individual marginal tax rate is',dum2
+        write(file_id,*)'Max individual marginal tax rate is',dum2
 
 
         dum2=max(maxval(Sim1m(:,:,:,14)),maxval(Sim1f(:,:,:,14)))
 
         dum2=max(dum2,maxval(SimR1m(:,:,:,17)),maxval(SimR1f(:,:,:,17)))
 
-        Print *,'Max individual average tax rate is',dum2
+        write(file_id,*)'Max individual average tax rate is',dum2
 
 
 
@@ -2072,15 +2072,15 @@ contains
 
         end do
 
-        Print *,'SS tax per retiree is',dum4/dum2
-        Print *,'Average pension is',dum5/dum2
+        write(file_id,*)'SS tax per retiree is',dum4/dum2
+        write(file_id,*)'Average pension is',dum5/dum2
 
         dum5=dum5/dum3
 
         ss_expense=dum5
 
-        Print *,'Social Security expenses per capita is',dum5
-        !Print *,'Pension',Psi_pension/2d0
+        write(file_id,*)'Social Security expenses per capita is',dum5
+        !write(file_id,*)'Pension',Psi_pension/2d0
 
         !epsilon=Psi_pension-dum4*2d0
 
@@ -2125,7 +2125,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Savings per capita is',dum2
+        write(file_id,*)'Savings per capita is',dum2
         dum6=dum2
 
         ! Assets for redistribution
@@ -2167,8 +2167,8 @@ contains
         !
         !dum2=dum2/dum3
 
-        !Print *,'Assets per capita to be redistributed',dum2/2d0
-        !Print *,'Gamma_redistr',Gamma_redistr/2d0
+        !write(file_id,*)'Assets per capita to be redistributed',dum2/2d0
+        !write(file_id,*)'Gamma_redistr',Gamma_redistr/2d0
 
         !epsilon2=Gamma_redistr-dum2
         !
@@ -2215,7 +2215,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Capital tax per capita is',dum2
+        write(file_id,*)'Capital tax per capita is',dum2
 
         dum7=dum2
 
@@ -2258,7 +2258,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Consumption per capita is',dum2
+        write(file_id,*)'Consumption per capita is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -2299,7 +2299,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Consumption tax per capita is',dum2
+        write(file_id,*)'Consumption tax per capita is',dum2
 
         !Labor income tax
 
@@ -2339,9 +2339,9 @@ contains
 
         dum4=dum4/dum5
 
-        Print *,'Labor income tax per capita is',dum4
+        write(file_id,*)'Labor income tax per capita is',dum4
 
-        Print *,'Tax revenue per capita is',dum4+dum2+dum7
+        write(file_id,*)'Tax revenue per capita is',dum4+dum2+dum7
 
         dum5=dum4+dum2
 
@@ -2381,8 +2381,8 @@ contains
 
         new_revenue=dum2/dum3
 
-        Print *,'New Revenue is',new_revenue
-        Print *,'t_const is',t_const
+        write(file_id,*)'New Revenue is',new_revenue
+        write(file_id,*)'t_const is',t_const
 
         dum2=0d0
         dum3=0d0
@@ -2453,22 +2453,22 @@ contains
         end do
 
 
-        !Print *,'Ltot is',dum9
+        !write(file_id,*)'Ltot is',dum9
 
         dum3=((ratio*dum9)**alpha)*(dum9**(1-alpha))/dum3
 
-        Print *,'GDP per capita is',dum3
+        write(file_id,*)'GDP per capita is',dum3
 
         lumpsumdum=0.02d0*dum3
         !
-        Print *,'Lumpsumdum is',lumpsumdum/2d0
-        Print *,'Lumpsum is',lumpsum/2d0
+        write(file_id,*)'Lumpsumdum is',lumpsumdum/2d0
+        write(file_id,*)'Lumpsum is',lumpsum/2d0
 
         !epsilon3=lumpsum-lumpsumdum
 
         !epsilon3=lumpsum-lumpsumdum
 
-        epsilon3=0d0
+        !epsilon3=0d0
         !lumpsum=lumpsum-0.1d0*(lumpsum-lumpsumdum)
 
 
@@ -2480,9 +2480,10 @@ contains
 
         lumpsumdum=(dum5+dum7+ss_tax)+mu*debttoGDP*dum3-(ss_expense+dum15+r*debttoGDP*dum3+lumpsum/2d0)
         
-        Print *,'Net revenue is',lumpsumdum
+        write(file_id,*)'Net revenue is',lumpsumdum
 
         !epsilon3=lumpsumdum-0.119363895479142d0
+        epsilon3=lumpsumdum-0.136994041755477d0
 
         !lumpsumdum=new_revenue+0.00902d0
         !
@@ -2490,7 +2491,7 @@ contains
         !
         !epsilon3=lumpsum-lumpsumdum
         !
-        !Print *,'epsilon3 is',epsilon3
+        !write(file_id,*)'epsilon3 is',epsilon3
 
         !epsilon3=0d0
         !lumpsum=lumpsum-0.1d0*(lumpsum-lumpsumdum)
@@ -2534,9 +2535,9 @@ contains
         end do
 
 
-        Print *,'Average labor income tax rate is',dum4/dum2
+        write(file_id,*)'Average labor income tax rate is',dum4/dum2
 
-        Print *,'Average individual earnings is',dum2/dum3
+        write(file_id,*)'Average individual earnings is',dum2/dum3
         
         !dum2=0d0
         !dum3=0d0
@@ -2556,7 +2557,7 @@ contains
         !
         !    end do
         !    
-        !    Print *,'Average married household earnings is',dum2/dum3
+        !    write(file_id,*)'Average married household earnings is',dum2/dum3
         !
         !STOP
         
@@ -2599,9 +2600,9 @@ contains
         end do
 
 
-        Print *,'Average individual earnings for working people is',dum2/dum3
+        write(file_id,*)'Average individual earnings for working people is',dum2/dum3
 
-        Print *,'AE is',AE
+        write(file_id,*)'AE is',AE
 
         dum10=dum10+((dum2/dum3-1d0)/1d0)**2
 
@@ -2756,23 +2757,23 @@ contains
 
         dum6=dum2-debttoGDP*((ratio*dum9)**(alpha))*(dum9**(1d0-alpha))
 
-        Print *,'capital stock is',dum6/population_mass
+        write(file_id,*)'capital stock is',dum6/population_mass
 
         ratiodum=dum6/dum9
 
-        Print *,'Ratio between capital and labor is',ratiodum
+        write(file_id,*)'Ratio between capital and labor is',ratiodum
 
-        Print *,'Implied wage is',(1d0-alpha)*ratiodum**alpha
-        Print *,'Implied interest is',alpha*ratiodum**(alpha-1d0)-delta
+        write(file_id,*)'Implied wage is',(1d0-alpha)*ratiodum**alpha
+        write(file_id,*)'Implied interest is',alpha*ratiodum**(alpha-1d0)-delta
 
-        Print *,'Wage is',w
-        Print *,'Interest is',r
+        write(file_id,*)'Wage is',w
+        write(file_id,*)'Interest is',r
 
-        Print *,'K/Y is',ratiodum**(1d0-alpha)
+        write(file_id,*)'K/Y is',ratiodum**(1d0-alpha)
 
         dum10=dum10+(((ratiodum**(1d0-alpha))-2.6399)/2.6399)**2
 
-        Print *,'FCN is',dum10
+        write(file_id,*)'FCN is',dum10
 
         ! beta=1.00251
         ! Fw=0.0125
@@ -2780,13 +2781,13 @@ contains
         ! gamma0=0.3288d0
         ! FCN=0.00000559
 
-        !Print *,'I/Y is',delta*ratiodum**(1d0-alpha)
+        !write(file_id,*)'I/Y is',delta*ratiodum**(1d0-alpha)
 
         dum9=max(maxval(Sim1m(:,:,:,1)),maxval(Sim1f(:,:,:,1)))
 
         dum9=max(dum9,maxval(SimR1m(:,:,:,1)),maxval(SimR1f(:,:,:,1)))
 
-        Print *,'Max savings is',dum9
+        write(file_id,*)'Max savings is',dum9
 
         dum2=0d0
 
@@ -2803,7 +2804,7 @@ contains
 
         end do
 
-        Print *,'Fraction of Married females is',dum2/(1d0*T*nsim2*nsim)
+        write(file_id,*)'Fraction of Married females is',dum2/(1d0*T*nsim2*nsim)
 
         dum2=0d0
 
@@ -2820,7 +2821,7 @@ contains
 
         end do
 
-        Print *,'Fraction of Married males is',dum2/(1d0*T*nsim2*nsim)
+        write(file_id,*)'Fraction of Married males is',dum2/(1d0*T*nsim2*nsim)
 
 
         dum2=0d0
@@ -2840,7 +2841,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 65 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 65 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2859,7 +2860,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 31 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 31 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2878,7 +2879,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 35 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 35 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2897,7 +2898,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 50 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 50 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2916,7 +2917,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 63 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 63 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2935,7 +2936,7 @@ contains
         end do
 
 
-        Print *,'Probability of being married at 64 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Probability of being married at 64 conditional on married at 30 is',dum3/dum2
 
         dum2=0d0
         dum3=0d0
@@ -2954,7 +2955,7 @@ contains
         end do
 
 
-        Print *,'Male Probability of being married at 64 conditional on married at 30 is',dum3/dum2
+        write(file_id,*)'Male Probability of being married at 64 conditional on married at 30 is',dum3/dum2
 
 
         dum2=0d0
@@ -2970,7 +2971,7 @@ contains
             end do
         end do
 
-        Print *,'Fraction of Married females at age 64 is',dum2/(1d0*nsim2*nsim)
+        write(file_id,*)'Fraction of Married females at age 64 is',dum2/(1d0*nsim2*nsim)
 
         dum2=0d0
 
@@ -2985,7 +2986,7 @@ contains
             end do
         end do
 
-        Print *,'Fraction of Married females at age 50 is',dum2/(1d0*nsim2*nsim)
+        write(file_id,*)'Fraction of Married females at age 50 is',dum2/(1d0*nsim2*nsim)
 
 
         mpartnerdum=0d0
@@ -3122,7 +3123,7 @@ contains
 
         epsilon6=max(maxval(fpartnerdum2),maxval(mpartnerdum2))
 
-        Print *,'max distance between distribution of singles is',epsilon6
+        write(file_id,*)'max distance between distribution of singles is',epsilon6
 
         !if(iter>5) then
         epsilon6=0d0
@@ -3146,7 +3147,7 @@ contains
         !    end do
         !end do
         !
-        !Print *,'sum fpartner is',dum2
+        !write(file_id,*)'sum fpartner is',dum2
 
         dum2=0d0
 
@@ -3162,7 +3163,7 @@ contains
         !    end do
         !end do
         !
-        !Print *,'sum mpartner is',dum2
+        !write(file_id,*)'sum mpartner is',dum2
 
         !Here we are computing the matrix of  probabilities for marrying someone of ability a' if you have probability a.
 
@@ -3196,7 +3197,7 @@ contains
 
         end do
 
-        Print *,'ability_prob is',ability_prob(2,:)
+        write(file_id,*)'ability_prob is',ability_prob(2,:)
 
         dum2=0d0
         dum3=0d0
@@ -3307,7 +3308,7 @@ contains
 
 
 
-        Print *,'Distribution of female fixed cost shock is',dum2,dum3,dum4,dum5,dum6,dum8,dum9,dum10,dum11,dum12,dum13,dum14,dum15,dum16,dum17,dum18,dum19,dum20,dum21,dum22,dum23,dum24,dum25
+        write(file_id,*)'Distribution of female fixed cost shock is',dum2,dum3,dum4,dum5,dum6,dum8,dum9,dum10,dum11,dum12,dum13,dum14,dum15,dum16,dum17,dum18,dum19,dum20,dum21,dum22,dum23,dum24,dum25
 
         ! Taxes by demographic group
 
@@ -3368,9 +3369,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum5
 
-        Print *,'Capital tax for singles is',(dum2+dum4)/2d0
-        Print *,'Capital tax for single men is',dum2
-        Print *,'Capital tax for single women is',dum4
+        write(file_id,*)'Capital tax for singles is',(dum2+dum4)/2d0
+        write(file_id,*)'Capital tax for single men is',dum2
+        write(file_id,*)'Capital tax for single women is',dum4
 
         dum6=dum2
         dum7=dum4
@@ -3426,9 +3427,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum5
 
-        Print *,'Consumption tax for singles is',(dum2+dum4)/2d0
-        Print *,'Consumption tax for single men is',dum2
-        Print *,'Consumption tax for single women is',dum4
+        write(file_id,*)'Consumption tax for singles is',(dum2+dum4)/2d0
+        write(file_id,*)'Consumption tax for single men is',dum2
+        write(file_id,*)'Consumption tax for single women is',dum4
 
         dum6=dum6+dum2
         dum7=dum7+dum4
@@ -3487,17 +3488,17 @@ contains
         dum10=dum10/dum3
         dum11=dum11/dum5
 
-        Print *,'Labor income tax for singles is',(dum2+dum4)/2d0
-        Print *,'Labor income tax for single men is',dum2
-        Print *,'Labor income tax for single women is',dum4
+        write(file_id,*)'Labor income tax for singles is',(dum2+dum4)/2d0
+        write(file_id,*)'Labor income tax for single men is',dum2
+        write(file_id,*)'Labor income tax for single women is',dum4
 
-        Print *,'Labor income tax rate for singles is',(dum2+dum4)/(dum10+dum11)
-        Print *,'Labor income tax rate for single men is',dum2/dum10
-        Print *,'Labor income tax rate for single women is',dum4/dum11
+        write(file_id,*)'Labor income tax rate for singles is',(dum2+dum4)/(dum10+dum11)
+        write(file_id,*)'Labor income tax rate for single men is',dum2/dum10
+        write(file_id,*)'Labor income tax rate for single women is',dum4/dum11
 
-        Print *,'Total tax revenue for singles is',(dum2+dum4+dum6+dum7)/2d0
-        Print *,'Total tax revenueor single men is',dum2+dum6
-        Print *,'Total tax revenue for single women is',dum4+dum7
+        write(file_id,*)'Total tax revenue for singles is',(dum2+dum4+dum6+dum7)/2d0
+        write(file_id,*)'Total tax revenueor single men is',dum2+dum6
+        write(file_id,*)'Total tax revenue for single women is',dum4+dum7
 
         !Married
 
@@ -3545,7 +3546,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Capital tax for married is',dum2
+        write(file_id,*)'Capital tax for married is',dum2
 
         dum6=dum2
 
@@ -3590,7 +3591,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Consumption tax for married is',dum2+dum4
+        write(file_id,*)'Consumption tax for married is',dum2+dum4
 
         dum6=dum6+dum2
 
@@ -3630,11 +3631,11 @@ contains
         dum2=dum2/dum3
         dum12=dum12/dum3
 
-        Print *,'Labor income tax for married is',dum2
+        write(file_id,*)'Labor income tax for married is',dum2
 
-        Print *,'Labor income tax rate for married is',dum2/dum12
+        write(file_id,*)'Labor income tax rate for married is',dum2/dum12
 
-        Print *,'Total tax revenue for married is',dum2+dum6
+        write(file_id,*)'Total tax revenue for married is',dum2+dum6
 
         !Single female labor income tax after 65
 
@@ -3662,7 +3663,7 @@ contains
 
         dum5=dum4/dum2
 
-        Print *,'Labor income tax rate of single females 65+ is',dum5
+        write(file_id,*)'Labor income tax rate of single females 65+ is',dum5
 
         !Married female labor income tax after 65
 
@@ -3690,7 +3691,7 @@ contains
 
         dum5=dum4/dum2
 
-        Print *,'Labor income tax rate of married females 65+ is',dum5
+        write(file_id,*)'Labor income tax rate of married females 65+ is',dum5
 
         !STOP
 
@@ -3742,7 +3743,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Social welfare of everyone is',dum2
+        write(file_id,*)'Social welfare of everyone is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -3760,7 +3761,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Social welfare of 20-year olds is',dum2
+        write(file_id,*)'Social welfare of 20-year olds is',dum2
 
     !Ex-post + ex-ante Social Welfare of 65-year old married males by ability
 
@@ -3790,9 +3791,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'ability',ia,'Ex-post Social welfare of 65-year old married men is',dum2
-        Print *,'ability',ia,'Ex-ante Social welfare of 65-year old married men is',dum4
-        Print *,'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old married men is',dum2+dum4
+        write(file_id,*)'ability',ia,'Ex-post Social welfare of 65-year old married men is',dum2
+        write(file_id,*)'ability',ia,'Ex-ante Social welfare of 65-year old married men is',dum4
+        write(file_id,*)'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old married men is',dum2+dum4
             
     end do
 
@@ -3824,9 +3825,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'ability',ia,'Ex-post Social welfare of 65-year old married women is',dum2
-        Print *,'ability',ia,'Ex-ante Social welfare of 65-year old married women is',dum4
-        Print *,'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old married women is',dum2+dum4
+        write(file_id,*)'ability',ia,'Ex-post Social welfare of 65-year old married women is',dum2
+        write(file_id,*)'ability',ia,'Ex-ante Social welfare of 65-year old married women is',dum4
+        write(file_id,*)'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old married women is',dum2+dum4
             
     end do
 
@@ -3859,9 +3860,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'ability',ia,'Ex-post Social welfare of 65-year old single men is',dum2
-        Print *,'ability',ia,'Ex-ante Social welfare of 65-year old single men is',dum4
-        Print *,'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old single men is',dum2+dum4
+        write(file_id,*)'ability',ia,'Ex-post Social welfare of 65-year old single men is',dum2
+        write(file_id,*)'ability',ia,'Ex-ante Social welfare of 65-year old single men is',dum4
+        write(file_id,*)'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old single men is',dum2+dum4
             
     end do
 
@@ -3894,9 +3895,9 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'ability',ia,'Ex-post Social welfare of 65-year old single women is',dum2
-        Print *,'ability',ia,'Ex-ante Social welfare of 65-year old single women is',dum4
-        Print *,'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old single women is',dum2+dum4
+        write(file_id,*)'ability',ia,'Ex-post Social welfare of 65-year old single women is',dum2
+        write(file_id,*)'ability',ia,'Ex-ante Social welfare of 65-year old single women is',dum4
+        write(file_id,*)'ability',ia,'Ex-post + Ex-ante Social welfare of 65-year old single women is',dum2+dum4
             
     end do
 
@@ -3922,7 +3923,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'ability',ia,'Social welfare of 20-year males',dum2
+        write(file_id,*)'ability',ia,'Social welfare of 20-year males',dum2
         
     end do
 
@@ -3947,7 +3948,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'ability',ia,'Social welfare of 20-year females',dum2
+        write(file_id,*)'ability',ia,'Social welfare of 20-year females',dum2
         
     end do
         
@@ -3970,7 +3971,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Ex-post Social welfare of everyone at 65 is',dum2
+        write(file_id,*)'Ex-post Social welfare of everyone at 65 is',dum2
 
 
         !Social welfare of married and single at age 65
@@ -3997,10 +3998,10 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'Ex-post Social welfare of 65-year old married men is',dum2
-        Print *,'Ex-ante Social welfare of 65-year old married men is',dum4
-        Print *,'Ex-post + Ex-ante Social welfare of 65-year old married men is',dum2+dum4
-        Print *,'Number of 65-year old married men is',dum3
+        write(file_id,*)'Ex-post Social welfare of 65-year old married men is',dum2
+        write(file_id,*)'Ex-ante Social welfare of 65-year old married men is',dum4
+        write(file_id,*)'Ex-post + Ex-ante Social welfare of 65-year old married men is',dum2+dum4
+        write(file_id,*)'Number of 65-year old married men is',dum3
 
 
         !Social welfare single men at 65
@@ -4025,10 +4026,10 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'Ex-post Social welfare of 65-year old single men is',dum2
-        Print *,'Ex-ante Social welfare of 65-year old single men is',dum4
-        Print *,'Ex-post + Ex-ante Social welfare of 65-year old single men is',dum2+dum4
-        Print *,'Number of 65-year old single men is',dum3
+        write(file_id,*)'Ex-post Social welfare of 65-year old single men is',dum2
+        write(file_id,*)'Ex-ante Social welfare of 65-year old single men is',dum4
+        write(file_id,*)'Ex-post + Ex-ante Social welfare of 65-year old single men is',dum2+dum4
+        write(file_id,*)'Number of 65-year old single men is',dum3
 
 
         !Social welfare married women at 65
@@ -4055,10 +4056,10 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'Ex-post Social welfare of 65-year old married women is',dum2
-        Print *,'Ex-ante Social welfare of 65-year old married women is',dum4
-        Print *,'Ex-post + Ex-ante Social welfare of 65-year old married women is',dum2+dum4
-        Print *,'Number of 65-year old married women is',dum3
+        write(file_id,*)'Ex-post Social welfare of 65-year old married women is',dum2
+        write(file_id,*)'Ex-ante Social welfare of 65-year old married women is',dum4
+        write(file_id,*)'Ex-post + Ex-ante Social welfare of 65-year old married women is',dum2+dum4
+        write(file_id,*)'Number of 65-year old married women is',dum3
 
         !Social welfare single women at 65
 
@@ -4081,10 +4082,10 @@ contains
         dum2=dum2/dum3
         dum4=dum4/dum3
 
-        Print *,'Ex-post Social welfare of 65-year old single women is',dum2
-        Print *,'Ex-ante Social welfare of 65-year old single women is',dum4
-        Print *,'Ex-post + Ex-ante Social welfare of 65-year old single women is',dum2+dum4
-        Print *,'Number of 65-year old single women is',dum3
+        write(file_id,*)'Ex-post Social welfare of 65-year old single women is',dum2
+        write(file_id,*)'Ex-ante Social welfare of 65-year old single women is',dum4
+        write(file_id,*)'Ex-post + Ex-ante Social welfare of 65-year old single women is',dum2+dum4
+        write(file_id,*)'Number of 65-year old single women is',dum3
 
         !Budget constraint single women
 
@@ -4108,7 +4109,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of retired single women is',dum2
+        write(file_id,*)'Error in budget constraint of retired single women is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4130,7 +4131,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of working single women is',dum2
+        write(file_id,*)'Error in budget constraint of working single women is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4152,7 +4153,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of non-retired women working 0 hours',dum2
+        write(file_id,*)'Error in budget constraint of non-retired women working 0 hours',dum2
 
         !Single female budget before 65
 
@@ -4176,7 +4177,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of working single females below 65 is',dum2
+        write(file_id,*)'Error in budget constraint of working single females below 65 is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4198,7 +4199,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of unemployed single females below 65 is',dum2
+        write(file_id,*)'Error in budget constraint of unemployed single females below 65 is',dum2
 
         !Budget constraint single men
 
@@ -4222,7 +4223,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of retired single men is',dum2
+        write(file_id,*)'Error in budget constraint of retired single men is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4244,7 +4245,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of working single men is',dum2
+        write(file_id,*)'Error in budget constraint of working single men is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4266,7 +4267,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of non-retired men working 0 hours',dum2    
+        write(file_id,*)'Error in budget constraint of non-retired men working 0 hours',dum2    
 
         !Budget constraint married
 
@@ -4290,7 +4291,7 @@ contains
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of couples, both not working is',dum2
+        write(file_id,*)'Error in budget constraint of couples, both not working is',dum2
 
         dum2=0d0
         dum3=0d0
@@ -4306,10 +4307,10 @@ contains
 
                             dum2=dum2+abs(SimR1m(it2,it,i,18))*WeightRet(i)
                             if(SimR1m(it2,it,i,18)/=SimR1m(it2,it,i,18)) then
-                                Print *,'SimR1m(it2,it,i,18) is',SimR1m(it2,it,i,18)
-                                Print *,'it2 is',it2
-                                Print *,'it2 is',it
-                                Print *,'i is',i
+                                write(file_id,*)'SimR1m(it2,it,i,18) is',SimR1m(it2,it,i,18)
+                                write(file_id,*)'it2 is',it2
+                                write(file_id,*)'it2 is',it
+                                write(file_id,*)'i is',i
                                 PAUSE
                             end if
                             dum3=dum3+1d0*WeightRet(i)
@@ -4323,12 +4324,12 @@ contains
 
         end do
 
-        Print *,'dum2 is',dum2
-        Print *,'dum3 is',dum3
+        write(file_id,*)'dum2 is',dum2
+        write(file_id,*)'dum3 is',dum3
 
         dum2=dum2/dum3
 
-        Print *,'Error in budget constraint of couples with some labor income is',dum2
+        write(file_id,*)'Error in budget constraint of couples with some labor income is',dum2
 
         dum2=0d0
         dum3=0d0    
@@ -4356,12 +4357,12 @@ contains
 
         end do    
 
-        !Print *,'dum2 is',dum2
-        !    Print *,'dum3 is',dum3
+        !write(file_id,*)'dum2 is',dum2
+        !    write(file_id,*)'dum3 is',dum3
 
         dum2=dum2/dum3
 
-        Print *,'Fraction of non-retired married women above 65 is',dum2
+        write(file_id,*)'Fraction of non-retired married women above 65 is',dum2
 
         dum2=0d0
         dum3=0d0    
@@ -4382,11 +4383,11 @@ contains
 
                         if((SimR1m(it2,it,i,5)>0d0).AND.(expR1m(it2,it,i,3)==1)) then
 
-                            Print *,'expR1m(it2,it,i,3) is',expR1m(it2,it,i,3)
-                            Print *,'labor supply is',SimR1m(it2,it,i,5)
-                            Print *,'it2 is',it2
-                            Print *,'it is',it
-                            Print *,'i is',i
+                            write(file_id,*)'expR1m(it2,it,i,3) is',expR1m(it2,it,i,3)
+                            write(file_id,*)'labor supply is',SimR1m(it2,it,i,5)
+                            write(file_id,*)'it2 is',it2
+                            write(file_id,*)'it is',it
+                            write(file_id,*)'i is',i
 
                             PAUSE
 
@@ -4401,12 +4402,12 @@ contains
 
         end do    
 
-        !Print *,'dum2 is',dum2
-        !    Print *,'dum3 is',dum3
+        !write(file_id,*)'dum2 is',dum2
+        !    write(file_id,*)'dum3 is',dum3
 
         dum2=dum2/dum3
 
-        Print *,'Fraction of non-retired married men above 65 is',dum2
+        write(file_id,*)'Fraction of non-retired married men above 65 is',dum2
 
         open(21, file='share_single.txt')
     
