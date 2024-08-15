@@ -34,23 +34,28 @@ program Laffer
     open(newunit=iu_simres, file="Laffer_Results.txt")
 
     t_const = 0.0d0
-    write(iu_simres, *) "========================="
+    write(iu_simres,*) "========================="
     write(iu_simres, "(a, f10.6)") "t_const = ", t_const
-    write(iu_simres, *) "========================="
+    write(iu_simres,*) "========================="
 
 
-    !tax_level_scale=1.1d0
+    tax_level_scale=1.0d0
     epsilon3=1d0
-    !P2=tax_level_scale
+    write(iu_simres,*) '             '
+    write(iu_simres,*) '********epsilon3 is',epsilon3
+    write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+    P2=tax_level_scale
     !P4=tax_level_scale+0.15d0
     !P1=tax_level_scale-0.15d0
+    P4=tax_level_scale+0.05d0
+    P1=tax_level_scale-0.05d0
 
     short_testing = 0
     do while(abs(epsilon3)>0.0001d0)
 
 
-        !thetas = (/0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
-        !theta = (/0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
+        thetas = (/0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
+        theta = (/0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
         !theta = thetas
         epsilon_ratio=1d0
 
@@ -343,9 +348,9 @@ program Laffer
 
             iter_ratio=iter_ratio+1
             ratio=ratio+epsilon_ratio*0.1d0
-            write(iu_simres, *) "-----------------"
-            write(iu_simres, *) "iter_ratio = ", iter_ratio
-            write(iu_simres, *) "ratio = ", ratio
+            print *, "-----------------"
+            print *, "iter_ratio = ", iter_ratio
+            print *, "ratio = ", ratio
 
             w=(1d0-alpha)*ratio**alpha
             r=alpha*ratio**(alpha-1d0)-delta
@@ -354,29 +359,28 @@ program Laffer
             !epsilon_ratio=0d0
         end do
 
-        print *, '********epsilon3 is',epsilon3
-        print *, 'tax_level_scale is',tax_level_scale
         !STOP
 
         !t_const = t_const + 0.01d0
 
         ! --------------- Prepare for next iteration
-
-        !if (epsilon3 < 0d0) then
-        !    P4=P2
-        !else
-        !    P1=P2
-        !end if
-        !
-        !P2 = (P4+P1)/2d0
-        !
-        !tax_level_scale = P2
-
-        !STOP
-        !end do
-
         call Statistics(file_id=iu_simres)
         if (short_testing == 1) STOP
+
+        if (epsilon3 < 0d0) then
+            P4=P2
+        else
+            P1=P2
+        end if
+        
+        P2 = (P4+P1)/2d0
+        
+        tax_level_scale = P2
+
+        write(iu_simres,*) '             '
+        write(iu_simres,*) '********epsilon3 is',epsilon3
+        write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+
 
     end do
 

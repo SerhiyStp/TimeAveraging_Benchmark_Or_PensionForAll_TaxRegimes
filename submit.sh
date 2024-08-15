@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Job name:
-#SBATCH --job-name=bch_n
+#SBATCH --job-name=b_b
 ## Project:
 ## Number of nodes/tasks:
 ##SBATCH --nodes=3

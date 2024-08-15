@@ -2459,10 +2459,10 @@ contains
 
         write(file_id,*)'GDP per capita is',dum3
 
-        lumpsumdum=0.02d0*dum3
+        !lumpsumdum=0.02d0*dum3
         !
-        write(file_id,*)'Lumpsumdum is',lumpsumdum/2d0
-        write(file_id,*)'Lumpsum is',lumpsum/2d0
+        !write(file_id,*)'Lumpsumdum is',lumpsumdum/2d0
+        !write(file_id,*)'Lumpsum is',lumpsum/2d0
 
         !epsilon3=lumpsum-lumpsumdum
 
@@ -2480,6 +2480,7 @@ contains
 
         lumpsumdum=(dum5+dum7+ss_tax)+mu*debttoGDP*dum3-(ss_expense+dum15+r*debttoGDP*dum3+lumpsum/2d0)
         
+        write(file_id,*)'**************************'
         write(file_id,*)'Net revenue is',lumpsumdum
 
         !epsilon3=lumpsumdum-0.119363895479142d0
