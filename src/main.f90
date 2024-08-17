@@ -3602,11 +3602,11 @@ contains
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
-        write(newunit=iu_tmp, '(i0)') testing 
-        write(newunit=iu_tmp, '(i0)') pension_for_all
-        write(newunit=iu_tmp, '(i0)') tax_regime
-        write(newunit=iu_tmp, '(i0)') I_ubi
-        close(newunit=iu_tmp)        
+        write(iu_tmp, '(i0)') testing 
+        write(iu_tmp, '(i0)') pension_for_all
+        write(iu_tmp, '(i0)') tax_regime
+        write(iu_tmp, '(i0)') I_ubi
+        close(iu_tmp)        
 
         allocate(v(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
         allocate(ev(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
