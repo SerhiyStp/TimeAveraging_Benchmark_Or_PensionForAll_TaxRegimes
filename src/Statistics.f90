@@ -2483,8 +2483,12 @@ contains
         write(file_id,*)'**************************'
         write(file_id,*)'Net revenue is',lumpsumdum
 
-        !epsilon3=lumpsumdum-0.119363895479142d0
-        epsilon3=lumpsumdum-0.136994041755477d0
+        if (pension_for_all == 0) then
+            !epsilon3=lumpsumdum-0.119363895479142d0
+            epsilon3=lumpsumdum-0.119770515551100d0
+        else
+            epsilon3=lumpsumdum-0.136994041755477d0
+        end if
 
         !lumpsumdum=new_revenue+0.00902d0
         !

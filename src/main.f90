@@ -41,14 +41,17 @@ program Laffer
 
     tax_level_scale=1.0d0
     epsilon3=1d0
-    write(iu_simres,*) '             '
     write(iu_simres,*) '********epsilon3 is',epsilon3
     write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+    write(iu_simres,*) '             '
+    write(output_unit,*) '********epsilon3 is',epsilon3
+    write(output_unit,*) 'tax_level_scale is',tax_level_scale
+    write(output_unit,*) '             '
     P2=tax_level_scale
     !P4=tax_level_scale+0.15d0
     !P1=tax_level_scale-0.15d0
-    P4=tax_level_scale+0.05d0
-    P1=tax_level_scale-0.05d0
+    P4=tax_level_scale+0.10d0
+    P1=tax_level_scale-0.10d0
 
     short_testing = 0
     do while(abs(epsilon3)>0.0001d0)
@@ -3571,6 +3574,8 @@ contains
 
         !USE ANORDF_INT
         implicit none
+
+        integer :: iu_tmp
         
         
         if (pension_for_all == 1) then
@@ -3583,16 +3588,25 @@ contains
             tax_folder = 'benchmark/'
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
+            I_ubi = 0
         else if (tax_regime == 2) then
             tax_folder = 'nit/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            I_ubi = 0
+        else if (tax_regime == 3) then
+            tax_folder = 'ubi/'
+            Deduct_Cutoff = 0d0
+            Deduct_Cutoff_Mar = Deduct_Cutoff
+            I_ubi = 1
         end if
         
-        open(81, file=trim(results_folder)//trim(tax_folder)//'test.txt')
-        write(81, '(i0)') testing 
-        write(81, '(i0)') pension_for_all
-        close(81)        
+        open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
+        write(newunit=iu_tmp, '(i0)') testing 
+        write(newunit=iu_tmp, '(i0)') pension_for_all
+        write(newunit=iu_tmp, '(i0)') tax_regime
+        write(newunit=iu_tmp, '(i0)') I_ubi
+        close(newunit=iu_tmp)        
 
         allocate(v(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
         allocate(ev(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
