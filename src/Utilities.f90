@@ -3,6 +3,16 @@ module Utilities
     use Model_Parameters
 
     implicit none
+    
+    abstract interface
+        function after_tax_inc(y) result(res)
+            real(8) :: y
+            real(8) :: res
+        end function after_tax_inc
+    end interface
+    
+    procedure (after_tax_inc), pointer :: after_tax_labor_inc_single => null ()
+    procedure (after_tax_inc), pointer :: after_tax_labor_inc_married => null ()    
 
 contains
 
@@ -20,7 +30,7 @@ contains
         res = y - after_tax_labor_inc_married(y)
     end function labor_tax_married
 
-    function after_tax_labor_inc_single(y) result(res)
+    function after_tax_labor_inc_single_base(y) result(res)
         real(8) :: y
         real(8) :: res
         
@@ -29,9 +39,26 @@ contains
         else
             res = Deduct_cutoff + thetas(1)*(y - Deduct_cutoff)**(1.0d0-thetas(2))
         end if
-    end function after_tax_labor_inc_single
+    end function after_tax_labor_inc_single_base
     
-    function after_tax_labor_inc_married(y) result(res)
+    function after_tax_labor_inc_single_nit(y) result(res)
+        real(8) :: y
+        real(8) :: res
+                
+        if (y <= yhat .and. y <= Deduct_cutoff) then
+            res = b_nit + y*(1d0-s_nit)
+        else if (y <= yhat .and. y > Deduct_cutoff) then
+            res = b_nit - s_nit*y + (1d0-tau_L)*(y - Deduct_cutoff) + Deduct_cutoff
+        else if (y > yhat .and. y <= Deduct_cutoff) then
+            res = y
+        else
+            res = (1d0-tau_L)*(y - Deduct_cutoff) + Deduct_cutoff
+        end if
+            
+    end function after_tax_labor_inc_single_nit
+    
+    
+    function after_tax_labor_inc_married_base(y) result(res)
         real(8) :: y
         real(8) :: res
         
@@ -40,7 +67,22 @@ contains
         else
             res = Deduct_cutoff_Mar + theta(1)*(y - Deduct_cutoff_Mar)**(1.0d0-theta(2))
         end if
-    end function after_tax_labor_inc_married   
+    end function after_tax_labor_inc_married_base  
+    
+    function after_tax_labor_inc_married_nit(y) result(res)
+        real(8) :: y
+        real(8) :: res
+        
+        if (y <= yhat_mar .and. y <= Deduct_cutoff_Mar) then
+            res = b_nit_mar + y*(1d0-s_nit)
+        else if (y <= yhat_mar .and. y > Deduct_cutoff_Mar) then
+            res = b_nit_mar - s_nit*y + (1d0-tau_L)*(y - Deduct_cutoff_Mar) + Deduct_cutoff_Mar
+        else if (y > yhat_mar .and. y <= Deduct_cutoff_Mar) then
+            res = y
+        else
+            res = (1d0-tau_L)*(y - Deduct_cutoff_Mar) + Deduct_cutoff_Mar
+        end if        
+    end function after_tax_labor_inc_married_nit      
 
     function wage(gender,aval,x,uval)
         integer :: i,gender

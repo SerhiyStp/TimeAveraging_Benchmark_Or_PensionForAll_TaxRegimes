@@ -3589,16 +3589,22 @@ contains
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
             I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base
         else if (tax_regime == 2) then
             tax_folder = 'nit/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
             I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit
         else if (tax_regime == 3) then
             tax_folder = 'ubi/'
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
             I_ubi = 1
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base            
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
