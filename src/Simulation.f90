@@ -495,7 +495,7 @@ contains
                     Sim1m(ik,it2,i,6) = dum3
                     Sim1f(ik,it3,i,6) = dum3
                     
-                    tmp = labor_tax_married(dum3)
+                    tmp = labor_tax_married(dum3) - b_ubi_mar*I_ubi
                     Sim1m(ik,it2,i,7) = tmp
                     Sim1f(ik,it3,i,7) = tmp
 
@@ -635,6 +635,7 @@ contains
                     else
                         Sim1m(ik,it2,i,7)=0d0
                     end if
+					Sim1m(ik,it2,i,7)=Sim1m(ik,it2,i,7) -b_ubi*I_ubi
 
                     Sim1m(ik,it2,i,8)= dum4*tc
                     Sim1m(ik,it2,i,9)=dum3*t_employee+t_employer*dum3
@@ -741,6 +742,7 @@ contains
                     else
                         Sim1f(ik,it2,i,7)=0d0
                     end if
+					Sim1f(ik,it2,i,7)=Sim1f(ik,it2,i,7) -b_ubi*I_ubi
 
                     Sim1f(ik,it2,i,8)= dum4*tc
                     Sim1f(ik,it2,i,9)=dum3*t_employee+t_employer*dum3

@@ -4,7 +4,7 @@ module Model_Parameters
         
     integer, parameter :: testing = 0
     integer, parameter :: pension_for_all = 0
-    integer, parameter :: tax_regime = 1 ! Baseline = 1, NIT w Deduction = 2    
+    integer, parameter :: tax_regime = 1 ! Baseline = 1, NIT w Deduction = 2, UBI = 3
     
     character(len=100) :: results_folder
     character(len=100) :: tax_folder
@@ -25,6 +25,10 @@ module Model_Parameters
     real(8), parameter :: b_nit = s_nit*yhat
     real(8), parameter :: b_nit_mar = s_nit*yhat_mar
     real(8) :: tau_L  = 0.13d0
+    !UBI
+    real(8), parameter :: b_ubi = 0.01d0 !0.05d0
+    real(8), parameter :: b_ubi_mar = 2.0d0*b_ubi !0.10d0   
+    integer :: I_ubi
     
         
     real(8), parameter :: etam    = 1d0/0.4d0  ! Inverse Frisch elasticity men
@@ -72,8 +76,8 @@ module Model_Parameters
     integer, parameter :: nk     = 16         ! Number of gridpoints over capital
 
 
-    integer, parameter :: KORDER   = 3         ! Order of spline in K-dimension
-    integer, parameter :: EXPORDER   = 3       ! Order of spline in experience
+    !integer, parameter :: KORDER   = 3         ! Order of spline in K-dimension
+    !integer, parameter :: EXPORDER   = 3       ! Order of spline in experience
 
     real(8), dimension (:,:), allocatable :: a_couple
     real(8), dimension (:,:), allocatable :: a, Prob_a      !Vectors with the value of ability and the probability of each ability

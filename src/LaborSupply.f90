@@ -12,7 +12,8 @@ contains
         integer :: ik
         integer :: tax_regime_nit
         
-        if (tax_regime == 1) then
+        if (tax_regime == 1 .or. tax_regime == 3) then
+            ! Solution for UBI is the same
             !$OMP PARALLEL PRIVATE(ik)
             !$OMP DO SCHEDULE(DYNAMIC)
             do ik=1,nc

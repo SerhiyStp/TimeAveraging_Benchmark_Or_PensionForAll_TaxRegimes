@@ -88,7 +88,7 @@ subroutine SolveActiveLife(counter)
                         wagem = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(1,a(1,iam),exp_grid(ixm,T-it),u(1,ium))/(1d0+t_employer)
                         wagef = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(2,a(2,iaf),exp_grid(ix,T-it),u(2,iuf))/(1d0+t_employer)
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+b_ubi_mar*I_ubi
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem+wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem+wagef)*t_employee))/(1d0+tc))                   
                         
@@ -194,7 +194,7 @@ subroutine SolveActiveLife(counter)
 
                         !If female unemployed
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit+b_ubi_mar*I_ubi
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem)*t_employee))/(1d0+tc))                  
 
@@ -296,7 +296,7 @@ subroutine SolveActiveLife(counter)
 
                         !If male unemployed
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit+b_ubi_mar*I_ubi					
                         aftertax_lab_inc = after_tax_labor_inc_married(wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))                  
 
@@ -407,7 +407,7 @@ subroutine SolveActiveLife(counter)
                         
 
                         !If both spouses unemployed
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0)
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0) + b_ubi_mar*I_ubi
                         P1=0.001d0
                         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/ (1d0+tc)
                         
@@ -541,7 +541,7 @@ subroutine SolveActiveLife(counter)
         !Finding optimal capital by golden search
         wagef = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(2,a(2,iam),exp_grid(ix,T-it),u(2,ium))/(1d0+t_employer)
         P1=0.001d0
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+b_ubi*I_ubi
         aftertax_lab_inc = after_tax_labor_inc_single(wagef)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))               
 
@@ -635,7 +635,7 @@ subroutine SolveActiveLife(counter)
 
 
         !If female unemployed
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0) +b_ubi*I_ubi
         P1=0.001d0
         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
@@ -736,7 +736,7 @@ subroutine SolveActiveLife(counter)
     do ifc=1,nfcm
         wagem = (1d0/(1d0+exp(kappa*(T-(it+agestart)))))*wage(1,a(1,iam),exp_grid(ix,T-it),u(1,ium))/(1d0+t_employer)
         P1=0.001d0
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0+b_ubi*I_ubi
         aftertax_lab_inc = after_tax_labor_inc_single(wagem)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem)*t_employee))/(1d0+tc))                  
 
@@ -829,7 +829,7 @@ subroutine SolveActiveLife(counter)
         ns_lfp(j,ik,ix,iam,ium,T-it,ifc,LFP_1)=dum4
 
         !If male unemployed
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0) +b_ubi*I_ubi
         P1=0.001d0
         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do

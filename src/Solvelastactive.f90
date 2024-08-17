@@ -85,7 +85,7 @@ subroutine Solvelastactive(counter)
                         wagem = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(1,a(1,iam),exp_grid(ixm,T),u(1,ium))/(1d0+t_employer)
                         wagef = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(2,a(2,iaf),exp_grid(ix,T),u(2,iuf))/(1d0+t_employer)
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+b_ubi_mar*I_ubi
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem+wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem+wagef)*t_employee))/(1d0+tc))                   
 
@@ -176,7 +176,7 @@ subroutine Solvelastactive(counter)
 
                         !If female unemployed
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit +b_ubi_mar*I_ubi
                         aftertax_lab_inc = after_tax_labor_inc_married(wagem)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - wagem*t_employee))/(1d0+tc))                   
 
@@ -200,7 +200,6 @@ subroutine Solvelastactive(counter)
                                 V2=V2+beta*OmegaActive(T)*vnext
                             else
                                 V2=Uc(P2)+Ul(dum4,0d0)-fcm(1,ifcm)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), exp_grid(ixm,T)+1d0, KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)*(1d0-deltaexp),exp_grid(ixm,T)+1d0,idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -225,7 +224,6 @@ subroutine Solvelastactive(counter)
                                 V3=V3+beta*OmegaActive(T)*vnext
                             else
                                 V3=Uc(P3)+Ul(dum4,0d0)-fcm(1,ifcm)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)*(1d0-deltaexp), exp_grid(ixm,T)+1d0, KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)*(1d0-deltaexp),exp_grid(ixm,T)+1d0,idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -264,7 +262,7 @@ subroutine Solvelastactive(counter)
                         
                         !If male unemployed
                         P1=0.001d0
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk))+lumpsum+Unemp_benefit +b_ubi_mar*I_ubi
                         aftertax_lab_inc = after_tax_labor_inc_married(wagef)
                         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))                 
 
@@ -312,7 +310,6 @@ subroutine Solvelastactive(counter)
                                 V3=V3+beta*OmegaActive(T)*vnext
                             else
                                 V3=Uc(P3)+Ul(0d0,dum4)-fc(1,ifc)
-                                !vnext = D_BS3VL(dum2, exp_grid(ix,T)+1d0, exp_grid(ixm,T)*(1d0-deltaexp), KORDER, EXPORDER, EXPORDER, K_KNOT,EXP_KNOT(:,T+1),EXP_KNOT(:,T+1), nk, nexp, nexp, ev_ret_spln_coefs(2,2,:,:,:,iam,ium,iaf,iuf,1,ifc,ifcm))
                                 call db3val(dum2,exp_grid(ix,T)+1d0,exp_grid(ixm,T)*(1d0-deltaexp),idx,idy,idz,&
                                         tx,ty(:,T+1),tz(:,T+1),&
                                         nk,nexp,nexp,kx,ky,kz,&
@@ -351,7 +348,7 @@ subroutine Solvelastactive(counter)
 
                         
                         !If both spouses unemployed
-                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0)
+                        nonlab_inc = (k_grid(ik) + Gamma_redistr)*(1d0+r*(1d0-tk)) + lumpsum + 2d0*Unemp_benefit + after_tax_labor_inc_married(0d0) + b_ubi_mar*I_ubi
                         P1=0.001d0
                         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/ (1d0+tc)
                         do
@@ -456,7 +453,7 @@ subroutine Solvelastactive(counter)
     do ifc=1,nfc
         wagef = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(2,a(2,iam),exp_grid(ix,T),u(2,ium))/(1d0+t_employer)
         P1=0.001d0
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0 +b_ubi*I_ubi
         aftertax_lab_inc = after_tax_labor_inc_single(wagef)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagef)*t_employee))/(1d0+tc))
         do
@@ -532,7 +529,7 @@ subroutine Solvelastactive(counter)
         ns_lfp(j,ik,ix,iam,ium,T,ifc,LFP_1)=dum4
 
         !If single female unemployed
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0) +b_ubi*I_ubi
         P1=0.001d0
         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
@@ -621,7 +618,7 @@ subroutine Solvelastactive(counter)
     do ifc=1,nfcm
         wagem = (1d0/(1d0+exp(kappa*(T-agestart))))*wage(1,a(1,iam),exp_grid(ix,T),u(1,ium))/(1d0+t_employer)
         P1=0.001d0
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk))+lumpsum*0.5d0 +b_ubi*I_ubi
         aftertax_lab_inc = after_tax_labor_inc_single(wagem)
         P4 = min((k_grid(nk)-0.001d0)/(1d0+tc), (nonlab_inc + (1d0-t_const)*(aftertax_lab_inc - (wagem)*t_employee))/(1d0+tc))
         do
@@ -699,7 +696,7 @@ subroutine Solvelastactive(counter)
 
 
         !If single male unemployed
-        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0)
+        nonlab_inc = (k_grid(ik) + Gamma_redistr*0.5d0)*(1d0+r*(1d0-tk)) + lumpsum*0.5d0 + Unemp_benefit + after_tax_labor_inc_single(0d0) +b_ubi*I_ubi
         P1=0.001d0
         P4 = min( k_grid(nk)-0.001d0, nonlab_inc )/(1d0+tc)
         do
