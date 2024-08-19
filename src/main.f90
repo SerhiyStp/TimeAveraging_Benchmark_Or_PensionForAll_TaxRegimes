@@ -24,15 +24,13 @@ program Laffer
     !call OMP_SET_NUM_THREADS(106)
     
     solve_lifecycle = .true.
-    call Initialize
+    open(newunit=iu_simres, file="Laffer_Results.txt")
+    call Initialize(iu_simres)
     !call setHybrParams(2)
 
     iter_ratio=1
 
     !Compute optimal policies in retirement
-
-    open(newunit=iu_simres, file="Laffer_Results.txt")
-
     t_const = 0.0d0
     write(iu_simres,*) "========================="
     write(iu_simres, "(a, f10.6)") "t_const = ", t_const
@@ -3570,18 +3568,21 @@ program Laffer
     
 contains
 
-    subroutine Initialize()
+    subroutine Initialize(iunit)
 
         !USE ANORDF_INT
         implicit none
-
+        
+        integer, intent(in) :: iunit
         integer :: iu_tmp
         
         
         if (pension_for_all == 1) then
             results_folder = 'pensionforall/'    
+            write(iunit, *) 'Computing pensionforall model '
         else
-            results_folder = 'benchmark/'    
+            results_folder = 'benchmark/'   
+            write(iunit, *) 'Computing benchmark model '
         end if
         
         if (tax_regime == 1) then
@@ -3591,6 +3592,7 @@ contains
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base
+            write(iunit, *) 'with benchmark tax system'
         else if (tax_regime == 2) then
             tax_folder = 'nit/'
             Deduct_Cutoff = 0.1d0
@@ -3598,13 +3600,15 @@ contains
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit
             after_tax_labor_inc_married => after_tax_labor_inc_married_nit
+            write(iunit, *) 'with NIT tax system'
         else if (tax_regime == 3) then
             tax_folder = 'ubi/'
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
             I_ubi = 1
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            after_tax_labor_inc_married => after_tax_labor_inc_married_base            
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base  
+            write(iunit, *) 'with UBI tax system'
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
