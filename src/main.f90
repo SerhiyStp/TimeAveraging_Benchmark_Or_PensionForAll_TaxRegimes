@@ -391,24 +391,27 @@ program Laffer
         call Statistics(file_id=iu_simres)
         if (short_testing == 1) STOP
 
-        if (epsilon3 < 0d0) then
-            P4=P2
-        else
-            P1=P2
-        end if
-        
-        P2 = (P4+P1)/2d0
-        
-        if (tax_regime == 1 .or. tax_regime == 2) then
-            tax_level_scale = P2
-        else
-            tau_L = P2
-        end if
-
         write(iu_simres,*) '             '
-        write(iu_simres,*) '********epsilon3 is',epsilon3
-        write(iu_simres,*) 'tax_level_scale is',tax_level_scale
-
+        write(iu_simres,*) '********epsilon3 is',epsilon3        
+        if (tax_regime == 1 .or. tax_regime == 2) then
+            if (epsilon3 < 0d0) then
+                P4=P2
+            else
+                P1=P2
+            end if
+            P2 = (P4+P1)/2d0            
+            tax_level_scale = P2
+            write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+        else
+            if (epsilon3 > 0d0) then
+                P4=P2
+            else
+                P1=P2
+            end if
+            P2 = (P4+P1)/2d0              
+            tau_L = P2
+            write(iu_simres,*) 'tau_L is',tau_L
+        end if
 
     end do
 
