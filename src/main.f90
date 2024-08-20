@@ -39,8 +39,7 @@ program Laffer
         tax_reg_str = '_ubi'
     end if
 
-    open(newunit=iu_simres,
-    file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
+    open(newunit=iu_simres, file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
     call Initialize(iu_simres)
     !call setHybrParams(2)
 
