@@ -38,18 +38,26 @@ program Laffer
 
 
     tax_level_scale=1.0d0
+    tau_L = 0.25d0    
+    
     epsilon3=1d0
     write(iu_simres,*) '********epsilon3 is',epsilon3
-    write(iu_simres,*) 'tax_level_scale is',tax_level_scale
-    write(iu_simres,*) '             '
     write(output_unit,*) '********epsilon3 is',epsilon3
-    write(output_unit,*) 'tax_level_scale is',tax_level_scale
+    
+
+    if (tax_regime == 1 .or. tax_regime == 3) then
+        P2=tax_level_scale
+        P4=tax_level_scale+0.15d0
+        P1=tax_level_scale-0.15d0
+        write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+        write(output_unit,*) 'tax_level_scale is',tax_level_scale
+    else
+        P2=tau_L
+        P4=tau_L+0.15d0
+        P1=tau_L-0.15d0        
+    end if
+    write(iu_simres,*) '             '
     write(output_unit,*) '             '
-    P2=tax_level_scale
-    !P4=tax_level_scale+0.15d0
-    !P1=tax_level_scale-0.15d0
-    P4=tax_level_scale+0.10d0
-    P1=tax_level_scale-0.10d0
 
     short_testing = 0
     do while(abs(epsilon3)>0.0001d0)
@@ -376,7 +384,11 @@ program Laffer
         
         P2 = (P4+P1)/2d0
         
-        tax_level_scale = P2
+        if (tax_regime == 1 .or. tax_regime == 2) then
+            tax_level_scale = P2
+        else
+            tau_L = P2
+        end if
 
         write(iu_simres,*) '             '
         write(iu_simres,*) '********epsilon3 is',epsilon3
