@@ -20,11 +20,27 @@ program Laffer
     logical :: solve_lifecycle
     integer :: short_testing
     integer :: iu_simres
+    character(len=15) :: model_version_str
+    character(len=15) :: tax_reg_str
 
     !call OMP_SET_NUM_THREADS(106)
     
     solve_lifecycle = .true.
-    open(newunit=iu_simres, file="Laffer_Results.txt")
+    if (pension_for_all == 0) then
+        model_version_str = 'Benchmark'
+    else
+        model_version_str = 'PensionForAll'
+    end if
+    if (tax_regime == 1) then
+        tax_reg_str = '_bench'
+    else if (tax_regime == 2) then
+        tax_reg_str = '_nit'
+    else if (tax_regime == 3) then
+        tax_reg_str = '_ubi'
+    end if
+
+    open(newunit=iu_simres,
+    file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
     call Initialize(iu_simres)
     !call setHybrParams(2)
 
