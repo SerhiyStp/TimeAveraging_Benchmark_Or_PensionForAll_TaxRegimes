@@ -388,6 +388,12 @@ program Laffer
         !t_const = t_const + 0.01d0
 
         ! --------------- Prepare for next iteration
+        write(output_unit,*) '             '
+        write(output_unit,*) 'epsilon_ratio loop converged'        
+        write(output_unit,*) '             '
+        write(iu_simres,*) '             '
+        write(iu_simres,*) 'epsilon_ratio loop converged'        
+        write(iu_simres,*) '             '
         call Statistics(file_id=iu_simres)
         if (short_testing == 1) STOP
 
