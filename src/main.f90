@@ -20,6 +20,7 @@ program Laffer
     logical :: solve_lifecycle
     integer :: short_testing
     integer :: iu_simres
+    integer :: get_paths
     character(len=15) :: model_version_str
     character(len=15) :: tax_reg_str
 
@@ -399,7 +400,7 @@ program Laffer
 
         write(iu_simres,*) '             '
         write(iu_simres,*) '********epsilon3 is',epsilon3        
-        if (tax_regime == 1 .or. tax_regime == 2) then
+        if (tax_regime == 1 .or. tax_regime == 3) then
             if (epsilon3 < 0d0) then
                 P4=P2
             else
@@ -424,3184 +425,11 @@ program Laffer
 
     close(iu_simres)
 
-
-
-
-    !open(1, file='singledist.txt')
-    !
-    !write (1, *) fpartner,mpartner
-    !
-    !close(1)
-    !
-    !open(1, file='abilityprob.txt')
-    !
-    !write (1, *) ability_prob
-    !
-    !close(1)
-    !
-    !open(1, file='av_earnings.txt')
-    !
-    !write (1, *) av_earnings
-    !
-    !close(1)
-    !
-    !STOP
-
-    print *, 'av_earnings(1,1,:) is',av_earnings(1,1,:)
-    print *, 'av_earnings(1,2,:) is',av_earnings(1,2,:)
-    print *, 'av_earnings(2,1,:) is',av_earnings(2,1,:)
-    print *, 'av_earnings(2,2,:) is',av_earnings(2,2,:)
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WELFARE BY AGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !Welfare of everyone
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepath_all.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                dum3=dum3+2d0
-                dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Welfare of everyone by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                dum3=dum3+2d0*WeightRet(it4)
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-
-
-    !Single female welfare
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    dum3=dum3+1d0
-                    dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)<0.5) then
-                    dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-!Single female welfare ability 1
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a1.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    if(exp1f(it4,it3,it2,2)<2) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)<0.5) then
-                    if(exp1f(it2,it,T,2)<2) then
-                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-!Single female welfare ability 1 and 2
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a12.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    if(exp1f(it4,it3,it2,2)<3) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)<0.5) then
-                    if(exp1f(it2,it,T,2)<3) then
-                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-
-    !Married Female Welfare
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female.txt')
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                    dum3=dum3+1d0
-                    dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)>0.5) then
-                    dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-    
-!Married female welfare ability 1
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a1.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                    if(exp1f(it4,it3,it2,2)<2) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)>0.5) then
-                    if(exp1f(it2,it,T,2)<2) then
-                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-!Married female welfare ability 1 and 2
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a12.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                    if(exp1f(it4,it3,it2,2)<3) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married female welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)>0.5) then
-                    if(exp1f(it2,it,T,2)<3) then
-                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-    !Single Male Welfare
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                    dum3=dum3+1d0
-                    dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)<0.5) then
-                    dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-    
-!Single male welfare ability 1
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a1.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                    if(exp1m(it4,it3,it2,2)<2) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)<0.5) then
-                    if(exp1m(it2,it,T,2)<2) then
-                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-!Single male welfare ability 1 and 2
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a12.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                    if(exp1m(it4,it3,it2,2)<3) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Single male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)<0.5) then
-                    if(exp1m(it2,it,T,2)<3) then
-                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-    
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male.txt')
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                    dum3=dum3+1d0
-                    dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)>0.5) then
-                    dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-
-    close(1)
-
-!Married male welfare ability 1
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a1.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                    if(exp1m(it4,it3,it2,2)<2) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)>0.5) then
-                    if(exp1m(it2,it,T,2)<2) then
-                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-    
-!Married male welfare ability 1 and 2
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a12.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,nsim
-                if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                    if(exp1m(it4,it3,it2,2)<3) then
-                        dum3=dum3+1d0
-                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
-    end do
-
-    !Married male welfare by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)>0.5) then
-                    if(exp1m(it2,it,T,2)<3) then
-                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
-                        dum3=dum3+1d0*WeightRet(it4)
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-    
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'kpath.txt')
-
-    do it2=1,T
-        dum2=0d0
-        dum3=0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum3=dum3+2d0
-                dum2=dum2+Sim1m(it4,it3,it2,1)
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    dum2=dum2+Sim1f(it4,it3,it2,1)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.3,F8.3)') it2*1d0+19d0, dum2
-    end do
-
-    do it2=1,Tret
-        dum2=0.0
-        dum3=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum3=dum3+2d0
-                dum2=dum2+SimR1m(it4,it3,it2,1)
-                if(Sim1f(it4,it3,T,10)<0.5d0) then
-                    dum2=dum2+SimR1f(it4,it3,it2,1)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.3,F8.3)') it2*1d0+64d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm.txt')
-
-    do it2=1,T
-        dum2=0d0
-        dum3=0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum3=dum3+1d0
-                dum2=dum2+Sim1m(it4,it3,it2,5)
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm2.txt')
-
-    do it2=1,T
-        dum2=0d0
-        dum3=0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                    dum3=dum3+1d0
-                    dum2=dum2+Sim1m(it4,it3,it2,5)
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathf.txt')
-
-    do it2=1,T
-        dum2=0d0
-        dum3=0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum3=dum3+1d0
-                dum2=dum2+Sim1f(it4,it3,it2,5)
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'cpathm.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1m(it4,it3,it2,2)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    do it2=1,Tret
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+SimR1m(it4,it3,it2,2)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'cpathf.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1f(it4,it3,it2,2)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    do it2=1,Tret
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+SimR1f(it4,it3,it2,2)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'kpathm.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1m(it4,it3,it2,1)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    do it2=1,Tret
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+SimR1m(it4,it3,it2,1)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'kpathf.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1f(it4,it3,it2,1)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    do it2=1,Tret
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+SimR1f(it4,it3,it2,1)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'npathm.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1m(it4,it3,it2,4)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'npathf.txt')
-
-    do it2=1,T
-        dum2=0.0
-        do it4=1,nsim2
-            do it3=1,10000
-                dum2=dum2+Sim1f(it4,it3,it2,4)
-            end do
-        end do
-        dum2=dum2/160000d0
-        write (1,'(F8.3,F8.3)') it2*1d0, dum2
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle.txt')
-
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    dum3=dum3+1d0
-                    if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                        dum2=dum2+1d0
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.5,F8.5)') it2*1d0, dum2
-    end do
-
-    !Single female labor force participation by age after 65
-
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)<0.5) then
-                    if(SimR1f(it2,it,it4,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-
-        write (1,'(F8.5,F8.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried.txt')
-
-    do it2=1,T
-        dum2=0.0d0
-        dum3=0.0d0
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                    dum3=dum3+1d0
-                    if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                        dum2=dum2+1d0
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        write (1,'(F8.5,F8.5)') it2*1d0, dum2
-    end do
-
-    !Married female labor force participation by age after 65
-
-    do it4=1,Tret
-
-        dum2=0d0
-        dum3=0d0    
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)>0.5) then
-                    if(SimR1f(it2,it,it4,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    dum3=dum3+1d0*WeightRet(it4)
-                end if
-            end do
-        end do
-
-        dum2=dum2/dum3
-
-        write (1,'(F8.5,F8.5)') (64+it4)*1d0, dum2
-
-    end do
-
-    close(1)
-
-
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male.txt')
-
-    do i=1,T
-
-        dum2=0.0d0
-        dum3=0.0d0    
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,i,10)<0.5) then
-                    if(Sim1m(it2,it,i,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightActive(i)
-                    end if
-                    dum3=dum3+1d0*WeightActive(i)
-                end if
-            end do
-        end do
-
-        dum2=dum2/dum3
-        write (1,'(F8.5,F8.5)') i*1d0, dum2
-
-    end do
-
-    !Single male labor force participation by age after 65
-
-    do i=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)<0.5) then
-                    if(SimR1m(it2,it,i,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(i)
-                    end if
-                    dum3=dum3+1d0*WeightRet(i)
-                end if
-            end do
-        end do
-
-        dum2=dum2/dum3
-        write (1,'(F8.5,F8.5)') (64+i)*1d0, dum2
-
-    end do
-
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male.txt')
-
-    do i=1,T
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,i,10)>0.5) then
-                    if(Sim1m(it2,it,i,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightActive(i)
-                    end if
-                    dum3=dum3+1d0*WeightActive(i)
-                end if
-            end do
-        end do
-
-        dum2=dum2/dum3
-
-        write (1,'(F8.5,F8.5)') i*1d0, dum2
-
-    end do
-
-
-    !Married male labor force participation by age after 65
-
-
-    do i=1,Tret
-
-        dum2=0d0
-        dum3=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)>0.5) then
-                    if(SimR1m(it2,it,i,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(i)
-                    end if
-                    dum3=dum3+1d0*WeightRet(i)
-                end if
-            end do
-        end do
-
-        dum2=dum2/dum3
-
-        write (1,'(F8.5,F8.5)') (64+i)*1d0, dum2
-
-    end do
-
-
-    close(1)
-
-
-    !!!!!!!!!!!!!!!LFP by Fixed Cost !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-    !Single Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglefc.txt')
-
-    do it6=1,nfc
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            do it4=1,nsim2
-                do it3=1,10000
-                    if(exp1f(it4,it3,it2,6)==it6) then
-
-                        if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                            dum3=dum3+1d0
-                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-                end do
-            end do
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fc(2,it6), dum2
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1f(it2,it,T,6)==it6) then
-                        if(Sim1f(it2,it,T,10)<0.5) then
-                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)*WeightRet(it4)
-                            end if
-                            dum3=dum3+1d0*WeightRet(it4)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fc(2,it6), dum2
-
-        end do
-
-    end do
-
-    close(1)
-
-
-
-
-    !Married Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedfc.txt')
-
-    do it6=1,nfc
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            do it4=1,nsim2
-                do it3=1,10000
-                    if(exp1f(it4,it3,it2,6)==it6) then
-
-                        if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                            dum3=dum3+1d0
-                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-                end do
-            end do
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fc(1,it6), dum2
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1f(it2,it,T,6)==it6) then
-                        if(Sim1f(it2,it,T,10)>0.5) then
-                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)*WeightRet(it4)
-                            end if
-                            dum3=dum3+1d0*WeightRet(it4)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fc(1,it6), dum2
-
-        end do
-
-    end do
-
-    close(1)
-
-
-
-
-    !Single Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemalefc.txt')
-
-    do it6=1,nfcm
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            do it4=1,nsim2
-                do it3=1,10000
-                    if(exp1m(it4,it3,it2,6)==it6) then
-
-                        if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                            dum3=dum3+1d0
-                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-                end do
-            end do
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fcm(2,it6), dum2
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1m(it2,it,T,6)==it6) then
-                        if(Sim1m(it2,it,T,10)<0.5) then
-                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)*WeightRet(it4)
-                            end if
-                            dum3=dum3+1d0*WeightRet(it4)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fcm(2,it6), dum2
-
-        end do
-
-    end do
-
-    close(1)
-
-
-
-
-    !Married Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmalefc.txt')
-
-    do it6=1,nfcm
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            do it4=1,nsim2
-                do it3=1,10000
-                    if(exp1m(it4,it3,it2,6)==it6) then
-
-                        if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                            dum3=dum3+1d0
-                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-                end do
-            end do
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fcm(1,it6), dum2
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1m(it2,it,T,6)==it6) then
-                        if(Sim1m(it2,it,T,10)>0.5) then
-                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)*WeightRet(it4)
-                            end if
-                            dum3=dum3+1d0*WeightRet(it4)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fcm(1,it6), dum2
-
-        end do
-
-    end do
-
-    close(1)
-
-    !!!!!!!!!!!!!!!!!LFP by a,u,f !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !Single Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_auf.txt')
-
-    do it8=1,nfc
-
-        do it7=1,na
-
-            do it6=1,nu
-
-                do it2=1,T
-
-
-                    dum2=0.0d0
-                    dum3=0.0d0
-                    dum4=0.0d0
-                    dum5=0.0d0
-
-                    do it4=1,nsim2
-                        do it3=1,10000
-
-                            if(exp1f(it4,it3,it2,6)==it8) then
-
-                                if(exp1f(it4,it3,it2,2)==it7) then
-
-                                    if(exp1f(it4,it3,it2,3)==it6) then
-
-                                        if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                                            dum3=dum3+1d0
-                                            dum4=dum4+Sim1f(it4,it3,it2,1)
-                                            dum5=dum5+Sim1f(it4,it3,it2,2)
-                                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                                dum2=dum2+1d0
-                                            end if
-                                        end if
-
-                                    end if
-
-                                end if
-
-                            end if
-
-                        end do
-                    end do
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5,0d0
-
-                end do
-
-                do it4=1,Tret
-
-                    dum2=0d0
-                    dum3=0d0
-                    dum4=0d0
-                    dum5=0d0
-                    dum6=0d0
-
-                    do it2=1,nsim2
-                        do it=1,nsim
-                            if(exp1f(it2,it,T,6)==it8) then
-                                if(exp1f(it2,it,T,2)==it7) then
-                                    if(exp1f(it2,it,T,3)==it6) then
-                                        if(Sim1f(it2,it,T,10)<0.5) then
-                                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                                dum2=dum2+(1d0)
-                                            end if
-                                            dum3=dum3+1d0
-                                            dum4=dum4+SimR1f(it2,it,it4,1)
-                                            dum5=dum5+SimR1f(it2,it,it4,2)
-                                            dum6=dum6+SimR1f(it2,it,it4,13)
-                                        end if
-                                    end if
-                                end if
-                            end if
-                        end do
-                    end do
-
-
-
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-                    dum6=dum6/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5, dum6
-
-                end do
-
-            end do
-
-        end do
-
-    end do
-
-    close(1)
-
-
-    !Single Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_auf.txt')
-
-    do it8=1,nfcm
-
-        do it7=1,na
-
-            do it6=1,nu
-
-                do it2=1,T
-
-
-                    dum2=0.0d0
-                    dum3=0.0d0
-                    dum4=0.0d0
-                    dum5=0.0d0
-
-                    do it4=1,nsim2
-                        do it3=1,10000
-
-                            if(exp1m(it4,it3,it2,6)==it8) then
-
-                                if(exp1m(it4,it3,it2,2)==it7) then
-
-                                    if(exp1m(it4,it3,it2,3)==it6) then
-
-                                        if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                                            dum3=dum3+1d0
-                                            dum4=dum4+Sim1m(it4,it3,it2,1)
-                                            dum5=dum5+Sim1m(it4,it3,it2,2)
-
-                                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                                dum2=dum2+1d0
-                                            end if
-                                        end if
-
-                                    end if
-
-                                end if
-
-                            end if
-
-                        end do
-                    end do
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, 0d0
-
-                end do
-
-                do it4=1,Tret
-
-                    dum2=0d0
-                    dum3=0d0
-                    dum4=0d0
-                    dum5=0d0
-                    dum6=0d0
-
-                    do it2=1,nsim2
-                        do it=1,nsim
-                            if(exp1m(it2,it,T,6)==it8) then
-                                if(exp1m(it2,it,T,2)==it7) then
-                                    if(exp1m(it2,it,T,3)==it6) then
-                                        if(Sim1m(it2,it,T,10)<0.5) then
-                                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                                dum2=dum2+(1d0)
-                                            end if
-                                            dum3=dum3+1d0
-                                            dum4=dum4+SimR1m(it2,it,it4,1)
-                                            dum5=dum5+SimR1m(it2,it,it4,2)
-                                            dum6=dum6+SimR1m(it2,it,it4,13)
-                                        end if
-                                    end if
-                                end if
-                            end if
-                        end do
-                    end do
-
-
-
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-                    dum6=dum6/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, dum6
-
-                end do
-
-            end do
-
-        end do
-
-    end do
-
-    close(1)
-
-    !Married Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_auf.txt')
-
-    do it8=1,nfc
-
-        do it7=1,na
-
-            do it6=1,nu
-
-                do it2=1,T
-
-
-                    dum2=0.0d0
-                    dum3=0.0d0
-                    dum4=0.0d0
-                    dum5=0.0d0
-
-                    do it4=1,nsim2
-                        do it3=1,10000
-
-                            if(exp1f(it4,it3,it2,6)==it8) then
-
-                                if(exp1f(it4,it3,it2,2)==it7) then
-
-                                    if(exp1f(it4,it3,it2,3)==it6) then
-
-                                        if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                                            dum3=dum3+1d0
-                                            dum4=dum4+Sim1f(it4,it3,it2,1)
-                                            dum5=dum5+Sim1f(it4,it3,it2,2)
-                                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                                dum2=dum2+1d0
-                                            end if
-                                        end if
-
-                                    end if
-
-                                end if
-
-                            end if
-
-                        end do
-                    end do
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5,0d0
-
-                end do
-
-                do it4=1,Tret
-
-                    dum2=0d0
-                    dum3=0d0
-                    dum4=0d0
-                    dum5=0d0
-                    dum6=0d0
-
-                    do it2=1,nsim2
-                        do it=1,nsim
-                            if(exp1f(it2,it,T,6)==it8) then
-                                if(exp1f(it2,it,T,2)==it7) then
-                                    if(exp1f(it2,it,T,3)==it6) then
-                                        if(Sim1f(it2,it,T,10)>0.5) then
-                                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                                dum2=dum2+(1d0)
-                                            end if
-                                            dum3=dum3+1d0
-                                            dum4=dum4+SimR1f(it2,it,it4,1)
-                                            dum5=dum5+SimR1f(it2,it,it4,2)
-                                            dum6=dum6+SimR1f(it2,it,it4,13)
-                                        end if
-                                    end if
-                                end if
-                            end if
-                        end do
-                    end do
-
-
-
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-                    dum6=dum6/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5, dum6
-
-                end do
-
-            end do
-
-        end do
-
-    end do
-
-    close(1)
-
-
-    !Married Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_auf.txt')
-
-    do it8=1,nfcm
-
-        do it7=1,na
-
-            do it6=1,nu
-
-                do it2=1,T
-
-
-                    dum2=0.0d0
-                    dum3=0.0d0
-                    dum4=0.0d0
-                    dum5=0.0d0
-
-                    do it4=1,nsim2
-                        do it3=1,10000
-
-                            if(exp1m(it4,it3,it2,6)==it8) then
-
-                                if(exp1m(it4,it3,it2,2)==it7) then
-
-                                    if(exp1m(it4,it3,it2,3)==it6) then
-
-                                        if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                                            dum3=dum3+1d0
-                                            dum4=dum4+Sim1m(it4,it3,it2,1)
-                                            dum5=dum5+Sim1m(it4,it3,it2,2)
-
-                                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                                dum2=dum2+1d0
-                                            end if
-                                        end if
-
-                                    end if
-
-                                end if
-
-                            end if
-
-                        end do
-                    end do
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, 0d0
-
-                end do
-
-                do it4=1,Tret
-
-                    dum2=0d0
-                    dum3=0d0
-                    dum4=0d0
-                    dum5=0d0
-                    dum6=0d0
-
-                    do it2=1,nsim2
-                        do it=1,nsim
-                            if(exp1m(it2,it,T,6)==it8) then
-                                if(exp1m(it2,it,T,2)==it7) then
-                                    if(exp1m(it2,it,T,3)==it6) then
-                                        if(Sim1m(it2,it,T,10)>0.5) then
-                                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                                dum2=dum2+(1d0)
-                                            end if
-                                            dum3=dum3+1d0
-                                            dum4=dum4+SimR1m(it2,it,it4,1)
-                                            dum5=dum5+SimR1m(it2,it,it4,2)
-                                            dum6=dum6+SimR1m(it2,it,it4,13)
-                                        end if
-                                    end if
-                                end if
-                            end if
-                        end do
-                    end do
-
-
-
-                    dum2=dum2/dum3
-                    dum4=dum4/dum3
-                    dum5=dum5/dum3
-                    dum6=dum6/dum3
-
-                    write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, dum6
-
-                end do
-
-            end do
-
-        end do
-
-    end do
-
-    close(1)
-
-
-
-    !!!!!!!!!!!!!!!!!LFP by a !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !Single Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_a.txt')
-
-
-    do it7=1,na
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-                    if(exp1f(it4,it3,it2,2)==it7) then
-
-                        if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                            dum3=dum3+1d0
-                            dum4=dum4+Sim1f(it4,it3,it2,1)
-                            dum5=dum5+Sim1f(it4,it3,it2,2)
-                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1f(it2,it,T,2)==it7) then
-                        if(Sim1f(it2,it,T,10)<0.5) then
-                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)
-                            end if
-                            dum3=dum3+1d0
-                            dum4=dum4+SimR1f(it2,it,it4,1)
-                            dum5=dum5+SimR1f(it2,it,it4,2)
-                            dum6=dum6+SimR1f(it2,it,it4,13)
-                        end if
-                    end if
-                end do
-            end do
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-
-    close(1)
-
-
-    !Single Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_a.txt')
-
-    do it7=1,na
-
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-
-                    if(exp1m(it4,it3,it2,2)==it7) then
-
-
-                        if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                            dum3=dum3+1d0
-                            dum4=dum4+Sim1m(it4,it3,it2,1)
-                            dum5=dum5+Sim1m(it4,it3,it2,2)
-
-                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1m(it2,it,T,2)==it7) then
-                        if(Sim1m(it2,it,T,10)<0.5) then
-                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)
-                            end if
-                            dum3=dum3+1d0
-                            dum4=dum4+SimR1m(it2,it,it4,1)
-                            dum5=dum5+SimR1m(it2,it,it4,2)
-                            dum6=dum6+SimR1m(it2,it,it4,13)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-    close(1)
-
-    !Married Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_a.txt')
-
-    do it7=1,na
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-                    if(exp1f(it4,it3,it2,2)==it7) then
-
-
-                        if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                            dum3=dum3+1d0
-                            dum4=dum4+Sim1f(it4,it3,it2,1)
-                            dum5=dum5+Sim1f(it4,it3,it2,2)
-                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1f(it2,it,T,2)==it7) then
-                        if(Sim1f(it2,it,T,10)>0.5) then
-                            if(SimR1f(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)
-                            end if
-                            dum3=dum3+1d0
-                            dum4=dum4+SimR1f(it2,it,it4,1)
-                            dum5=dum5+SimR1f(it2,it,it4,2)
-                            dum6=dum6+SimR1f(it2,it,it4,13)
-                        end if
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-
-    close(1)
-
-
-    !Married Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_a.txt')
-
-    do it7=1,na
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-                    if(exp1m(it4,it3,it2,2)==it7) then
-
-
-                        if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                            dum3=dum3+1d0
-                            dum4=dum4+Sim1m(it4,it3,it2,1)
-                            dum5=dum5+Sim1m(it4,it3,it2,2)
-
-                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                                dum2=dum2+1d0
-                            end if
-                        end if
-
-                    end if
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1m(it2,it,T,2)==it7) then
-                        if(Sim1m(it2,it,T,10)>0.5) then
-                            if(SimR1m(it2,it,it4,5)>1d-3) then
-                                dum2=dum2+(1d0)
-                            end if
-                            dum3=dum3+1d0
-                            dum4=dum4+SimR1m(it2,it,it4,1)
-                            dum5=dum5+SimR1m(it2,it,it4,2)
-                            dum6=dum6+SimR1m(it2,it,it4,13)
-                        end if
-                    end if
-                end do
-            end do
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-
-    close(1)
-
-    !!!!!!!!!!!!!!!!!LFP by a (not by marital status) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !Single Females
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_females_a.txt')
-
-
-    do it7=1,na
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-                    if(exp1f(it4,it3,it2,2)==it7) then
-
-                        dum3=dum3+1d0
-                        dum4=dum4+Sim1f(it4,it3,it2,1)
-                        dum5=dum5+Sim1f(it4,it3,it2,2)
-                        if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                            dum2=dum2+1d0
-                        end if
-                    end if
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1f(it2,it,T,2)==it7) then
-                        if(SimR1f(it2,it,it4,5)>1d-3) then
-                            dum2=dum2+(1d0)
-                        end if
-                        dum3=dum3+1d0
-                        dum4=dum4+SimR1f(it2,it,it4,1)
-                        dum5=dum5+SimR1f(it2,it,it4,2)
-                        dum6=dum6+SimR1f(it2,it,it4,13)
-                    end if
-                end do
-            end do
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-
-    close(1)
-
-
-    !Single Males
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_males_a.txt')
-
-    do it7=1,na
-
-
-        do it2=1,T
-
-
-            dum2=0.0d0
-            dum3=0.0d0
-            dum4=0.0d0
-            dum5=0.0d0
-
-            do it4=1,nsim2
-                do it3=1,10000
-
-
-                    if(exp1m(it4,it3,it2,2)==it7) then
-
-                        dum3=dum3+1d0
-                        dum4=dum4+Sim1m(it4,it3,it2,1)
-                        dum5=dum5+Sim1m(it4,it3,it2,2)
-
-                        if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                            dum2=dum2+1d0
-                        end if
-                    end if
-
-                end do
-            end do
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
-
-        end do
-
-        do it4=1,Tret
-
-            dum2=0d0
-            dum3=0d0
-            dum4=0d0
-            dum5=0d0
-            dum6=0d0
-
-            do it2=1,nsim2
-                do it=1,nsim
-                    if(exp1m(it2,it,T,2)==it7) then
-                        if(SimR1m(it2,it,it4,5)>1d-3) then
-                            dum2=dum2+(1d0)
-                        end if
-                        dum3=dum3+1d0
-                        dum4=dum4+SimR1m(it2,it,it4,1)
-                        dum5=dum5+SimR1m(it2,it,it4,2)
-                        dum6=dum6+SimR1m(it2,it,it4,13)
-                    end if
-                end do
-            end do
-
-
-
-            dum2=dum2/dum3
-            dum4=dum4/dum3
-            dum5=dum5/dum3
-            dum6=dum6/dum3
-
-            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
-
-        end do
-
-    end do
-
-    close(1)
-
-
-    !Earners in couples
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'earners_in_couples.txt')
-
-    open(2,file=trim(results_folder)//trim(tax_folder)//'ability_couple_f_works.txt')
-
-    do it2=1,T
-
-
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-        dum7=0d0
-        a_couple=0d0
-
-        do it4=1,nsim2
-            do it3=1,nsim
-
-                if(Sim1m(it4,it3,it2,10)>0.5) then
-
-                    it7=exp1m(it4,it3,it2,4)
-                    dum3=dum3+1d0
-
-                    if((Sim1m(it4,it3,it2,4)>0.001).AND.(Sim1f(it4,it7,it2,4)>0.001d0)) then
-                        dum2=dum2+1d0
-                    elseif((Sim1m(it4,it3,it2,4)>0.001).AND.(Sim1f(it4,it7,it2,4)<0.001d0)) then
-                        dum4=dum4+1d0
-                    elseif((Sim1m(it4,it3,it2,4)<0.001).AND.(Sim1f(it4,it7,it2,4)>0.001d0)) then
-                        dum5=dum5+1d0
-                        it8=exp1m(it4,it3,it2,2)
-                        it9=exp1f(it4,it7,it2,2)
-                        a_couple(it9,it8)=a_couple(it9,it8)+1d0
-                    else
-                        dum7=dum7+1d0
-                    end if
-                end if
-
-            end do
-        end do
-
-        a_couple=a_couple/dum5
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        dum7=dum7/dum3
-
-        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5)') (it2+19)*1d0, dum2, dum4, dum5, dum7
-        write (2,'(26F12.5)') (it2+19)*1d0, a_couple(1,1), a_couple(1,2), a_couple(1,3), a_couple(1,4), a_couple(1,5), a_couple(2,1), a_couple(2,2), a_couple(2,3), a_couple(2,4), a_couple(2,5), a_couple(3,1), a_couple(3,2), a_couple(3,3), a_couple(3,4), a_couple(3,5), a_couple(4,1), a_couple(4,2), a_couple(4,3), a_couple(4,4), a_couple(4,5), a_couple(5,1), a_couple(5,2), a_couple(5,3), a_couple(5,4), a_couple(5,5)
-
-
-    end do
-
-    do it2=1,Tret
-
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-        dum7=0d0
-        a_couple=0d0
-
-        do it4=1,nsim2
-            do it3=1,nsim
-
-                if(Sim1m(it4,it3,T,10)>0.5) then
-
-                    it7=exp1m(it4,it3,T,4)
-                    dum3=dum3+1d0
-
-                    if((SimR1m(it4,it3,it2,5)>0.001).AND.(SimR1f(it4,it7,it2,5)>0.001d0)) then
-                        dum2=dum2+1d0
-                    elseif((SimR1m(it4,it3,it2,5)>0.001).AND.(SimR1f(it4,it7,it2,5)<0.001d0)) then
-                        dum4=dum4+1d0
-                    elseif((SimR1m(it4,it3,it2,5)<0.001).AND.(SimR1f(it4,it7,it2,5)>0.001d0)) then
-                        dum5=dum5+1d0
-                        it8=exp1m(it4,it3,T,2)
-                        it9=exp1f(it4,it7,T,2)
-                        a_couple(it9,it8)=a_couple(it9,it8)+1d0
-                    else
-                        dum7=dum7+1d0
-                    end if
-                end if
-
-            end do
-        end do
-
-        a_couple=a_couple/dum5
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        dum7=dum7/dum3
-
-        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5)') (it2+64)*1d0, dum2, dum4, dum5, dum7
-        write (2,'(26F12.5)') (it2+64)*1d0, a_couple(1,1), a_couple(1,2), a_couple(1,3), a_couple(1,4), a_couple(1,5), a_couple(2,1), a_couple(2,2), a_couple(2,3), a_couple(2,4), a_couple(2,5), a_couple(3,1), a_couple(3,2), a_couple(3,3), a_couple(3,4), a_couple(3,5), a_couple(4,1), a_couple(4,2), a_couple(4,3), a_couple(4,4), a_couple(4,5), a_couple(5,1), a_couple(5,2), a_couple(5,3), a_couple(5,4), a_couple(5,5)
-
-    end do
-
-
-    close(1)
-
-    close(2)   
-
-    !Persistence of Employment
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle2.txt')
-
-
-    do it2=4,T
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1f(it4,it3,it2,10)<0.5d0) then
-                    if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                        dum3=dum3+1d0
-                        if(Sim1f(it4,it3,it2-1,4)>0.001d0) then    
-                            dum2=dum2+1d0
-                        end if
-                        if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0)) then    
-                            dum4=dum4+1d0
-                        end if
-                        if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0).AND.(Sim1f(it4,it3,it2-3,4)>0.001d0)) then    
-                            dum5=dum5+1d0
-                        end if
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
-    end do
-
-    !Single female labor force participation by age after 65
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=1
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)<0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(Sim1f(it2,it,T,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3).AND.(Sim1f(it2,it,T-2,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=2
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)<0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=3
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)<0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-
-    do it4=4,Tret
-
-        dum2=0d0
-        dum3=0d0
-        dum4=0d0
-        dum5=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)<0.5) then
-                    if(SimR1f(it2,it,it4,5)>1d-3) then
-                        dum3=dum3+1d0*WeightRet(it4)
-                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                            dum2=dum2+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
-                            dum4=dum4+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(SimR1f(it2,it,it4-3,5)>1d-3)) then
-                            dum5=dum5+(1d0)*WeightRet(it4)
-                        end if   
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    end do
-
-
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried2.txt')
-
-
-    do it2=4,T
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1f(it4,it3,it2,10)>0.5d0) then
-                    if(Sim1f(it4,it3,it2,4)>0.001d0) then
-                        dum3=dum3+1d0
-                        if(Sim1f(it4,it3,it2-1,4)>0.001d0) then    
-                            dum2=dum2+1d0
-                        end if
-                        if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0)) then    
-                            dum4=dum4+1d0
-                        end if
-                        if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0).AND.(Sim1f(it4,it3,it2-3,4)>0.001d0)) then    
-                            dum5=dum5+1d0
-                        end if
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
-    end do
-
-    !Married female labor force participation by age after 65
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=1
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)>0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(Sim1f(it2,it,T,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3).AND.(Sim1f(it2,it,T-2,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=2
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)>0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=3
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1f(it2,it,T,10)>0.5) then
-                if(SimR1f(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-
-    do it4=4,Tret
-
-        dum2=0d0
-        dum3=0d0
-        dum4=0d0
-        dum5=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1f(it2,it,T,10)>0.5) then
-                    if(SimR1f(it2,it,it4,5)>1d-3) then
-                        dum3=dum3+1d0*WeightRet(it4)
-                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
-                            dum2=dum2+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
-                            dum4=dum4+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(SimR1f(it2,it,it4-3,5)>1d-3)) then
-                            dum5=dum5+(1d0)*WeightRet(it4)
-                        end if   
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    end do
-
-
-
-    close(1) 
-
-
-
-
-
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male2.txt')
-
-    do it2=4,T
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1m(it4,it3,it2,10)<0.5d0) then
-                    if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                        dum3=dum3+1d0
-                        if(Sim1m(it4,it3,it2-1,4)>0.001d0) then    
-                            dum2=dum2+1d0
-                        end if
-                        if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0)) then    
-                            dum4=dum4+1d0
-                        end if
-                        if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0).AND.(Sim1m(it4,it3,it2-3,4)>0.001d0)) then    
-                            dum5=dum5+1d0
-                        end if
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
-    end do
-
-    !Single male labor force participation by age after 65
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=1
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)<0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(Sim1m(it2,it,T,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3).AND.(Sim1m(it2,it,T-2,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=2
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)<0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=3
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)<0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-
-    do it4=4,Tret
-
-        dum2=0d0
-        dum3=0d0
-        dum4=0d0
-        dum5=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)<0.5) then
-                    if(SimR1m(it2,it,it4,5)>1d-3) then
-                        dum3=dum3+1d0*WeightRet(it4)
-                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                            dum2=dum2+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
-                            dum4=dum4+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(SimR1m(it2,it,it4-3,5)>1d-3)) then
-                            dum5=dum5+(1d0)*WeightRet(it4)
-                        end if   
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    end do
-
-
-    close(1)
-
-    open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male2.txt')
-
-    do it2=4,T
-        dum2=0.0d0
-        dum3=0.0d0
-        dum4=0.0d0
-        dum5=0.0d0
-
-        do it4=1,nsim2
-            do it3=1,10000
-                if(Sim1m(it4,it3,it2,10)>0.5d0) then
-                    if(Sim1m(it4,it3,it2,4)>0.001d0) then
-                        dum3=dum3+1d0
-                        if(Sim1m(it4,it3,it2-1,4)>0.001d0) then    
-                            dum2=dum2+1d0
-                        end if
-                        if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0)) then    
-                            dum4=dum4+1d0
-                        end if
-                        if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0).AND.(Sim1m(it4,it3,it2-3,4)>0.001d0)) then    
-                            dum5=dum5+1d0
-                        end if
-                    end if
-                end if
-            end do
-        end do
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
-    end do
-
-    !Married male labor force participation by age after 65
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=1
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)>0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(Sim1m(it2,it,T,4)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3).AND.(Sim1m(it2,it,T-2,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=2
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)>0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-    dum2=0d0
-    dum3=0d0
-    dum4=0d0
-    dum5=0d0
-
-    it4=3
-
-    do it2=1,nsim2
-        do it=1,nsim
-            if(Sim1m(it2,it,T,10)>0.5) then
-                if(SimR1m(it2,it,it4,5)>1d-3) then
-                    dum3=dum3+1d0*WeightRet(it4)
-                    if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                        dum2=dum2+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
-                        dum4=dum4+(1d0)*WeightRet(it4)
-                    end if
-                    if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
-                        dum5=dum5+(1d0)*WeightRet(it4)
-                    end if   
-                end if
-            end if
-        end do
-    end do
-
-
-
-    dum2=dum2/dum3
-    dum4=dum4/dum3
-    dum5=dum5/dum3
-
-    write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-
-
-    do it4=4,Tret
-
-        dum2=0d0
-        dum3=0d0
-        dum4=0d0
-        dum5=0d0
-
-        do it2=1,nsim2
-            do it=1,nsim
-                if(Sim1m(it2,it,T,10)>0.5) then
-                    if(SimR1m(it2,it,it4,5)>1d-3) then
-                        dum3=dum3+1d0*WeightRet(it4)
-                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
-                            dum2=dum2+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
-                            dum4=dum4+(1d0)*WeightRet(it4)
-                        end if
-                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(SimR1m(it2,it,it4-3,5)>1d-3)) then
-                            dum5=dum5+(1d0)*WeightRet(it4)
-                        end if   
-                    end if
-                end if
-            end do
-        end do
-
-
-
-        dum2=dum2/dum3
-        dum4=dum4/dum3
-        dum5=dum5/dum3
-
-        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
-
-    end do
-
-
-
-    close(1)
-
-    !Variables are age, ID number, gender, marital status, asset holdings, labor supply, experience, consumption, social security, ability
-
-    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_wealth_data.txt')
-    !
-    !do it2=T-5,T
-    !    !it2=T
-    !    do it3=1,nsim2
-    !        do it4=1,nsim
-    !            it7=exp1m(it3,it4,it2,2)
-    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,it2,10),A(1,it7)
-    !            it7=exp1m(it3,it4,it2,2)
-    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,it2,10),A(2,it7)
-    !        end do
-    !    end do
-    !end do
-    !
-    !do it2=1,5
-    !    !it2=1
-    !    !ium=int(weightret(it2)*nsim)
-    !    do it3=1,nsim2
-    !        do it4=1,nsim
-    !            it7=expR1m(it3,it4,it2,1)
-    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 1d0, Sim1m(it3,it4,T,10),A(1,it7)
-    !            it7=expR1f(it3,it4,it2,1)
-    !            write (1,'(F12.4,F12.4,F12.4,F12.4,F12.4)') (64+it2)*1d0, nsim*(it3-1)*1d0+it4*1d0, 2d0, Sim1f(it3,it4,T,10),A(2,it7)
-    !        end do
-    !    end do
-    !end do
-    !
-    !close(1)
-
-    !open(1, file='Share_single.txt')
-    !do it2=1,T
-    !    write (1,'(F12.4,F12.4)') (it2+19)*1d0, share_single(it2)
-    !end do
-    !close(1)
-
-    open(1, file='Probm.txt')
-    do it2=1,T
-        write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
-    end do
-    close(1)
-
-    open(1, file='Probd.txt')
-    do it2=1,T
-        write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
-    end do
-    close(1)
-
-    !Variables are age, ID number, earnings
-    
-    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_male.txt')
-    !
-    !do it2=1,T
-    !    do it3=1,nsim2
-    !        do it4=1,nsim
-    !            if(Sim1m(it4,it3,it2,10)<0.5d0) then
-    !                it7=exp1m(it3,it4,it2,2)
-    !                !if(it7==1) then
-    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,5)
-    !                !end if
-    !            end if
-    !        end do
-    !    end do
-    !end do
-    !
-    !close(1)
-    
-    !Variables are age, ID number, earnings
-    
-    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_female.txt')
-    !
-    !do it2=1,T
-    !    do it3=1,nsim2
-    !        do it4=1,nsim
-    !            if(Sim1f(it4,it3,it2,10)<0.5d0) then
-    !                it7=exp1f(it3,it4,it2,2)
-    !                !if(it7==1) then
-    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1f(it3,it4,it2,5)
-    !                !end if
-    !            end if
-    !        end do
-    !    end do
-    !end do
-    !
-    !close(1)
-    
-    !Variables are age, male ID number, household earnings
-    
-    !open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_married.txt')
-    !
-    !do it2=1,T
-    !    do it3=1,nsim2
-    !        do it4=1,nsim
-    !            if(Sim1m(it4,it3,it2,10)>0.5d0) then
-    !                it7=exp1m(it3,it4,it2,4)                
-    !                !if((exp1m(it3,it4,it2,2)==1).AND.(exp1f(it3,it7,it2,2)==1)) then
-    !                    write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,6)
-    !                !end if
-    !            end if
-    !        end do
-    !    end do
-    !end do
-    !
-    !close(1)
-    
-    
-    
+    get_paths = 0
+    if (get_paths == 1) then
+        call generate_paths()
+    end if
+        
 contains
 
     subroutine Initialize(iunit)
@@ -3982,5 +810,3070 @@ contains
         
     end subroutine Initialize  
 
+    subroutine generate_paths()
+        implicit none
+        integer :: it2, it3, it4
+        real(8) :: dum2, dum3
+        print *, 'av_earnings(1,1,:) is',av_earnings(1,1,:)
+        print *, 'av_earnings(1,2,:) is',av_earnings(1,2,:)
+        print *, 'av_earnings(2,1,:) is',av_earnings(2,1,:)
+        print *, 'av_earnings(2,2,:) is',av_earnings(2,2,:)
+
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WELFARE BY AGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        !Welfare of everyone
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepath_all.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    dum3=dum3+2d0
+                    dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                    dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Welfare of everyone by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                    dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                    dum3=dum3+2d0*WeightRet(it4)
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+
+        !Single female welfare
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        dum3=dum3+1d0
+                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)<0.5) then
+                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Single female welfare ability 1
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a1.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        if(exp1f(it4,it3,it2,2)<2) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)<0.5) then
+                        if(exp1f(it2,it,T,2)<2) then
+                            dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Single female welfare ability 1 and 2
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_female_a12.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        if(exp1f(it4,it3,it2,2)<3) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)<0.5) then
+                        if(exp1f(it2,it,T,2)<3) then
+                            dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+        !Married Female Welfare
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female.txt')
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                        dum3=dum3+1d0
+                        dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)>0.5) then
+                        dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+        !Married female welfare ability 1
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a1.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                        if(exp1f(it4,it3,it2,2)<2) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)>0.5) then
+                        if(exp1f(it2,it,T,2)<2) then
+                            dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Married female welfare ability 1 and 2
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_female_a12.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                        if(exp1f(it4,it3,it2,2)<3) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1f(it4,it3,it2,16)+(beta**(it2-1))*Sim1f(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married female welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)>0.5) then
+                        if(exp1f(it2,it,T,2)<3) then
+                            dum2=dum2+(SimR1f(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1f(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Single Male Welfare
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                        dum3=dum3+1d0
+                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)<0.5) then
+                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+        !Single male welfare ability 1
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a1.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                        if(exp1m(it4,it3,it2,2)<2) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)<0.5) then
+                        if(exp1m(it2,it,T,2)<2) then
+                            dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Single male welfare ability 1 and 2
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathsingle_male_a12.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                        if(exp1m(it4,it3,it2,2)<3) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Single male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)<0.5) then
+                        if(exp1m(it2,it,T,2)<3) then
+                            dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male.txt')
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                        dum3=dum3+1d0
+                        dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)>0.5) then
+                        dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+
+        close(1)
+
+        !Married male welfare ability 1
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a1.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                        if(exp1m(it4,it3,it2,2)<2) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)>0.5) then
+                        if(exp1m(it2,it,T,2)<2) then
+                            dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        !Married male welfare ability 1 and 2
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'welfarepathmarried_male_a12.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,nsim
+                    if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                        if(exp1m(it4,it3,it2,2)<3) then
+                            dum3=dum3+1d0
+                            dum2=dum2+Sim1m(it4,it3,it2,16)+(beta**(it2-1))*Sim1m(it4,it3,it2,11)
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F12.5,F12.5)') (19+it2)*1d0, dum2
+        end do
+
+        !Married male welfare by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)>0.5) then
+                        if(exp1m(it2,it,T,2)<3) then
+                            dum2=dum2+(SimR1m(it2,it,it4,19)+(beta**(45+(it4-1)))*SimR1m(it2,it,it4,11))*WeightRet(it4)
+                            dum3=dum3+1d0*WeightRet(it4)
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F12.5,F12.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'kpath.txt')
+
+        do it2=1,T
+            dum2=0d0
+            dum3=0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum3=dum3+2d0
+                    dum2=dum2+Sim1m(it4,it3,it2,1)
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        dum2=dum2+Sim1f(it4,it3,it2,1)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.3,F8.3)') it2*1d0+19d0, dum2
+        end do
+
+        do it2=1,Tret
+            dum2=0.0
+            dum3=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum3=dum3+2d0
+                    dum2=dum2+SimR1m(it4,it3,it2,1)
+                    if(Sim1f(it4,it3,T,10)<0.5d0) then
+                        dum2=dum2+SimR1f(it4,it3,it2,1)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.3,F8.3)') it2*1d0+64d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm.txt')
+
+        do it2=1,T
+            dum2=0d0
+            dum3=0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum3=dum3+1d0
+                    dum2=dum2+Sim1m(it4,it3,it2,5)
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathm2.txt')
+
+        do it2=1,T
+            dum2=0d0
+            dum3=0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                        dum3=dum3+1d0
+                        dum2=dum2+Sim1m(it4,it3,it2,5)
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'earningspathf.txt')
+
+        do it2=1,T
+            dum2=0d0
+            dum3=0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum3=dum3+1d0
+                    dum2=dum2+Sim1f(it4,it3,it2,5)
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'cpathm.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1m(it4,it3,it2,2)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        do it2=1,Tret
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+SimR1m(it4,it3,it2,2)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'cpathf.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1f(it4,it3,it2,2)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        do it2=1,Tret
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+SimR1f(it4,it3,it2,2)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'kpathm.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1m(it4,it3,it2,1)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        do it2=1,Tret
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+SimR1m(it4,it3,it2,1)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'kpathf.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1f(it4,it3,it2,1)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        do it2=1,Tret
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+SimR1f(it4,it3,it2,1)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'npathm.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1m(it4,it3,it2,4)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'npathf.txt')
+
+        do it2=1,T
+            dum2=0.0
+            do it4=1,nsim2
+                do it3=1,10000
+                    dum2=dum2+Sim1f(it4,it3,it2,4)
+                end do
+            end do
+            dum2=dum2/160000d0
+            write (1,'(F8.3,F8.3)') it2*1d0, dum2
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle.txt')
+
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        dum3=dum3+1d0
+                        if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                            dum2=dum2+1d0
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.5,F8.5)') it2*1d0, dum2
+        end do
+
+        !Single female labor force participation by age after 65
+
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)<0.5) then
+                        if(SimR1f(it2,it,it4,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+
+            write (1,'(F8.5,F8.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried.txt')
+
+        do it2=1,T
+            dum2=0.0d0
+            dum3=0.0d0
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                        dum3=dum3+1d0
+                        if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                            dum2=dum2+1d0
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            write (1,'(F8.5,F8.5)') it2*1d0, dum2
+        end do
+
+        !Married female labor force participation by age after 65
+
+        do it4=1,Tret
+
+            dum2=0d0
+            dum3=0d0    
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)>0.5) then
+                        if(SimR1f(it2,it,it4,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        dum3=dum3+1d0*WeightRet(it4)
+                    end if
+                end do
+            end do
+
+            dum2=dum2/dum3
+
+            write (1,'(F8.5,F8.5)') (64+it4)*1d0, dum2
+
+        end do
+
+        close(1)
+
+
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male.txt')
+
+        do i=1,T
+
+            dum2=0.0d0
+            dum3=0.0d0    
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,i,10)<0.5) then
+                        if(Sim1m(it2,it,i,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightActive(i)
+                        end if
+                        dum3=dum3+1d0*WeightActive(i)
+                    end if
+                end do
+            end do
+
+            dum2=dum2/dum3
+            write (1,'(F8.5,F8.5)') i*1d0, dum2
+
+        end do
+
+        !Single male labor force participation by age after 65
+
+        do i=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)<0.5) then
+                        if(SimR1m(it2,it,i,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(i)
+                        end if
+                        dum3=dum3+1d0*WeightRet(i)
+                    end if
+                end do
+            end do
+
+            dum2=dum2/dum3
+            write (1,'(F8.5,F8.5)') (64+i)*1d0, dum2
+
+        end do
+
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male.txt')
+
+        do i=1,T
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,i,10)>0.5) then
+                        if(Sim1m(it2,it,i,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightActive(i)
+                        end if
+                        dum3=dum3+1d0*WeightActive(i)
+                    end if
+                end do
+            end do
+
+            dum2=dum2/dum3
+
+            write (1,'(F8.5,F8.5)') i*1d0, dum2
+
+        end do
+
+
+        !Married male labor force participation by age after 65
+
+
+        do i=1,Tret
+
+            dum2=0d0
+            dum3=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)>0.5) then
+                        if(SimR1m(it2,it,i,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(i)
+                        end if
+                        dum3=dum3+1d0*WeightRet(i)
+                    end if
+                end do
+            end do
+
+            dum2=dum2/dum3
+
+            write (1,'(F8.5,F8.5)') (64+i)*1d0, dum2
+
+        end do
+
+
+        close(1)
+
+
+        !!!!!!!!!!!!!!!LFP by Fixed Cost !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+        !Single Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglefc.txt')
+
+        do it6=1,nfc
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                do it4=1,nsim2
+                    do it3=1,10000
+                        if(exp1f(it4,it3,it2,6)==it6) then
+
+                            if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                                dum3=dum3+1d0
+                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+                    end do
+                end do
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fc(2,it6), dum2
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1f(it2,it,T,6)==it6) then
+                            if(Sim1f(it2,it,T,10)<0.5) then
+                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)*WeightRet(it4)
+                                end if
+                                dum3=dum3+1d0*WeightRet(it4)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fc(2,it6), dum2
+
+            end do
+
+        end do
+
+        close(1)
+
+
+
+
+        !Married Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedfc.txt')
+
+        do it6=1,nfc
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                do it4=1,nsim2
+                    do it3=1,10000
+                        if(exp1f(it4,it3,it2,6)==it6) then
+
+                            if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                                dum3=dum3+1d0
+                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+                    end do
+                end do
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fc(1,it6), dum2
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1f(it2,it,T,6)==it6) then
+                            if(Sim1f(it2,it,T,10)>0.5) then
+                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)*WeightRet(it4)
+                                end if
+                                dum3=dum3+1d0*WeightRet(it4)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fc(1,it6), dum2
+
+            end do
+
+        end do
+
+        close(1)
+
+
+
+
+        !Single Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemalefc.txt')
+
+        do it6=1,nfcm
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                do it4=1,nsim2
+                    do it3=1,10000
+                        if(exp1m(it4,it3,it2,6)==it6) then
+
+                            if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                                dum3=dum3+1d0
+                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+                    end do
+                end do
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fcm(2,it6), dum2
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1m(it2,it,T,6)==it6) then
+                            if(Sim1m(it2,it,T,10)<0.5) then
+                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)*WeightRet(it4)
+                                end if
+                                dum3=dum3+1d0*WeightRet(it4)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fcm(2,it6), dum2
+
+            end do
+
+        end do
+
+        close(1)
+
+
+
+
+        !Married Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmalefc.txt')
+
+        do it6=1,nfcm
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                do it4=1,nsim2
+                    do it3=1,10000
+                        if(exp1m(it4,it3,it2,6)==it6) then
+
+                            if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                                dum3=dum3+1d0
+                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+                    end do
+                end do
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (it2+19)*1d0, Fcm(1,it6), dum2
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1m(it2,it,T,6)==it6) then
+                            if(Sim1m(it2,it,T,10)>0.5) then
+                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)*WeightRet(it4)
+                                end if
+                                dum3=dum3+1d0*WeightRet(it4)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5)') it6*1d0, (64+it4)*1d0, Fcm(1,it6), dum2
+
+            end do
+
+        end do
+
+        close(1)
+
+        !!!!!!!!!!!!!!!!!LFP by a,u,f !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        !Single Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_auf.txt')
+
+        do it8=1,nfc
+
+            do it7=1,na
+
+                do it6=1,nu
+
+                    do it2=1,T
+
+
+                        dum2=0.0d0
+                        dum3=0.0d0
+                        dum4=0.0d0
+                        dum5=0.0d0
+
+                        do it4=1,nsim2
+                            do it3=1,10000
+
+                                if(exp1f(it4,it3,it2,6)==it8) then
+
+                                    if(exp1f(it4,it3,it2,2)==it7) then
+
+                                        if(exp1f(it4,it3,it2,3)==it6) then
+
+                                            if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                                                dum3=dum3+1d0
+                                                dum4=dum4+Sim1f(it4,it3,it2,1)
+                                                dum5=dum5+Sim1f(it4,it3,it2,2)
+                                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                                    dum2=dum2+1d0
+                                                end if
+                                            end if
+
+                                        end if
+
+                                    end if
+
+                                end if
+
+                            end do
+                        end do
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5,0d0
+
+                    end do
+
+                    do it4=1,Tret
+
+                        dum2=0d0
+                        dum3=0d0
+                        dum4=0d0
+                        dum5=0d0
+                        dum6=0d0
+
+                        do it2=1,nsim2
+                            do it=1,nsim
+                                if(exp1f(it2,it,T,6)==it8) then
+                                    if(exp1f(it2,it,T,2)==it7) then
+                                        if(exp1f(it2,it,T,3)==it6) then
+                                            if(Sim1f(it2,it,T,10)<0.5) then
+                                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                                    dum2=dum2+(1d0)
+                                                end if
+                                                dum3=dum3+1d0
+                                                dum4=dum4+SimR1f(it2,it,it4,1)
+                                                dum5=dum5+SimR1f(it2,it,it4,2)
+                                                dum6=dum6+SimR1f(it2,it,it4,13)
+                                            end if
+                                        end if
+                                    end if
+                                end if
+                            end do
+                        end do
+
+
+
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+                        dum6=dum6/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5, dum6
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        close(1)
+
+
+        !Single Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_auf.txt')
+
+        do it8=1,nfcm
+
+            do it7=1,na
+
+                do it6=1,nu
+
+                    do it2=1,T
+
+
+                        dum2=0.0d0
+                        dum3=0.0d0
+                        dum4=0.0d0
+                        dum5=0.0d0
+
+                        do it4=1,nsim2
+                            do it3=1,10000
+
+                                if(exp1m(it4,it3,it2,6)==it8) then
+
+                                    if(exp1m(it4,it3,it2,2)==it7) then
+
+                                        if(exp1m(it4,it3,it2,3)==it6) then
+
+                                            if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                                                dum3=dum3+1d0
+                                                dum4=dum4+Sim1m(it4,it3,it2,1)
+                                                dum5=dum5+Sim1m(it4,it3,it2,2)
+
+                                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                                    dum2=dum2+1d0
+                                                end if
+                                            end if
+
+                                        end if
+
+                                    end if
+
+                                end if
+
+                            end do
+                        end do
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, 0d0
+
+                    end do
+
+                    do it4=1,Tret
+
+                        dum2=0d0
+                        dum3=0d0
+                        dum4=0d0
+                        dum5=0d0
+                        dum6=0d0
+
+                        do it2=1,nsim2
+                            do it=1,nsim
+                                if(exp1m(it2,it,T,6)==it8) then
+                                    if(exp1m(it2,it,T,2)==it7) then
+                                        if(exp1m(it2,it,T,3)==it6) then
+                                            if(Sim1m(it2,it,T,10)<0.5) then
+                                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                                    dum2=dum2+(1d0)
+                                                end if
+                                                dum3=dum3+1d0
+                                                dum4=dum4+SimR1m(it2,it,it4,1)
+                                                dum5=dum5+SimR1m(it2,it,it4,2)
+                                                dum6=dum6+SimR1m(it2,it,it4,13)
+                                            end if
+                                        end if
+                                    end if
+                                end if
+                            end do
+                        end do
+
+
+
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+                        dum6=dum6/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, dum6
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        close(1)
+
+        !Married Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_auf.txt')
+
+        do it8=1,nfc
+
+            do it7=1,na
+
+                do it6=1,nu
+
+                    do it2=1,T
+
+
+                        dum2=0.0d0
+                        dum3=0.0d0
+                        dum4=0.0d0
+                        dum5=0.0d0
+
+                        do it4=1,nsim2
+                            do it3=1,10000
+
+                                if(exp1f(it4,it3,it2,6)==it8) then
+
+                                    if(exp1f(it4,it3,it2,2)==it7) then
+
+                                        if(exp1f(it4,it3,it2,3)==it6) then
+
+                                            if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                                                dum3=dum3+1d0
+                                                dum4=dum4+Sim1f(it4,it3,it2,1)
+                                                dum5=dum5+Sim1f(it4,it3,it2,2)
+                                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                                    dum2=dum2+1d0
+                                                end if
+                                            end if
+
+                                        end if
+
+                                    end if
+
+                                end if
+
+                            end do
+                        end do
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5,0d0
+
+                    end do
+
+                    do it4=1,Tret
+
+                        dum2=0d0
+                        dum3=0d0
+                        dum4=0d0
+                        dum5=0d0
+                        dum6=0d0
+
+                        do it2=1,nsim2
+                            do it=1,nsim
+                                if(exp1f(it2,it,T,6)==it8) then
+                                    if(exp1f(it2,it,T,2)==it7) then
+                                        if(exp1f(it2,it,T,3)==it6) then
+                                            if(Sim1f(it2,it,T,10)>0.5) then
+                                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                                    dum2=dum2+(1d0)
+                                                end if
+                                                dum3=dum3+1d0
+                                                dum4=dum4+SimR1f(it2,it,it4,1)
+                                                dum5=dum5+SimR1f(it2,it,it4,2)
+                                                dum6=dum6+SimR1f(it2,it,it4,13)
+                                            end if
+                                        end if
+                                    end if
+                                end if
+                            end do
+                        end do
+
+
+
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+                        dum6=dum6/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fc(2,it8), A(2,it7), U(2,it6), dum2, dum4, dum5, dum6
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        close(1)
+
+
+        !Married Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_auf.txt')
+
+        do it8=1,nfcm
+
+            do it7=1,na
+
+                do it6=1,nu
+
+                    do it2=1,T
+
+
+                        dum2=0.0d0
+                        dum3=0.0d0
+                        dum4=0.0d0
+                        dum5=0.0d0
+
+                        do it4=1,nsim2
+                            do it3=1,10000
+
+                                if(exp1m(it4,it3,it2,6)==it8) then
+
+                                    if(exp1m(it4,it3,it2,2)==it7) then
+
+                                        if(exp1m(it4,it3,it2,3)==it6) then
+
+                                            if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                                                dum3=dum3+1d0
+                                                dum4=dum4+Sim1m(it4,it3,it2,1)
+                                                dum5=dum5+Sim1m(it4,it3,it2,2)
+
+                                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                                    dum2=dum2+1d0
+                                                end if
+                                            end if
+
+                                        end if
+
+                                    end if
+
+                                end if
+
+                            end do
+                        end do
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, 0d0
+
+                    end do
+
+                    do it4=1,Tret
+
+                        dum2=0d0
+                        dum3=0d0
+                        dum4=0d0
+                        dum5=0d0
+                        dum6=0d0
+
+                        do it2=1,nsim2
+                            do it=1,nsim
+                                if(exp1m(it2,it,T,6)==it8) then
+                                    if(exp1m(it2,it,T,2)==it7) then
+                                        if(exp1m(it2,it,T,3)==it6) then
+                                            if(Sim1m(it2,it,T,10)>0.5) then
+                                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                                    dum2=dum2+(1d0)
+                                                end if
+                                                dum3=dum3+1d0
+                                                dum4=dum4+SimR1m(it2,it,it4,1)
+                                                dum5=dum5+SimR1m(it2,it,it4,2)
+                                                dum6=dum6+SimR1m(it2,it,it4,13)
+                                            end if
+                                        end if
+                                    end if
+                                end if
+                            end do
+                        end do
+
+
+
+                        dum2=dum2/dum3
+                        dum4=dum4/dum3
+                        dum5=dum5/dum3
+                        dum6=dum6/dum3
+
+                        write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, Fcm(2,it8), A(1,it7), U(1,it6), dum2, dum4, dum5, dum6
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        close(1)
+
+
+
+        !!!!!!!!!!!!!!!!!LFP by a !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        !Single Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_a.txt')
+
+
+        do it7=1,na
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+                        if(exp1f(it4,it3,it2,2)==it7) then
+
+                            if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                                dum3=dum3+1d0
+                                dum4=dum4+Sim1f(it4,it3,it2,1)
+                                dum5=dum5+Sim1f(it4,it3,it2,2)
+                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1f(it2,it,T,2)==it7) then
+                            if(Sim1f(it2,it,T,10)<0.5) then
+                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)
+                                end if
+                                dum3=dum3+1d0
+                                dum4=dum4+SimR1f(it2,it,it4,1)
+                                dum5=dum5+SimR1f(it2,it,it4,2)
+                                dum6=dum6+SimR1f(it2,it,it4,13)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+
+        close(1)
+
+
+        !Single Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsinglemale_a.txt')
+
+        do it7=1,na
+
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+
+                        if(exp1m(it4,it3,it2,2)==it7) then
+
+
+                            if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                                dum3=dum3+1d0
+                                dum4=dum4+Sim1m(it4,it3,it2,1)
+                                dum5=dum5+Sim1m(it4,it3,it2,2)
+
+                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1m(it2,it,T,2)==it7) then
+                            if(Sim1m(it2,it,T,10)<0.5) then
+                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)
+                                end if
+                                dum3=dum3+1d0
+                                dum4=dum4+SimR1m(it2,it,it4,1)
+                                dum5=dum5+SimR1m(it2,it,it4,2)
+                                dum6=dum6+SimR1m(it2,it,it4,13)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+        close(1)
+
+        !Married Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_a.txt')
+
+        do it7=1,na
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+                        if(exp1f(it4,it3,it2,2)==it7) then
+
+
+                            if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                                dum3=dum3+1d0
+                                dum4=dum4+Sim1f(it4,it3,it2,1)
+                                dum5=dum5+Sim1f(it4,it3,it2,2)
+                                if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1f(it2,it,T,2)==it7) then
+                            if(Sim1f(it2,it,T,10)>0.5) then
+                                if(SimR1f(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)
+                                end if
+                                dum3=dum3+1d0
+                                dum4=dum4+SimR1f(it2,it,it4,1)
+                                dum5=dum5+SimR1f(it2,it,it4,2)
+                                dum6=dum6+SimR1f(it2,it,it4,13)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+
+        close(1)
+
+
+        !Married Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarriedmale_a.txt')
+
+        do it7=1,na
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+                        if(exp1m(it4,it3,it2,2)==it7) then
+
+
+                            if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                                dum3=dum3+1d0
+                                dum4=dum4+Sim1m(it4,it3,it2,1)
+                                dum5=dum5+Sim1m(it4,it3,it2,2)
+
+                                if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                    dum2=dum2+1d0
+                                end if
+                            end if
+
+                        end if
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1m(it2,it,T,2)==it7) then
+                            if(Sim1m(it2,it,T,10)>0.5) then
+                                if(SimR1m(it2,it,it4,5)>1d-3) then
+                                    dum2=dum2+(1d0)
+                                end if
+                                dum3=dum3+1d0
+                                dum4=dum4+SimR1m(it2,it,it4,1)
+                                dum5=dum5+SimR1m(it2,it,it4,2)
+                                dum6=dum6+SimR1m(it2,it,it4,13)
+                            end if
+                        end if
+                    end do
+                end do
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+
+        close(1)
+
+        !!!!!!!!!!!!!!!!!LFP by a (not by marital status) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        !Single Females
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_females_a.txt')
+
+
+        do it7=1,na
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+                        if(exp1f(it4,it3,it2,2)==it7) then
+
+                            dum3=dum3+1d0
+                            dum4=dum4+Sim1f(it4,it3,it2,1)
+                            dum5=dum5+Sim1f(it4,it3,it2,2)
+                            if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                                dum2=dum2+1d0
+                            end if
+                        end if
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0,it7*1d0, it6*1d0, (it2+19)*1d0, A(2,it7), dum2, dum4, dum5,0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1f(it2,it,T,2)==it7) then
+                            if(SimR1f(it2,it,it4,5)>1d-3) then
+                                dum2=dum2+(1d0)
+                            end if
+                            dum3=dum3+1d0
+                            dum4=dum4+SimR1f(it2,it,it4,1)
+                            dum5=dum5+SimR1f(it2,it,it4,2)
+                            dum6=dum6+SimR1f(it2,it,it4,13)
+                        end if
+                    end do
+                end do
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(2,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+
+        close(1)
+
+
+        !Single Males
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppath_males_a.txt')
+
+        do it7=1,na
+
+
+            do it2=1,T
+
+
+                dum2=0.0d0
+                dum3=0.0d0
+                dum4=0.0d0
+                dum5=0.0d0
+
+                do it4=1,nsim2
+                    do it3=1,10000
+
+
+                        if(exp1m(it4,it3,it2,2)==it7) then
+
+                            dum3=dum3+1d0
+                            dum4=dum4+Sim1m(it4,it3,it2,1)
+                            dum5=dum5+Sim1m(it4,it3,it2,2)
+
+                            if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                                dum2=dum2+1d0
+                            end if
+                        end if
+
+                    end do
+                end do
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (it2+19)*1d0, A(1,it7), dum2, dum4, dum5, 0d0
+
+            end do
+
+            do it4=1,Tret
+
+                dum2=0d0
+                dum3=0d0
+                dum4=0d0
+                dum5=0d0
+                dum6=0d0
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(exp1m(it2,it,T,2)==it7) then
+                            if(SimR1m(it2,it,it4,5)>1d-3) then
+                                dum2=dum2+(1d0)
+                            end if
+                            dum3=dum3+1d0
+                            dum4=dum4+SimR1m(it2,it,it4,1)
+                            dum5=dum5+SimR1m(it2,it,it4,2)
+                            dum6=dum6+SimR1m(it2,it,it4,13)
+                        end if
+                    end do
+                end do
+
+
+
+                dum2=dum2/dum3
+                dum4=dum4/dum3
+                dum5=dum5/dum3
+                dum6=dum6/dum3
+
+                write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5,F12.5)') it8*1d0, it7*1d0, it6*1d0, (64+it4)*1d0, A(1,it7), dum2, dum4, dum5, dum6
+
+            end do
+
+        end do
+
+        close(1)
+
+
+        !Earners in couples
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'earners_in_couples.txt')
+
+        open(2,file=trim(results_folder)//trim(tax_folder)//'ability_couple_f_works.txt')
+
+        do it2=1,T
+
+
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+            dum7=0d0
+            a_couple=0d0
+
+            do it4=1,nsim2
+                do it3=1,nsim
+
+                    if(Sim1m(it4,it3,it2,10)>0.5) then
+
+                        it7=exp1m(it4,it3,it2,4)
+                        dum3=dum3+1d0
+
+                        if((Sim1m(it4,it3,it2,4)>0.001).AND.(Sim1f(it4,it7,it2,4)>0.001d0)) then
+                            dum2=dum2+1d0
+                        elseif((Sim1m(it4,it3,it2,4)>0.001).AND.(Sim1f(it4,it7,it2,4)<0.001d0)) then
+                            dum4=dum4+1d0
+                        elseif((Sim1m(it4,it3,it2,4)<0.001).AND.(Sim1f(it4,it7,it2,4)>0.001d0)) then
+                            dum5=dum5+1d0
+                            it8=exp1m(it4,it3,it2,2)
+                            it9=exp1f(it4,it7,it2,2)
+                            a_couple(it9,it8)=a_couple(it9,it8)+1d0
+                        else
+                            dum7=dum7+1d0
+                        end if
+                    end if
+
+                end do
+            end do
+
+            a_couple=a_couple/dum5
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            dum7=dum7/dum3
+
+            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5)') (it2+19)*1d0, dum2, dum4, dum5, dum7
+            write (2,'(26F12.5)') (it2+19)*1d0, a_couple(1,1), a_couple(1,2), a_couple(1,3), a_couple(1,4), a_couple(1,5), a_couple(2,1), a_couple(2,2), a_couple(2,3), a_couple(2,4), a_couple(2,5), a_couple(3,1), a_couple(3,2), a_couple(3,3), a_couple(3,4), a_couple(3,5), a_couple(4,1), a_couple(4,2), a_couple(4,3), a_couple(4,4), a_couple(4,5), a_couple(5,1), a_couple(5,2), a_couple(5,3), a_couple(5,4), a_couple(5,5)
+
+
+        end do
+
+        do it2=1,Tret
+
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+            dum7=0d0
+            a_couple=0d0
+
+            do it4=1,nsim2
+                do it3=1,nsim
+
+                    if(Sim1m(it4,it3,T,10)>0.5) then
+
+                        it7=exp1m(it4,it3,T,4)
+                        dum3=dum3+1d0
+
+                        if((SimR1m(it4,it3,it2,5)>0.001).AND.(SimR1f(it4,it7,it2,5)>0.001d0)) then
+                            dum2=dum2+1d0
+                        elseif((SimR1m(it4,it3,it2,5)>0.001).AND.(SimR1f(it4,it7,it2,5)<0.001d0)) then
+                            dum4=dum4+1d0
+                        elseif((SimR1m(it4,it3,it2,5)<0.001).AND.(SimR1f(it4,it7,it2,5)>0.001d0)) then
+                            dum5=dum5+1d0
+                            it8=exp1m(it4,it3,T,2)
+                            it9=exp1f(it4,it7,T,2)
+                            a_couple(it9,it8)=a_couple(it9,it8)+1d0
+                        else
+                            dum7=dum7+1d0
+                        end if
+                    end if
+
+                end do
+            end do
+
+            a_couple=a_couple/dum5
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            dum7=dum7/dum3
+
+            write (1,'(F12.5,F12.5,F12.5,F12.5,F12.5)') (it2+64)*1d0, dum2, dum4, dum5, dum7
+            write (2,'(26F12.5)') (it2+64)*1d0, a_couple(1,1), a_couple(1,2), a_couple(1,3), a_couple(1,4), a_couple(1,5), a_couple(2,1), a_couple(2,2), a_couple(2,3), a_couple(2,4), a_couple(2,5), a_couple(3,1), a_couple(3,2), a_couple(3,3), a_couple(3,4), a_couple(3,5), a_couple(4,1), a_couple(4,2), a_couple(4,3), a_couple(4,4), a_couple(4,5), a_couple(5,1), a_couple(5,2), a_couple(5,3), a_couple(5,4), a_couple(5,5)
+
+        end do
+
+
+        close(1)
+
+        close(2)   
+
+        !Persistence of Employment
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle2.txt')
+
+
+        do it2=4,T
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                        if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                            dum3=dum3+1d0
+                            if(Sim1f(it4,it3,it2-1,4)>0.001d0) then    
+                                dum2=dum2+1d0
+                            end if
+                            if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0)) then    
+                                dum4=dum4+1d0
+                            end if
+                            if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0).AND.(Sim1f(it4,it3,it2-3,4)>0.001d0)) then    
+                                dum5=dum5+1d0
+                            end if
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
+        end do
+
+        !Single female labor force participation by age after 65
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=1
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)<0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(Sim1f(it2,it,T,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3).AND.(Sim1f(it2,it,T-2,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=2
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)<0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=3
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)<0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+
+        do it4=4,Tret
+
+            dum2=0d0
+            dum3=0d0
+            dum4=0d0
+            dum5=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)<0.5) then
+                        if(SimR1f(it2,it,it4,5)>1d-3) then
+                            dum3=dum3+1d0*WeightRet(it4)
+                            if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                                dum2=dum2+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
+                                dum4=dum4+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(SimR1f(it2,it,it4-3,5)>1d-3)) then
+                                dum5=dum5+(1d0)*WeightRet(it4)
+                            end if   
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        end do
+
+
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried2.txt')
+
+
+        do it2=4,T
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1f(it4,it3,it2,10)>0.5d0) then
+                        if(Sim1f(it4,it3,it2,4)>0.001d0) then
+                            dum3=dum3+1d0
+                            if(Sim1f(it4,it3,it2-1,4)>0.001d0) then    
+                                dum2=dum2+1d0
+                            end if
+                            if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0)) then    
+                                dum4=dum4+1d0
+                            end if
+                            if((Sim1f(it4,it3,it2-1,4)>0.001d0).AND.(Sim1f(it4,it3,it2-2,4)>0.001d0).AND.(Sim1f(it4,it3,it2-3,4)>0.001d0)) then    
+                                dum5=dum5+1d0
+                            end if
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
+        end do
+
+        !Married female labor force participation by age after 65
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=1
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)>0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(Sim1f(it2,it,T,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3).AND.(Sim1f(it2,it,T-2,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=2
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)>0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3).AND.(Sim1f(it2,it,T-1,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=3
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1f(it2,it,T,10)>0.5) then
+                    if(SimR1f(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(Sim1f(it2,it,T,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+
+        do it4=4,Tret
+
+            dum2=0d0
+            dum3=0d0
+            dum4=0d0
+            dum5=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1f(it2,it,T,10)>0.5) then
+                        if(SimR1f(it2,it,it4,5)>1d-3) then
+                            dum3=dum3+1d0*WeightRet(it4)
+                            if(SimR1f(it2,it,it4-1,5)>1d-3) then
+                                dum2=dum2+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3)) then
+                                dum4=dum4+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1f(it2,it,it4-1,5)>1d-3).AND.(SimR1f(it2,it,it4-2,5)>1d-3).AND.(SimR1f(it2,it,it4-3,5)>1d-3)) then
+                                dum5=dum5+(1d0)*WeightRet(it4)
+                            end if   
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        end do
+
+
+
+        close(1) 
+
+
+
+
+
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathsingle_male2.txt')
+
+        do it2=4,T
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                        if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                            dum3=dum3+1d0
+                            if(Sim1m(it4,it3,it2-1,4)>0.001d0) then    
+                                dum2=dum2+1d0
+                            end if
+                            if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0)) then    
+                                dum4=dum4+1d0
+                            end if
+                            if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0).AND.(Sim1m(it4,it3,it2-3,4)>0.001d0)) then    
+                                dum5=dum5+1d0
+                            end if
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
+        end do
+
+        !Single male labor force participation by age after 65
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=1
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)<0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(Sim1m(it2,it,T,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3).AND.(Sim1m(it2,it,T-2,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=2
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)<0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=3
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)<0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+
+        do it4=4,Tret
+
+            dum2=0d0
+            dum3=0d0
+            dum4=0d0
+            dum5=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)<0.5) then
+                        if(SimR1m(it2,it,it4,5)>1d-3) then
+                            dum3=dum3+1d0*WeightRet(it4)
+                            if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                                dum2=dum2+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
+                                dum4=dum4+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(SimR1m(it2,it,it4-3,5)>1d-3)) then
+                                dum5=dum5+(1d0)*WeightRet(it4)
+                            end if   
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        end do
+
+
+        close(1)
+
+        open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male2.txt')
+
+        do it2=4,T
+            dum2=0.0d0
+            dum3=0.0d0
+            dum4=0.0d0
+            dum5=0.0d0
+
+            do it4=1,nsim2
+                do it3=1,10000
+                    if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                        if(Sim1m(it4,it3,it2,4)>0.001d0) then
+                            dum3=dum3+1d0
+                            if(Sim1m(it4,it3,it2-1,4)>0.001d0) then    
+                                dum2=dum2+1d0
+                            end if
+                            if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0)) then    
+                                dum4=dum4+1d0
+                            end if
+                            if((Sim1m(it4,it3,it2-1,4)>0.001d0).AND.(Sim1m(it4,it3,it2-2,4)>0.001d0).AND.(Sim1m(it4,it3,it2-3,4)>0.001d0)) then    
+                                dum5=dum5+1d0
+                            end if
+                        end if
+                    end if
+                end do
+            end do
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (19+it2)*1d0, dum2, dum4, dum5
+        end do
+
+        !Married male labor force participation by age after 65
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=1
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)>0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(Sim1m(it2,it,T,4)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3).AND.(Sim1m(it2,it,T-2,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=2
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)>0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3).AND.(Sim1m(it2,it,T-1,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+        dum2=0d0
+        dum3=0d0
+        dum4=0d0
+        dum5=0d0
+
+        it4=3
+
+        do it2=1,nsim2
+            do it=1,nsim
+                if(Sim1m(it2,it,T,10)>0.5) then
+                    if(SimR1m(it2,it,it4,5)>1d-3) then
+                        dum3=dum3+1d0*WeightRet(it4)
+                        if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                            dum2=dum2+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
+                            dum4=dum4+(1d0)*WeightRet(it4)
+                        end if
+                        if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(Sim1m(it2,it,T,4)>1d-3)) then
+                            dum5=dum5+(1d0)*WeightRet(it4)
+                        end if   
+                    end if
+                end if
+            end do
+        end do
+
+
+
+        dum2=dum2/dum3
+        dum4=dum4/dum3
+        dum5=dum5/dum3
+
+        write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+
+
+        do it4=4,Tret
+
+            dum2=0d0
+            dum3=0d0
+            dum4=0d0
+            dum5=0d0
+
+            do it2=1,nsim2
+                do it=1,nsim
+                    if(Sim1m(it2,it,T,10)>0.5) then
+                        if(SimR1m(it2,it,it4,5)>1d-3) then
+                            dum3=dum3+1d0*WeightRet(it4)
+                            if(SimR1m(it2,it,it4-1,5)>1d-3) then
+                                dum2=dum2+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3)) then
+                                dum4=dum4+(1d0)*WeightRet(it4)
+                            end if
+                            if((SimR1m(it2,it,it4-1,5)>1d-3).AND.(SimR1m(it2,it,it4-2,5)>1d-3).AND.(SimR1m(it2,it,it4-3,5)>1d-3)) then
+                                dum5=dum5+(1d0)*WeightRet(it4)
+                            end if   
+                        end if
+                    end if
+                end do
+            end do
+
+
+
+            dum2=dum2/dum3
+            dum4=dum4/dum3
+            dum5=dum5/dum3
+
+            write (1,'(F8.5,F8.5,F8.5,F8.5)') (64+it4)*1d0, dum2, dum4, dum5
+
+        end do
+
+
+
+        close(1)
+
+        open(1, file='Probm.txt')
+        do it2=1,T
+            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
+        end do
+        close(1)
+
+        open(1, file='Probd.txt')
+        do it2=1,T
+            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
+        end do
+        close(1)
+
+
+    end subroutine generate_paths
 
 end program Laffer
