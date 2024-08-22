@@ -38,11 +38,14 @@ program Laffer
         tax_reg_str = '_nit'
     else if (tax_regime == 3) then
         tax_reg_str = '_ubi'
+    else if (tax_regime == 4) then
+        tax_reg_str = '_eitc'
+    else if (tax_regime == 5) then
+        tax_reg_str = '_flattax'
     end if
 
     open(newunit=iu_simres, file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
     call Initialize(iu_simres)
-    !call setHybrParams(2)
 
     iter_ratio=1
 
@@ -61,7 +64,7 @@ program Laffer
     write(output_unit,*) '********epsilon3 is',epsilon3
     
 
-    if (tax_regime == 1 .or. tax_regime == 3) then
+    if (tax_regime == 1 .or. tax_regime == 3 .or. tax_regime == 5) then
         P2=tax_level_scale
         P4=tax_level_scale+0.15d0
         P1=tax_level_scale-0.15d0
@@ -426,7 +429,7 @@ program Laffer
 
     close(iu_simres)
 
-    get_paths = 0
+    get_paths = 1
     if (get_paths == 1) then
         call generate_paths()
     end if
@@ -490,6 +493,7 @@ contains
             tax_prog_scale = 0.001d0
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base             
+            write(iunit, *) 'with FlatTax tax system'    
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
