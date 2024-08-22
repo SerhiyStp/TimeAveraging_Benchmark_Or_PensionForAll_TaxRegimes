@@ -22,7 +22,7 @@ contains
             !$OMP END DO    
             !$OMP END PARALLEL  
             
-        else if (tax_regime == 2) then
+        else if (tax_regime == 2 .or. tax_regime == 4) then
             if (Deduct_cutoff <= yhat .and. Deduct_cutoff_Mar <= yhat_mar) then
                 tax_regime_nit = 1
             else if (Deduct_cutoff > yhat .and. Deduct_cutoff_Mar > yhat_mar) then
@@ -53,8 +53,7 @@ contains
         end if
         
     end subroutine Solve_Hours
-
-    
+   
     subroutine lsupply_baseline(ik)
         !This subroutine computes optimal policies durin active worklife.
         use Model_Parameters

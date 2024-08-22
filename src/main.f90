@@ -473,6 +473,13 @@ contains
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base  
             write(iunit, *) 'with UBI tax system'
+        else if (tax_regime == 4) then
+            tax_folder = 'eitc/'
+            Deduct_Cutoff = 0.1d0
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
+            after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
+            write(iunit, *) 'with UBI tax system'            
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')

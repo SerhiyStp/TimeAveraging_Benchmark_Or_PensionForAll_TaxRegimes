@@ -84,6 +84,56 @@ contains
         end if        
     end function after_tax_labor_inc_married_nit      
 
+    function after_tax_labor_inc_single_eitc(y) result(res)
+        real(8) :: y
+        real(8) :: res
+        
+        if (y > 0d0) then
+        
+            if (y <= yhat .and. y <= Deduct_cutoff) then
+                res = b_nit + y*(1d0-s_nit)
+            else if (y <= yhat .and. y > Deduct_cutoff) then
+                res = b_nit - s_nit*y + (1d0-tau_L)*(y - Deduct_cutoff) + Deduct_cutoff
+            else if (y > yhat .and. y <= Deduct_cutoff) then
+                res = y
+            else
+                res = (1d0-tau_L)*(y - Deduct_cutoff) + Deduct_cutoff
+            end if
+            
+        else
+            
+            res = 0d0
+            
+        end if
+            
+    end function after_tax_labor_inc_single_eitc    
+    
+    function after_tax_labor_inc_married_eitc(y) result(res)
+        real(8) :: y
+        real(8) :: res
+        
+        if (y > 0d0) then
+        
+            if (y <= yhat_mar .and. y <= Deduct_cutoff_Mar) then
+                res = b_nit_mar + y*(1d0-s_nit)
+            else if (y <= yhat_mar .and. y > Deduct_cutoff_Mar) then
+                res = b_nit_mar - s_nit*y + (1d0-tau_L)*(y - Deduct_cutoff_Mar) + Deduct_cutoff_Mar
+            else if (y > yhat_mar .and. y <= Deduct_cutoff_Mar) then
+                res = y
+            else
+                res = (1d0-tau_L)*(y - Deduct_cutoff_Mar) + Deduct_cutoff_Mar
+            end if    
+            
+        else
+            
+            res = 0d0
+            
+        end if
+        
+    end function after_tax_labor_inc_married_eitc 
+    
+    
+    
     function wage(gender,aval,x,uval)
         integer :: i,gender
         real(8) :: aval, x, uval
