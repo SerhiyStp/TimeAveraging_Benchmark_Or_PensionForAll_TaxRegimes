@@ -41,7 +41,7 @@ contains
         end if
     end function after_tax_labor_inc_single_base
     
-    function after_tax_labor_inc_single_nit(y) result(res)
+    function after_tax_labor_inc_single_nit_w_deduct(y) result(res)
         real(8) :: y
         real(8) :: res
                 
@@ -55,7 +55,7 @@ contains
             res = (1d0-tau_L)*(y - Deduct_cutoff) + Deduct_cutoff
         end if
             
-    end function after_tax_labor_inc_single_nit
+    end function after_tax_labor_inc_single_nit_w_deduct
     
     
     function after_tax_labor_inc_married_base(y) result(res)
@@ -69,7 +69,7 @@ contains
         end if
     end function after_tax_labor_inc_married_base  
     
-    function after_tax_labor_inc_married_nit(y) result(res)
+    function after_tax_labor_inc_married_nit_w_deduct(y) result(res)
         real(8) :: y
         real(8) :: res
         
@@ -82,7 +82,30 @@ contains
         else
             res = (1d0-tau_L)*(y - Deduct_cutoff_Mar) + Deduct_cutoff_Mar
         end if        
-    end function after_tax_labor_inc_married_nit      
+    end function after_tax_labor_inc_married_nit_w_deduct  
+    
+    function after_tax_labor_inc_single_nit(y) result(res)
+        real(8) :: y
+        real(8) :: res
+        
+        if ( y < yhat) then
+            res = y*(1d0-tau_L-s_nit) + b_nit
+        else
+            res = y*(1d0-tau_L)
+        end if        
+    end function after_tax_labor_inc_single_nit    
+    
+    function after_tax_labor_inc_married_nit(y) result(res)
+        real(8) :: y
+        real(8) :: res
+        
+        if ( y <= yhat_mar) then
+            res = y*(1d0-tau_L-s_nit) + b_nit_mar
+        else
+            res = y*(1d0-tau_L)
+        end if
+    end function after_tax_labor_inc_married_nit   
+    
 
     function after_tax_labor_inc_single_eitc(y) result(res)
         real(8) :: y

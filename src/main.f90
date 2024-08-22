@@ -463,12 +463,12 @@ contains
             after_tax_labor_inc_married => after_tax_labor_inc_married_base
             write(iunit, *) 'with benchmark tax system'
         else if (tax_regime == 2) then
-            tax_folder = 'nit/'
+            tax_folder = 'nit_w_deduct/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
             I_ubi = 0
-            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
-            after_tax_labor_inc_married => after_tax_labor_inc_married_nit
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
             write(iunit, *) 'with NIT tax system'
         else if (tax_regime == 3) then
             tax_folder = 'ubi/'

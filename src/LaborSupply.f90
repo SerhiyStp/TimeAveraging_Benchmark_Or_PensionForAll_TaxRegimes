@@ -24,6 +24,7 @@ contains
             !$OMP END PARALLEL  
             
         else if (tax_regime == 2 .or. tax_regime == 4) then
+        ! NIT w Deduction and EITC tax regimes 
             if (Deduct_cutoff <= yhat .and. Deduct_cutoff_Mar <= yhat_mar) then
                 tax_regime_nit = 1
             else if (Deduct_cutoff > yhat .and. Deduct_cutoff_Mar > yhat_mar) then
@@ -36,7 +37,7 @@ contains
                 !$OMP PARALLEL PRIVATE(ik)
                 !$OMP DO SCHEDULE(DYNAMIC)
                 do ik=1,nc
-                    call lsupply_nit_regime1(ik)
+                    call lsupply_nit_w_deduct_regime1(ik)
                 end do
                 !$OMP END DO    
                 !$OMP END PARALLEL
@@ -44,11 +45,20 @@ contains
                 !$OMP PARALLEL PRIVATE(ik)
                 !$OMP DO SCHEDULE(DYNAMIC)
                 do ik=1,nc
-                    call lsupply_nit_regime2(ik)
+                    call lsupply_nit_w_deduct_regime2(ik)
                 end do
                 !$OMP END DO    
                 !$OMP END PARALLEL
-            end if            
+            end if  
+        else if (tax_regime == 6) then
+            !$OMP PARALLEL PRIVATE(ik)
+            !$OMP DO SCHEDULE(DYNAMIC)
+            do ik=1,nc
+                call lsupply_nit(ik)
+            end do
+            !$OMP END DO    
+            !$OMP END PARALLEL            
+            
         else
             print *, 'WARNING: wrong tax regime'
         end if
@@ -593,7 +603,7 @@ contains
 
     end subroutine lsupply_baseline
 
-    subroutine lsupply_nit_regime1(ik)
+    subroutine lsupply_nit_w_deduct_regime1(ik)
         ! for the case where d <= yhat
         use Model_Parameters
         use PolicyFunctions
@@ -753,9 +763,9 @@ contains
             
         end do
         
-    end subroutine lsupply_nit_regime1
+    end subroutine lsupply_nit_w_deduct_regime1
 
-    subroutine lsupply_nit_regime2(ik)
+    subroutine lsupply_nit_w_deduct_regime2(ik)
         ! for the case where d > yhat
         ! for the case where d <= yhat
         use Model_Parameters
@@ -911,6 +921,161 @@ contains
             
         end do
         
-    end subroutine lsupply_nit_regime2
+    end subroutine lsupply_nit_w_deduct_regime2
+
+    
+    subroutine lsupply_nit(ik)
+        !This subroutine computes optimal policies durin active worklife.
+        use Model_Parameters
+        use PolicyFunctions
+        use glob0
+        use hours
+        use root_module
+
+        implicit none
+
+        integer, INTENT(IN) :: ik
+        integer :: ium, iuf
+
+        real(8) :: test_h_lo, h_cutoff, test_h_cutoff1, test_h_cutoff2, test_h_hi1, test_h_hi2, h_lo, h_hi, h_sol
+        real(8) :: h_a, h_b, test_a, test_b
+        integer :: i_gend
+        real(8) :: test_hm_lo, test_hf_lo, test_hm_hi, test_hf_hi, hf_tmp
+        real(8) :: hm_lo, hf_lo
+        real(8) :: hm_hi, hf_hi
+        real(8) :: hm_d, hf_d
+        real(8) :: hm_sol, hf_sol
+        real(8) :: test_h_d   
+
+        real(8) :: hsol, fsol_test
+        integer :: ic
+        real(8) :: hhat, htmp1, htmp2
+        real(8) :: htmp1m, htmp2m, htmp1f, htmp2f, ytot
+
+
+        !CALL ERSET(IERSVR, IPACT, ISACT)
+
+        dum=c_grid(ik)
+        cmod = dum
+        h_hi = 1.0d0
+
+        ! Married couples:
+        do ium=1,nw
+            do iuf=1,nw
+
+                wagem=wage_grid(ium)
+                wagef=wage_grid(iuf)
+
+                wage1 = wagem
+                wage2 = wagef
+                chi1 = chim
+                chi2 = chif
+                eta1 = etam
+                eta2 = etaf           
+
+
+                htmp1m = ( (1d0-t_const)*wage1*(1d0-tau_L-s_nit-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1)
+                htmp1f = ( (1d0-t_const)*wage2*(1d0-tau_L-s_nit-t_employee) / chi2 / cmod / (1d0+tc) )**(1d0/eta2)
+                ytot = wage1*htmp1m + wage2*htmp1f
+                if (ytot <= 2.0d0*yhat) then
+                    hm_sol = htmp1m 
+                    hf_sol = htmp1f
+                else
+                    htmp2m = ( (1d0-t_const)*wage1*(1d0-tau_L-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1) 
+                    htmp2f = ( (1d0-t_const)*wage2*(1d0-tau_L-t_employee) / chi2 / cmod / (1d0+tc) )**(1d0/eta2)
+                    hm_sol = min(h_hi, htmp2m)
+                    hf_sol = min(h_hi, htmp2f)
+                end if
+
+                !ytot = wage1*htmp1m + wage2*htmp1f
+                !
+                !if (ytot  <= yhat) then
+                !    hm_sol = htmp1m
+                !    hf_sol = htmp1f
+                !else
+                !    hm_sol = min(h_hi, htmp2m)
+                !    hf_sol = min(h_hi, htmp2f)
+                !end if     
+
+                laborm(ik,ium,iuf)=hm_sol
+                laborf(ik,ium,iuf)=hf_sol            
+
+
+            end do
+        end do
+
+        ! Only one spouse works:
+        do i_gend = 1, 2
+
+            if (i_gend == 1) then
+                chi1 = chim
+                eta1 = etam
+            else
+                chi1 = chif
+                eta1 = etaf
+            end if
+
+            do ium=1,nw
+                wagem=wage_grid(ium)
+                wage1 = wagem
+
+                htmp1 = ( (1d0-t_const)*wage1*(1d0-tau_L-s_nit-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1)
+                htmp2 = ( (1d0-t_const)*wage1*(1d0-tau_L-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1)    
+
+                ytot = htmp1*wage1
+
+                if (ytot  <= yhat) then
+                    h_sol = htmp1
+                else
+                    h_sol = min(h_hi, htmp2)
+                end if            
+
+                if (i_gend == 1) then
+                    labormwork(ik,ium)=h_sol
+                else
+                    laborfwork(ik,ium)=h_sol
+                end if
+
+            end do
+        end do
+
+
+        ! Singles:
+        do i_gend = 1, 2
+
+            if (i_gend == 1) then
+                chi1 = chims
+                eta1 = etam
+            else
+                chi1 = chifs
+                eta1 = etaf
+            end if
+
+            do ium=1,nw
+
+                wagem=wage_grid(ium)
+                wage1 = wagem
+
+                htmp1 = ( (1d0-t_const)*wage1*(1d0-tau_L-s_nit-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1)
+                htmp2 = ( (1d0-t_const)*wage1*(1d0-tau_L-t_employee) / chi1 / cmod / (1d0+tc) )**(1d0/eta1)   
+                ytot = wage1*htmp1
+                if (ytot <= yhat) then
+                    h_sol = htmp1    
+                else
+                    h_sol = min(h_hi, htmp2)
+                end if   
+
+                if (i_gend == 1) then
+                    laborsinglem(ik,ium)=h_sol
+                else
+                    laborsinglef(ik,ium)=h_sol
+                end if
+
+            end do
+
+        end do
+
+    end subroutine lsupply_nit
+    
     
 end module LaborSupply
