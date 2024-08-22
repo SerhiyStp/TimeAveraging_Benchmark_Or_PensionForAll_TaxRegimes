@@ -4,7 +4,7 @@ module Model_Parameters
         
     integer, parameter :: testing = 0
     integer, parameter :: pension_for_all = 0
-    integer, parameter :: tax_regime = 2 ! Baseline = 1, NIT w Deduction = 2, UBI = 3, EITC = 4
+    integer, parameter :: tax_regime = 2 ! Baseline = 1, NIT w Deduction = 2, UBI = 3, EITC = 4, Flat Tax = 5
     
     character(len=100) :: results_folder
     character(len=100) :: tax_folder

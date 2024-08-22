@@ -12,7 +12,8 @@ contains
         integer :: ik
         integer :: tax_regime_nit
         
-        if (tax_regime == 1 .or. tax_regime == 3) then
+        if (tax_regime == 1 .or. tax_regime == 3 .or. tax_regime == 5) then
+        ! Baseline, UBI and FlatTax tax regimes
             ! Solution for UBI is the same
             !$OMP PARALLEL PRIVATE(ik)
             !$OMP DO SCHEDULE(DYNAMIC)

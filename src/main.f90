@@ -400,7 +400,8 @@ program Laffer
 
         write(iu_simres,*) '             '
         write(iu_simres,*) '********epsilon3 is',epsilon3        
-        if (tax_regime == 1 .or. tax_regime == 3) then
+        if (tax_regime == 1 .or. tax_regime == 3 .or. tax_regime == 5) then
+        ! Baseline, UBI and FlatTax tax regimes
             if (epsilon3 < 0d0) then
                 P4=P2
             else
@@ -453,6 +454,7 @@ contains
             tax_folder = 'benchmark/'
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
+            tax_prog_scale = 1.0d0
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base
@@ -469,6 +471,7 @@ contains
             tax_folder = 'ubi/'
             Deduct_Cutoff = 0d0
             Deduct_Cutoff_Mar = Deduct_Cutoff
+            tax_prog_scale = 1.0d0
             I_ubi = 1
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base  
@@ -479,7 +482,14 @@ contains
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
             after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
             after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
-            write(iunit, *) 'with UBI tax system'            
+            write(iunit, *) 'with UBI tax system'    
+        else if (tax_regime == 5) then
+            tax_folder = 'flattax/'
+            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            tax_prog_scale = 0.001d0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base             
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
