@@ -469,7 +469,7 @@ contains
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
             after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
-            write(iunit, *) 'with NIT tax system'
+            write(iunit, *) 'with NIT with deduction tax system'
         else if (tax_regime == 3) then
             tax_folder = 'ubi/'
             Deduct_Cutoff = 0d0
@@ -493,7 +493,15 @@ contains
             tax_prog_scale = 0.001d0
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base             
-            write(iunit, *) 'with FlatTax tax system'    
+            write(iunit, *) 'with FlatTax tax system' 
+        else if (tax_regime == 6) then
+            tax_folder = 'nit'
+            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            !tax_prog_scale = 0.001d0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+            write(iunit, *) 'with NIT tax system' 
         end if
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
