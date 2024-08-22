@@ -363,7 +363,7 @@ program Laffer
             !$OMP END DO    
             !$OMP END PARALLEL
 
-
+            write(iu_simres,*) 'Simulations: '
             call Statistics(file_id=output_unit)
             !epsilon3=0d0
             !end do
