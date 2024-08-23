@@ -23,7 +23,9 @@ contains
         real(8) :: dum2a(na,3)
         real(8) :: share_single(T, na+1)        
         integer :: file_id
-
+        
+        
+         write(file_id,*)'Simulations: '
         !Computing the weight of each generation
 
         WeightActive(1)=1d0

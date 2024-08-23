@@ -363,7 +363,7 @@ program Laffer
             !$OMP END DO    
             !$OMP END PARALLEL
 
-            write(output_unit,*) 'Simulations: '
+            !write(output_unit,*) 'Simulations: '
             call Statistics(file_id=output_unit)
             !epsilon3=0d0
             !end do
