@@ -23,10 +23,14 @@ program Laffer
     integer :: get_paths
     character(len=15) :: model_version_str
     character(len=15) :: tax_reg_str
+    character(len=4) :: deduct_str
 
     !call OMP_SET_NUM_THREADS(106)
     
     solve_lifecycle = .true.
+    call Init_Model_TaxRegime_version()
+    
+    
     if (pension_for_all == 0) then
         model_version_str = 'Benchmark'
     else
@@ -41,7 +45,8 @@ program Laffer
     else if (tax_regime == 4) then
         tax_reg_str = '_eitc'
     else if (tax_regime == 5) then
-        tax_reg_str = '_flattax'
+        write(deduct_str, '(f4.2)') Deduct_Cutoff
+        tax_reg_str = '_flattax_'//TRIM(deduct_str)
     else if (tax_regime == 6) then
         tax_reg_str = '_nit'
     end if
@@ -441,6 +446,75 @@ program Laffer
         
 contains
 
+    subroutine Init_Model_TaxRegime_version()
+    
+        implicit none
+        
+        !if (pension_for_all == 1) then
+        !    results_folder = 'pensionforall/'    
+        !    write(iunit, *) 'Computing pensionforall model '
+        !else
+        !    results_folder = 'benchmark/'   
+        !    write(iunit, *) 'Computing benchmark model '
+        !end if
+        
+        if (tax_regime == 1) then
+            !tax_folder = 'benchmark/'
+            Deduct_Cutoff = 0d0
+            Deduct_Cutoff_Mar = Deduct_Cutoff
+            tax_prog_scale = 1.0d0
+            I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base
+            !write(iunit, *) 'with benchmark tax system'
+        else if (tax_regime == 2) then
+            !tax_folder = 'nit_w_deduct/'
+            Deduct_Cutoff = 0.1d0
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
+            !write(iunit, *) 'with NIT with deduction tax system'
+        else if (tax_regime == 3) then
+            !tax_folder = 'ubi/'
+            Deduct_Cutoff = 0d0
+            Deduct_Cutoff_Mar = Deduct_Cutoff
+            tax_prog_scale = 1.0d0
+            I_ubi = 1
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base  
+            !write(iunit, *) 'with UBI tax system'
+        else if (tax_regime == 4) then
+            !tax_folder = 'eitc/'
+            Deduct_Cutoff = 0.1d0
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
+            after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
+            !write(iunit, *) 'with UBI tax system'    
+        else if (tax_regime == 5) then
+            theta = thetas
+            !tax_folder = 'flattax/'
+            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this, 0.0, 0.2 and 0.4
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            tax_prog_scale = 0.001d0
+            I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            after_tax_labor_inc_married => after_tax_labor_inc_married_base             
+            !write(iunit, *) 'with FlatTax tax system' 
+        else if (tax_regime == 6) then
+            !tax_folder = 'nit'
+            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            !tax_prog_scale = 0.001d0
+            I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+            !write(iunit, *) 'with NIT tax system' 
+        end if
+    
+    end subroutine Init_Model_TaxRegime_version
+
+
     subroutine Initialize(iunit)
 
         !USE ANORDF_INT
@@ -448,7 +522,7 @@ contains
         
         integer, intent(in) :: iunit
         integer :: iu_tmp
-        
+        character(len=4) :: deduct_str
         
         if (pension_for_all == 1) then
             results_folder = 'pensionforall/'    
@@ -458,59 +532,62 @@ contains
             write(iunit, *) 'Computing benchmark model '
         end if
         
+        
         if (tax_regime == 1) then
             tax_folder = 'benchmark/'
-            Deduct_Cutoff = 0d0
-            Deduct_Cutoff_Mar = Deduct_Cutoff
-            tax_prog_scale = 1.0d0
-            I_ubi = 0
-            after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            after_tax_labor_inc_married => after_tax_labor_inc_married_base
+            !Deduct_Cutoff = 0d0
+            !Deduct_Cutoff_Mar = Deduct_Cutoff
+            !tax_prog_scale = 1.0d0
+            !I_ubi = 0
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_base
             write(iunit, *) 'with benchmark tax system'
         else if (tax_regime == 2) then
             tax_folder = 'nit_w_deduct/'
-            Deduct_Cutoff = 0.1d0
-            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
-            I_ubi = 0
-            after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
-            after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
-            write(iunit, *) 'with NIT with deduction tax system'
+            !Deduct_Cutoff = 0.1d0
+            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            !I_ubi = 0
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
+            !write(iunit, *) 'with NIT with deduction tax system'
         else if (tax_regime == 3) then
             tax_folder = 'ubi/'
-            Deduct_Cutoff = 0d0
-            Deduct_Cutoff_Mar = Deduct_Cutoff
-            tax_prog_scale = 1.0d0
-            I_ubi = 1
-            after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            after_tax_labor_inc_married => after_tax_labor_inc_married_base  
+            !Deduct_Cutoff = 0d0
+            !Deduct_Cutoff_Mar = Deduct_Cutoff
+            !tax_prog_scale = 1.0d0
+            !I_ubi = 1
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_base  
             write(iunit, *) 'with UBI tax system'
         else if (tax_regime == 4) then
             tax_folder = 'eitc/'
-            Deduct_Cutoff = 0.1d0
-            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
-            after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
-            after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
+            !Deduct_Cutoff = 0.1d0
+            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
             write(iunit, *) 'with UBI tax system'    
         else if (tax_regime == 5) then
-            theta = thetas
-            tax_folder = 'flattax/'
-            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
-            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            tax_prog_scale = 0.001d0
-            I_ubi = 0
-            after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            after_tax_labor_inc_married => after_tax_labor_inc_married_base             
-            write(iunit, *) 'with FlatTax tax system' 
+            !theta = thetas
+            write(deduct_str, '(f4.2)') Deduct_Cutoff
+            tax_folder = 'flattax_'//TRIM(deduct_str)//'/'
+            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            !tax_prog_scale = 0.001d0
+            !I_ubi = 0
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_base             
+            write(iunit, *) 'with FlatTax tax system and deduction = '//deduct_str 
         else if (tax_regime == 6) then
             tax_folder = 'nit'
-            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
-            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            !tax_prog_scale = 0.001d0
-            I_ubi = 0
-            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
-            after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            !!tax_prog_scale = 0.001d0
+            !I_ubi = 0
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
             write(iunit, *) 'with NIT tax system' 
         end if
+        
         
         open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
         write(iu_tmp, '(i0)') testing 
