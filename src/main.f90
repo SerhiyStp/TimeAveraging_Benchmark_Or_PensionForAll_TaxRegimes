@@ -84,7 +84,10 @@ program Laffer
 
         thetas = (/0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
         theta = (/0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
-        !theta = thetas
+        if (tax_regime == 5) then
+            ! Flat tax no deduction
+            theta = thetas
+        end if
         epsilon_ratio=1d0
 
         do while(abs(epsilon_ratio)>0.003d0)
@@ -487,6 +490,7 @@ contains
             after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
             write(iunit, *) 'with UBI tax system'    
         else if (tax_regime == 5) then
+            theta = thetas
             tax_folder = 'flattax/'
             Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
