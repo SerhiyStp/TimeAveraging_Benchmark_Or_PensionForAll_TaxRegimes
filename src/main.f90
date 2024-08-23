@@ -491,6 +491,7 @@ contains
             Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
             tax_prog_scale = 0.001d0
+            I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_base
             after_tax_labor_inc_married => after_tax_labor_inc_married_base             
             write(iunit, *) 'with FlatTax tax system' 
@@ -499,6 +500,7 @@ contains
             Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
             !tax_prog_scale = 0.001d0
+            I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit
             after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
             write(iunit, *) 'with NIT tax system' 

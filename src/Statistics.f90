@@ -20,7 +20,7 @@ contains
         real(8) :: dum18,dum19,dum20,dum21,dum22,dum23,dum24,dum25,r_ret,ss_tax,ss_expense,new_revenue,population_mass
         real(8), allocatable :: spousewage(:,:), spousewage2(:,:)
         real(8) :: test_corr
-        real(8) :: dum2a(na,3)
+        real(8) :: dum2a(na,3), dum3a(na)
         real(8) :: share_single(T, na+1)        
         integer :: file_id
         
@@ -1007,14 +1007,24 @@ contains
 
         dum2=0d0
         dum3=0d0
+        
+        dum2a=0d0
+        dum3a=0d0
 
         do i=1,T
 
             do it2=1,nsim2
                 do it=1,nsim
                     if(Sim1m(it2,it,i,10)<0.5) then
-                        dum2=dum2+Sim1m(it2,it,i,4)*WeightActive(i)
-                        dum3=dum3+1d0*WeightActive(i)
+                        dum2 = dum2 + Sim1m(it2,it,i,4)*WeightActive(i)
+                        dum3 = dum3 + 1d0*WeightActive(i)
+                        ia = exp1m(it2,it,i,2)
+                        dum2a(ia,1) = dum2a(ia,1) +Sim1m(it2,it,i,4)*WeightActive(i)
+                        if (Sim1m(it2,it,i,4) > 0.001d0) then
+                            dum2a(ia,2) = dum2a(ia,2) + 1d0*WeightActive(i)
+                        end if
+                        dum3a(ia) = dum3a(ia) +1d0*WeightActive(i)
+                    
                     end if
                 end do
             end do
@@ -1023,7 +1033,12 @@ contains
 
         dum2=dum2/dum3
 
-        write(file_id,*)'Single Male labor supply is',dum2
+        write(file_id,*),'Single Male labor supply is',dum2
+        do ia = 1, na
+            write(file_id,*), 'ability',ia,'single male labor supply is',dum2a(ia,1)/max(1d-6,dum3a(ia))
+            write(file_id,*), 'ability',ia,'single male LFP is',dum2a(ia,2)/max(1d-6,dum3a(ia))
+        end do
+    
 
         dum10=((dum2-0.281917216)/0.281917216)**2
 
@@ -1053,45 +1068,13 @@ contains
 
         write(file_id,*)'Single male labor force participation is',dum2
 
-        !YVAR=sqrt(-1.0)
-        !XVARS=sqrt(-1.0)
-
-        !do i=2,T
-
-        !do it2=1,nsim2
-        !do it=1,nsim
-        !if(Sim1m(it2,it,i,10)<0.5) then
-        !if(Sim1m(it2,it,i-1,4)>1d-3) then
-        !XVARs((i-1)*it*it2+(it2-1)*it+it,1)=1d0
-        !else
-        !XVARs((i-1)*it*it2+(it2-1)*it+it,1)=0d0
-        !end if    
-        !if(Sim1m(it2,it,i,4)>1d-3) then
-        !YVAR((i-1)*it*it2+(it2-1)*it+it)=1d0
-        !else
-        !YVAR((i-1)*it*it2+(it2-1)*it+it)=0d0
-        !end if      
-        !end if
-        !end do
-        !end do
-
-        !end do
-
-        !CALL RLSE (YVAR, XVARS, BREG, SST=SST, SSE=SSE)
-        !
-        !dum2=1d0-SSE/SST
-
-        !dum10=dum10+((dum2-0.4081)/0.4081)**2
-
-        !write(file_id,*)'BREG is',BREG
-
-        !write(file_id,*)'Single male LFP R2 is',dum2
-
-
         !Married Male Labor Supply
 
         dum2=0d0
         dum3=0d0
+
+    dum2a=0d0
+    dum3a=0d0
 
         do i=1,T
 
@@ -1100,7 +1083,15 @@ contains
                     if(Sim1m(it2,it,i,10)>0.5) then
                         dum2=dum2+Sim1m(it2,it,i,4)*WeightActive(i)
                         dum3=dum3+1d0*WeightActive(i)
-                    end if
+                    
+                        ia = exp1m(it2,it,i,2)
+                        dum2a(ia,1) = dum2a(ia,1) +Sim1m(it2,it,i,4)*WeightActive(i)
+                        if (Sim1m(it2,it,i,4) > 0.001d0) then
+                            dum2a(ia,2) = dum2a(ia,2) + 1d0*WeightActive(i)
+                        end if
+                        dum3a(ia) = dum3a(ia) +1d0*WeightActive(i)
+                        
+                        end if
                 end do
             end do
 
@@ -1108,7 +1099,11 @@ contains
 
         dum2=dum2/dum3
 
-        write(file_id,*)'Married Male labor supply is',dum2
+        write(file_id,*),'Married Male labor supply is',dum2
+        do ia = 1, na
+            write(file_id,*), 'ability',ia,'married male labor supply is',dum2a(ia,1)/max(1d-6,dum3a(ia))
+            write(file_id,*), 'ability',ia,'married male LFP is',dum2a(ia,2)/max(1d-6,dum3a(ia))
+        end do    
 
         dum10=dum10+((dum2-0.359934432)/0.359934432)**2
 
@@ -1200,13 +1195,25 @@ contains
         dum3=0d0
         dum4=0d0
 
+        dum2a=0d0
+        dum3a=0d0
+
+
         do i=1,T
 
             do it2=1,nsim2
                 do it=1,nsim
                     if(Sim1f(it2,it,i,10)<0.5) then
-                        dum2=dum2+Sim1f(it2,it,i,4)*WeightActive(i)
-                        dum3=dum3+1d0*WeightActive(i)
+                        dum2 = dum2 + Sim1f(it2,it,i,4)*WeightActive(i)
+                        dum3 = dum3 + 1d0*WeightActive(i)
+
+                        ia = exp1f(it2,it,i,2)
+                        dum2a(ia,1) = dum2a(ia,1) +Sim1f(it2,it,i,4)*WeightActive(i)
+                        if (Sim1f(it2,it,i,4) > 0.001d0) then
+                            dum2a(ia,2) = dum2a(ia,2) + 1d0*WeightActive(i)
+                        end if
+                        dum3a(ia) = dum3a(ia) +1d0*WeightActive(i)
+                    
                     end if
                 end do
             end do
@@ -1215,7 +1222,12 @@ contains
 
         dum2=dum2/dum3
 
-        write(file_id,*)'Single female labor supply is',dum2
+        write(file_id,*),'Single female labor supply is',dum2
+        do ia = 1, na
+            write(file_id,*), 'ability',ia,'single female labor supply is',dum2a(ia,1)/max(1d-6,dum3a(ia))
+            write(file_id,*), 'ability',ia,'single female LFP is',dum2a(ia,2)/max(1d-6,dum3a(ia))
+        end do
+    
 
         dum10=dum10+((dum2-0.25116337)/0.25116337)**2
 
@@ -1237,34 +1249,29 @@ contains
 
         write(file_id,*)'Stdev single female labor supply is',SQRT(dum4)
 
-
-        !!Variance of single female hours
-        !do i=10,10
-        !do it2=1,nsim2
-        !do it=1,nsim
-        !if(Sim1f(it2,it,i,10)<0.5) then
-        !dum4=dum4+((Sim1f(it2,it,i,4)-dum2)**2)*WeightActive(i)
-        !end if
-        !end do
-        !end do
-        !end do
-
-        !dum4=dum4/dum3
-
-        !write(file_id,*)'Stdev single female labor supply at age 30 is',SQRT(dum4)
-
         !Married female labor supply
 
         dum2=0d0
         dum3=0d0
         dum4=0d0
 
+        dum2a=0d0
+        dum3a=0d0
+
         do i=1,T
             do it2=1,nsim2
                 do it=1,nsim
                     if(Sim1f(it2,it,i,10)>0.5) then
-                        dum2=dum2+Sim1f(it2,it,i,4)*WeightActive(i)
-                        dum3=dum3+1d0*WeightActive(i)
+                        dum2 = dum2 + Sim1f(it2,it,i,4)*WeightActive(i)
+                        dum3 = dum3 + 1d0*WeightActive(i)
+
+                        ia = exp1f(it2,it,i,2)
+                        dum2a(ia,1) = dum2a(ia,1) +Sim1f(it2,it,i,4)*WeightActive(i)
+                        if (Sim1f(it2,it,i,4) > 0.001d0) then
+                            dum2a(ia,2) = dum2a(ia,2) + 1d0*WeightActive(i)
+                        end if
+                        dum3a(ia) = dum3a(ia) +1d0*WeightActive(i)
+                    
                     end if
                 end do
             end do
@@ -1272,7 +1279,12 @@ contains
 
         dum2=dum2/dum3
 
-        write(file_id,*)'Married female labor supply is',dum2
+        write(file_id,*),'Married female labor supply is',dum2
+        do ia = 1, na
+            write(file_id,*), 'ability',ia,'married female labor supply is',dum2a(ia,1)/max(1d-6,dum3a(ia))
+            write(file_id,*), 'ability',ia,'married female LFP is',dum2a(ia,2)/max(1d-6,dum3a(ia))
+        end do
+    
 
         dum10=dum10+((dum2-0.224398901)/0.224398901)**2
 
