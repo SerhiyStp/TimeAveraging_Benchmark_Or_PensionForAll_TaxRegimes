@@ -35,13 +35,15 @@ program Laffer
     if (tax_regime == 1) then
         tax_reg_str = '_bench'
     else if (tax_regime == 2) then
-        tax_reg_str = '_nit'
+        tax_reg_str = '_nit_w_deduct'
     else if (tax_regime == 3) then
         tax_reg_str = '_ubi'
     else if (tax_regime == 4) then
         tax_reg_str = '_eitc'
     else if (tax_regime == 5) then
         tax_reg_str = '_flattax'
+    else if (tax_regime == 6) then
+        tax_reg_str = '_nit'
     end if
 
     open(newunit=iu_simres, file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
