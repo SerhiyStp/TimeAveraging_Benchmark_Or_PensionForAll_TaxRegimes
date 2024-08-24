@@ -4,7 +4,7 @@ module Model_Parameters
         
     integer, parameter :: testing = 0
     integer, parameter :: pension_for_all = 0
-    integer, parameter :: tax_regime = 5 ! Baseline = 1, NIT w Deduction = 2, UBI = 3, EITC = 4, Flat Tax = 5, NIT = 6
+    integer, parameter :: tax_regime = 5 ! Baseline = 1, NIT w Deduction = 2, UBI = 3, EITC = 4, Flat Tax = 5, NIT1 = 6, NIT2 = 7
     
     character(len=100) :: results_folder
     character(len=100) :: tax_folder
@@ -19,11 +19,12 @@ module Model_Parameters
     !NIT 
     !real(8), parameter :: Deduct_Cutoff = 0.1d0 !0.8d0        
     !real(8), parameter :: Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff    
-    real(8), parameter :: yhat = 0.50d0
-    real(8), parameter :: yhat_mar = 2d0*yhat !1.00d0
+    !real(8), parameter :: yhat = 0.50d0
+    !real(8), parameter :: yhat_mar = 2d0*yhat !1.00d0
     real(8), parameter :: s_nit = 0.10d0
-    real(8), parameter :: b_nit = s_nit*yhat
-    real(8), parameter :: b_nit_mar = s_nit*yhat_mar
+    real(8) :: yhat, yhat_mar, b_nit, b_nit_mar
+    !real(8), parameter :: b_nit = s_nit*yhat
+    !real(8), parameter :: b_nit_mar = s_nit*yhat_mar
     real(8) :: tau_L  = 0.13d0
     !UBI
     real(8), parameter :: b_ubi = 0.01d0 !0.05d0

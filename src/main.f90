@@ -48,7 +48,9 @@ program Laffer
         write(deduct_str, '(f4.2)') Deduct_Cutoff
         tax_reg_str = '_flattax_'//TRIM(deduct_str)
     else if (tax_regime == 6) then
-        tax_reg_str = '_nit'
+        tax_reg_str = '_nit1'
+    else if (tax_regime == 7) then
+        tax_reg_str = '_nit2'        
     end if
 
     open(newunit=iu_simres, file="Laffer_Results_"//TRIM(model_version_str)//TRIM(tax_reg_str)//".txt")
@@ -490,6 +492,10 @@ contains
             !tax_folder = 'eitc/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            yhat = 0.50d0
+            yhat_mar = 2d0*yhat
+            b_nit = s_nit*yhat
+            b_nit_mar = s_nit*yhat_mar            
             after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
             after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
             !write(iunit, *) 'with UBI tax system'    
@@ -507,6 +513,23 @@ contains
             !tax_folder = 'nit'
             Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            yhat = 0.50d0
+            yhat_mar = 2d0*yhat
+            b_nit = s_nit*yhat
+            b_nit_mar = s_nit*yhat_mar
+            !tax_prog_scale = 0.001d0
+            I_ubi = 0
+            after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+            !write(iunit, *) 'with NIT tax system' 
+        else if (tax_regime == 7) then
+            !tax_folder = 'nit'
+            Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            yhat = 1.00d0
+            yhat_mar = 2d0*yhat
+            b_nit = s_nit*yhat
+            b_nit_mar = s_nit*yhat_mar
             !tax_prog_scale = 0.001d0
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit
@@ -580,14 +603,23 @@ contains
             !after_tax_labor_inc_married => after_tax_labor_inc_married_base             
             write(iunit, *) 'with FlatTax tax system and deduction = '//deduct_str 
         else if (tax_regime == 6) then
-            tax_folder = 'nit'
+            tax_folder = 'nit1'
             !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
             !!tax_prog_scale = 0.001d0
             !I_ubi = 0
             !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
             !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
-            write(iunit, *) 'with NIT tax system' 
+            write(iunit, *) 'with NIT1 tax system' 
+        else if (tax_regime == 7) then
+            tax_folder = 'nit2'
+            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+            !!tax_prog_scale = 0.001d0
+            !I_ubi = 0
+            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+            write(iunit, *) 'with NIT2 tax system'             
         end if
         
         
