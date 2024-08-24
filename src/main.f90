@@ -603,7 +603,7 @@ contains
             !after_tax_labor_inc_married => after_tax_labor_inc_married_base             
             write(iunit, *) 'with FlatTax tax system and deduction = '//deduct_str 
         else if (tax_regime == 6) then
-            tax_folder = 'nit1'
+            tax_folder = 'nit1/'
             !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
             !!tax_prog_scale = 0.001d0
@@ -612,7 +612,7 @@ contains
             !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
             write(iunit, *) 'with NIT1 tax system' 
         else if (tax_regime == 7) then
-            tax_folder = 'nit2'
+            tax_folder = 'nit2/'
             !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
             !!tax_prog_scale = 0.001d0
