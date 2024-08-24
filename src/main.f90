@@ -91,7 +91,7 @@ program Laffer
 
         thetas = (/0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
         theta = (/0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
-        if (tax_regime == 5) then
+        if (tax_regime == 5 .or. tax_regime == 3) then
             ! Flat tax no deduction
             theta = thetas
         end if
@@ -423,6 +423,8 @@ program Laffer
             P2 = (P4+P1)/2d0            
             tax_level_scale = P2
             write(iu_simres,*) 'tax_level_scale is',tax_level_scale
+            tau_L = 1d0-0.81773322*tax_level_scale
+            write(iu_simres,*) 'tau_L is',tau_L
         else
             if (epsilon3 > 0d0) then
                 P4=P2
