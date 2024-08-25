@@ -475,6 +475,8 @@ contains
             !tax_folder = 'nit_w_deduct/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            yhat = 0.50d0
+            yhat_mar = 2d0*yhat            
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
             after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
