@@ -21,6 +21,10 @@ contains
         real(8), allocatable :: spousewage(:,:), spousewage2(:,:)
         real(8) :: test_corr
         real(8) :: dum2a(na,3), dum3a(na)
+        real(8) :: dum2aa(na,na), dum3aa(na,na), dum2aa_check(na,na)
+        real(8) :: n1, n2, n3, n4, ntot, h1, h2, h3, h4
+        integer :: iam, iaf
+        integer :: ipart
         real(8) :: share_single(T, na+1)        
         integer :: file_id
         
@@ -4428,21 +4432,127 @@ contains
 
         write(file_id,*)'Fraction of non-retired married men above 65 is',dum2
 
-        open(21, file='share_single.txt')
+        !open(21, file='share_single.txt')
     
-        do i=1,T
-            share_single(i,1) = count( Sim1m(:,:,i,10)<0.5d0 ) / dble(nsim2*nsim)
-            do ia = 1, na
-                !dum2a(ia,1)=dum2a(ia,1)/dum3a(ia)
-                dum2 = count( Sim1m(:,:,i,10)<0.5d0 .and. exp1m(:,:,i,2) == ia )
-                dum3 = count( exp1m(:,:,i,2) == ia )
-                dum2a(ia,1) = dum2 / dum3
-                share_single(i,1+ia) = dum2a(ia,1)
-            end do
-            write(21, '(i2,<na+1>f12.6)') i, share_single(i,:)
-        end do
-        close(21)  
+        !do i=1,T
+        !    share_single(i,1) = count( Sim1m(:,:,i,10)<0.5d0 ) / dble(nsim2*nsim)
+        !    do ia = 1, na
+        !        !dum2a(ia,1)=dum2a(ia,1)/dum3a(ia)
+        !        dum2 = count( Sim1m(:,:,i,10)<0.5d0 .and. exp1m(:,:,i,2) == ia )
+        !        dum3 = count( exp1m(:,:,i,2) == ia )
+        !        dum2a(ia,1) = dum2 / dum3
+        !        share_single(i,1+ia) = dum2a(ia,1)
+        !    end do
+        !    write(21, '(i2,<na+1>f12.6)') i, share_single(i,:)
+        !end do
+        !close(21)  
 
+        if (tax_regime == 2 .or. tax_regime == 4) then
+            write(file_id,*) 'Single men and women, dependency table 1:'
+
+            ntot = count(Sim1m(:,:,:,10)<0.5d0)*1.0d0
+            n1 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)>0.01d0 .and. Sim1m(:,:,:,5)<=yhat)*1.0d0
+            n2 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,5)>yhat)*1.0d0
+            n3 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)<0.01d0)*1.0d0
+            n4 = 0d0
+            write(file_id,*) 'Single men Fraction in category 1 = ', n1/ntot
+            write(file_id,*) 'Single men Fraction in category 2 = ', n2/ntot
+            write(file_id,*) 'Single men Fraction in category 3 = ', n3/ntot
+            write(file_id,*) 'Single men Fraction in category 4 = ', n4/ntot
+
+            ntot = count(Sim1f(:,:,:,10)<0.5d0)*1.0d0
+            n1 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)>0.01d0 .and. Sim1f(:,:,:,5)<=yhat)*1.0d0
+            n2 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,5)>yhat)*1.0d0
+            n3 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)<0.01d0)*1.0d0
+            n4 = 0d0
+            write(file_id,*) 'Single women Fraction in category 1 = ', n1/ntot
+            write(file_id,*) 'Single women Fraction in category 2 = ', n2/ntot
+            write(file_id,*) 'Single women Fraction in category 3 = ', n3/ntot
+            write(file_id,*) 'Single women Fraction in category 4 = ', n4/ntot
+
+            do ia = 1, na
+                ntot = count(Sim1m(:,:,:,10)<0.5d0 .and. exp1m(:,:,:,2)==ia)*1.0d0
+                write(file_id,*) 'ability = ', ia, ' men ntot = ', ntot
+                n1 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)>0.01d0 .and. Sim1m(:,:,:,5)<=yhat .and. exp1m(:,:,:,2)==ia)*1.0d0
+                n2 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,5)>yhat .and. exp1m(:,:,:,2)==ia)*1.0d0
+                n3 = count(Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)<0.01d0 .and. exp1m(:,:,:,2)==ia)*1.0d0
+                n4 = 0d0
+
+                write(file_id,*) 'ability = ', ia, ' men Fraction in category 1 = ', n1/ntot
+                write(file_id,*) 'ability = ', ia, ' men Fraction in category 2 = ', n2/ntot
+                write(file_id,*) 'ability = ', ia, ' men Fraction in category 3 = ', n3/ntot
+                write(file_id,*) 'ability = ', ia, ' men Fraction in category 4 = ', n4/ntot
+
+                h1 = sum( Sim1m(:,:,:,4), mask=( Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)>0.01d0 .and. Sim1m(:,:,:,5)<=yhat .and. exp1m(:,:,:,2)==ia) )
+                h2 = sum( Sim1m(:,:,:,4), mask=( Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,5)>yhat .and. exp1m(:,:,:,2)==ia) )
+                h3 = sum( Sim1m(:,:,:,4), mask=( Sim1m(:,:,:,10)<0.5 .and. Sim1m(:,:,:,4)<0.01d0 .and. exp1m(:,:,:,2)==ia) )
+                h4 = 0d0
+
+                write(file_id,*) 'ability=', ia, ' men hrs category 1 = ', h1/n1
+                write(file_id,*) 'ability=', ia, ' men hrs category 2 = ', h2/n2
+                write(file_id,*) 'ability=', ia, ' men hrs category 3 = ', h3/n3
+                write(file_id,*) 'ability=', ia, ' men hrs category 4 = ', h4/n4
+
+                ntot = count(Sim1f(:,:,:,10)<0.5d0 .and. exp1f(:,:,:,2)==ia)*1.0d0
+                write(file_id,*) 'ability = ', ia, ' women ntot = ', ntot
+                n1 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)>0.01d0 .and. Sim1f(:,:,:,5)<=yhat .and. exp1f(:,:,:,2)==ia)*1.0d0
+                n2 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,5)>yhat .and. exp1f(:,:,:,2)==ia)*1.0d0
+                n3 = count(Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)<0.01d0 .and. exp1f(:,:,:,2)==ia)*1.0d0
+                n4 = 0d0
+
+                write(file_id,*) 'ability = ', ia, ' women Fraction in category 1 = ', n1/ntot
+                write(file_id,*) 'ability = ', ia, ' women Fraction in category 2 = ', n2/ntot
+                write(file_id,*) 'ability = ', ia, ' women Fraction in category 3 = ', n3/ntot
+                write(file_id,*) 'ability = ', ia, ' women Fraction in category 4 = ', n4/ntot
+
+                h1 = sum( Sim1f(:,:,:,4), mask=( Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)>0.01d0 .and. Sim1f(:,:,:,5)<=yhat .and. exp1f(:,:,:,2)==ia) )
+                h2 = sum( Sim1f(:,:,:,4), mask=( Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,5)>yhat .and. exp1f(:,:,:,2)==ia) )
+                h3 = sum( Sim1f(:,:,:,4), mask=( Sim1f(:,:,:,10)<0.5 .and. Sim1f(:,:,:,4)<0.01d0 .and. exp1f(:,:,:,2)==ia) )
+                h4 = 0d0
+
+                write(file_id,*) 'ability=', ia, ' women hrs category 1 = ', h1/n1
+                write(file_id,*) 'ability=', ia, ' women hrs category 2 = ', h2/n2
+                write(file_id,*) 'ability=', ia, ' women hrs category 3 = ', h3/n3
+                write(file_id,*) 'ability=', ia, ' women hrs category 4 = ', h4/n4
+            end do
+
+
+            dum2aa = 0d0
+            dum3aa = 0d0
+            dum2aa_check = 0d0
+
+            write(file_id,*) 'Dependency table 1: married couples'
+            do i=1,T
+
+                do it2=1,nsim2
+                    do it=1,nsim
+                        if(Sim1m(it2,it,i,10)>0.5) then
+                            
+                            ipart=exp1m(it2,it,i,4)
+                            iam = exp1m(it2,it,i,2)
+                            iaf = exp1f(it2,it,i,2)
+
+                            if (Sim1m(it2,it,i,4) < 0.01d0 .and. Sim1f(it2,ipart,i,4) < 0.01d0) then
+                                dum2aa(iam, iaf) = dum2aa(iam, iaf) + 1d0*WeightActive(i)
+                            end if
+                            if (Sim1m(it2,it,i,18) < 0.5d0 .and. Sim1f(it2,ipart,i,18) < 0.5d0) then
+                                dum2aa_check(iam, iaf) = dum2aa_check(iam, iaf) + 1d0*WeightActive(i)
+                            end if
+                            dum3aa(iam, iaf) = dum3aa(iam, iaf) + 1d0*WeightActive(i)
+                            
+                        end if
+                    end do
+                end do
+
+            end do
+
+            do iam = 1, na
+                do iaf = 1, na
+                    write(file_id, '(a,i2,a5,i2,a4,f14.8)') 'Fraction not working with am= ', iam, ' af= ', iaf, ' is ', dum2aa(iam,iaf) / dum3aa(iam,iaf) 
+                    write(file_id, '(a,i2,a5,i2,a4,f14.8)') 'TEST Fraction not working with am= ', iam, ' af= ', iaf, ' is ', dum2aa_check(iam,iaf) / dum3aa(iam,iaf) 
+                end do
+            end do
+        end if
     end subroutine Statistics
 
 end module Summarize_Simulation
