@@ -965,6 +965,10 @@ contains
         implicit none
         integer :: it2, it3, it4
         real(8) :: dum2, dum3
+        integer :: gen_earnings_distr
+        
+        gen_earnings_distr = 0
+        
         print *, 'av_earnings(1,1,:) is',av_earnings(1,1,:)
         print *, 'av_earnings(1,2,:) is',av_earnings(1,2,:)
         print *, 'av_earnings(2,1,:) is',av_earnings(2,1,:)
@@ -4012,17 +4016,77 @@ contains
 
         close(1)
 
-        open(1, file='Probm.txt')
-        do it2=1,T
-            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
-        end do
-        close(1)
+        !open(1, file='Probm.txt')
+        !do it2=1,T
+        !    write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
+        !end do
+        !close(1)
+        !
+        !open(1, file='Probd.txt')
+        !do it2=1,T
+        !    write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
+        !end do
+        !close(1)
+        
+        if (gen_earnings_distr == 1) then
+            !Variables are age, ID number, earnings
+            !open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male2.txt')
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_male.txt')
 
-        open(1, file='Probd.txt')
-        do it2=1,T
-            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
-        end do
-        close(1)
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                            it7=exp1m(it3,it4,it2,2)
+                            !if(it7==1) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,5)
+                            !end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)
+    
+            !Variables are age, ID number, earnings
+    
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_female.txt')
+
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                            it7=exp1f(it3,it4,it2,2)
+                            !if(it7==1) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1f(it3,it4,it2,5)
+                            !end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)
+    
+            !Variables are age, male ID number, household earnings
+    
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_married.txt')
+
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                            it7=exp1m(it3,it4,it2,4)                
+                            if((exp1m(it3,it4,it2,2)==1).AND.(exp1f(it3,it7,it2,2)==1)) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,6)
+                            end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)    
+            
+        end if
 
 
     end subroutine generate_paths
