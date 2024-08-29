@@ -497,7 +497,8 @@ contains
             yhat = 0.50d0
             yhat_mar = 2d0*yhat
             b_nit = s_nit*yhat
-            b_nit_mar = s_nit*yhat_mar            
+            b_nit_mar = s_nit*yhat_mar   
+            I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
             after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
             !write(iunit, *) 'with UBI tax system'    
