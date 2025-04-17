@@ -1,0 +1,13 @@
+*.txt
+x64/
+Debug/
+mod/
+obj/
+MAIN
+*.suo
+*.sln
+*.vfproj
+*.u2d
+*.i90
+*.out
+*.mod
