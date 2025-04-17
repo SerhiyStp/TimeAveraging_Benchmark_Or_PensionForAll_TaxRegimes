@@ -14,4 +14,5 @@ module load intel/2022a
 #module load intel-mpi/2021.2.0
 module list
 
+#mpif90 main_v2.f90 -o fox_v2.exe
 make

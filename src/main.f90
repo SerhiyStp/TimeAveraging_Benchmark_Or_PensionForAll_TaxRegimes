@@ -475,6 +475,8 @@ contains
             !tax_folder = 'nit_w_deduct/'
             Deduct_Cutoff = 0.1d0
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+            !yhat = 0.50d0
+            !yhat_mar = 2d0*yhat            
             I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
             after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
@@ -500,7 +502,8 @@ contains
             yhat = 0.50d0
             yhat_mar = 2d0*yhat
             b_nit = s_nit*yhat
-            b_nit_mar = s_nit*yhat_mar            
+            b_nit_mar = s_nit*yhat_mar   
+            I_ubi = 0
             after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
             after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
             !write(iunit, *) 'with UBI tax system'    
@@ -531,8 +534,7 @@ contains
             !tax_folder = 'nit'
             Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
             Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            !yhat = 1.00d0
-            yhat = 0.98d0
+            yhat = 1.00d0
             yhat_mar = 2d0*yhat
             b_nit = s_nit*yhat
             b_nit_mar = s_nit*yhat_mar
@@ -545,458 +547,462 @@ contains
     
     end subroutine Init_Model_TaxRegime_version
 
-    subroutine Initialize(iunit)
+        subroutine Initialize(iunit)
 
-        !USE ANORDF_INT
-        implicit none
-        
-        integer, intent(in) :: iunit
-        integer :: iu_tmp
-        character(len=4) :: deduct_str
-        integer :: check_stat
-        
-        if (pension_for_all == 1) then
-            results_folder = 'pensionforall/'    
-            write(iunit, *) 'Computing pensionforall model '
-        else
-            results_folder = 'benchmark/'   
-            write(iunit, *) 'Computing benchmark model '
-        end if
-        
-        
-        if (tax_regime == 1) then
-            tax_folder = 'benchmark/'
-            !Deduct_Cutoff = 0d0
-            !Deduct_Cutoff_Mar = Deduct_Cutoff
-            !tax_prog_scale = 1.0d0
-            !I_ubi = 0
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_base
-            write(iunit, *) 'with benchmark tax system'
-        else if (tax_regime == 2) then
-            tax_folder = 'nit_w_deduct/'
-            !Deduct_Cutoff = 0.1d0
-            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
-            !I_ubi = 0
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
-            !write(iunit, *) 'with NIT with deduction tax system'
-        else if (tax_regime == 3) then
-            tax_folder = 'ubi/'
-            !Deduct_Cutoff = 0d0
-            !Deduct_Cutoff_Mar = Deduct_Cutoff
-            !tax_prog_scale = 1.0d0
-            !I_ubi = 1
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_base  
-            write(iunit, *) '================================================'
-            write(iunit, *) 'with UBI tax system'
-            write(iunit, *) 'b_ubi ', b_ubi
-            write(iunit, *) 'b_ubi_mar ', b_ubi_mar
-            write(iunit, *) '================================================'
-        else if (tax_regime == 4) then
-            tax_folder = 'eitc/'
-            !Deduct_Cutoff = 0.1d0
-            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
-            write(iunit, *) 'with UBI tax system'    
-        else if (tax_regime == 5) then
-            !theta = thetas
-            write(deduct_str, '(f4.2)') Deduct_Cutoff
-            tax_folder = 'flattax_'//TRIM(deduct_str)//'/'
-            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
-            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            !tax_prog_scale = 0.001d0
-            !I_ubi = 0
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_base
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_base             
-            write(iunit, *) 'with FlatTax tax system and deduction = '//deduct_str 
-        else if (tax_regime == 6) then
-            tax_folder = 'nit1/'
-            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
-            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            !!tax_prog_scale = 0.001d0
-            !I_ubi = 0
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
-            write(iunit, *) '================================================'
-            write(iunit, *) 'with NIT1 tax system:' 
-            write(iunit, *), 's_nit = ', s_nit
-            write(iunit, *), 'yhat = ', yhat
-            write(iunit, *), 'yhat_mar = ', yhat_mar
-            write(iunit, *), 'b_nit = ', b_nit   
-            write(iunit, *), 'b_nit_mar = ', b_nit_mar
-            write(iunit, *) '================================================'
-        else if (tax_regime == 7) then
-            tax_folder = 'nit2/'
-            !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
-            !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
-            !!tax_prog_scale = 0.001d0
-            !I_ubi = 0
-            !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
-            !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
-            write(iunit, *) '================================================'
-            write(iunit, *) 'with NIT2 tax system'             
-            write(iunit, *), 's_nit = ', s_nit
-            write(iunit, *), 'yhat = ', yhat
-            write(iunit, *), 'yhat_mar = ', yhat_mar
-            write(iunit, *), 'b_nit = ', b_nit   
-            write(iunit, *), 'b_nit_mar = ', b_nit_mar
-            write(iunit, *) '================================================'
-        end if
-        
-        call execute_command_line("test -d "//trim(results_folder)//trim(tax_folder), exitstat=check_stat)
-        if (check_stat == 0) then
-            write(iunit, *), 'Folder already exists'
-        else
-            call execute_command_line("mkdir "//trim(results_folder)//trim(tax_folder), exitstat=check_stat)
-            if (check_stat == 0) then
-                write(iunit, *), 'Folder created successfully'
+            !USE ANORDF_INT
+            implicit none
+            
+            integer, intent(in) :: iunit
+            integer :: iu_tmp
+            character(len=4) :: deduct_str
+            integer :: check_stat
+            
+            if (pension_for_all == 1) then
+                results_folder = 'pensionforall/'    
+                write(iunit, *) 'Computing pensionforall model '
             else
-                write(iunit, *), 'Failed to create the folder'
+                results_folder = 'benchmark/'   
+                write(iunit, *) 'Computing benchmark model '
             end if
-        end if
-        
-        open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
-        write(iu_tmp, '(i0)') testing 
-        write(iu_tmp, '(i0)') pension_for_all
-        write(iu_tmp, '(i0)') tax_regime
-        write(iu_tmp, '(i0)') I_ubi
-        close(iu_tmp)        
+            
+            
+            if (tax_regime == 1) then
+                tax_folder = 'benchmark/'
+                !Deduct_Cutoff = 0d0
+                !Deduct_Cutoff_Mar = Deduct_Cutoff
+                !tax_prog_scale = 1.0d0
+                !I_ubi = 0
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_base
+                write(iunit, *) 'with benchmark tax system'
+            else if (tax_regime == 2) then
+                tax_folder = 'nit_w_deduct/'
+                !Deduct_Cutoff = 0.1d0
+                !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+                !I_ubi = 0
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_nit_w_deduct
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_nit_w_deduct
+                !write(iunit, *) 'with NIT with deduction tax system'
+            else if (tax_regime == 3) then
+                tax_folder = 'ubi/'
+                !Deduct_Cutoff = 0d0
+                !Deduct_Cutoff_Mar = Deduct_Cutoff
+                !tax_prog_scale = 1.0d0
+                !I_ubi = 1
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_base  
+                write(iunit, *) '================================================'
+                write(iunit, *) 'with UBI tax system'
+                write(iunit, *) 'b_ubi ', b_ubi
+                write(iunit, *) 'b_ubi_mar ', b_ubi_mar
+                write(iunit, *) '================================================'
+            else if (tax_regime == 4) then
+                tax_folder = 'eitc/'
+                !Deduct_Cutoff = 0.1d0
+                !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_eitc
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_eitc  
+                write(iunit, *) 'with UBI tax system'    
+            else if (tax_regime == 5) then
+                !theta = thetas
+                write(deduct_str, '(f4.2)') Deduct_Cutoff
+                tax_folder = 'flattax_'//TRIM(deduct_str)//'/'
+                !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+                !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+                !tax_prog_scale = 0.001d0
+                !I_ubi = 0
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_base
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_base             
+                write(iunit, *) 'with FlatTax tax system and deduction = '//deduct_str 
+            else if (tax_regime == 6) then
+                tax_folder = 'nit1/'
+                !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+                !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+                !!tax_prog_scale = 0.001d0
+                !I_ubi = 0
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+                write(iunit, *) '================================================'
+                write(iunit, *) 'with NIT1 tax system:' 
+                write(iunit, *), 's_nit = ', s_nit
+                write(iunit, *), 'yhat = ', yhat
+                write(iunit, *), 'yhat_mar = ', yhat_mar
+                write(iunit, *), 'b_nit = ', b_nit   
+                write(iunit, *), 'b_nit_mar = ', b_nit_mar
+                write(iunit, *) '================================================'
+            else if (tax_regime == 7) then
+                tax_folder = 'nit2/'
+                !Deduct_Cutoff = 0.0d0 ! There will be 3 versions of this
+                !Deduct_Cutoff_Mar = 2.0d0*Deduct_Cutoff 
+                !!tax_prog_scale = 0.001d0
+                !I_ubi = 0
+                !after_tax_labor_inc_single => after_tax_labor_inc_single_nit
+                !after_tax_labor_inc_married => after_tax_labor_inc_married_nit            
+                write(iunit, *) '================================================'
+                write(iunit, *) 'with NIT2 tax system'             
+                write(iunit, *), 's_nit = ', s_nit
+                write(iunit, *), 'yhat = ', yhat
+                write(iunit, *), 'yhat_mar = ', yhat_mar
+                write(iunit, *), 'b_nit = ', b_nit   
+                write(iunit, *), 'b_nit_mar = ', b_nit_mar
+                write(iunit, *) '================================================'
+            end if
+            
+            call execute_command_line("test -d "//trim(results_folder)//trim(tax_folder), exitstat=check_stat)
+            if (check_stat == 0) then
+                write(iunit, *), 'Folder already exists'
+            else
+                call execute_command_line("mkdir "//trim(results_folder)//trim(tax_folder), exitstat=check_stat)
+                if (check_stat == 0) then
+                    write(iunit, *), 'Folder created successfully'
+                else
+                    write(iunit, *), 'Failed to create the folder'
+                end if
+            end if
+            
+            open(newunit=iu_tmp, file=trim(results_folder)//trim(tax_folder)//'test.txt')
+            write(iu_tmp, '(i0)') testing 
+            write(iu_tmp, '(i0)') pension_for_all
+            write(iu_tmp, '(i0)') tax_regime
+            write(iu_tmp, '(i0)') I_ubi
+            close(iu_tmp)        
 
-        allocate(v(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(ev(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(c(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(k(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(nm(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(nf(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(v(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(ev(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(c(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(k(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(nm(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(nf(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
 
-        allocate(v_aux(nk,nexp,nexp,na,nu,na,nu,nfc,nfcm,2))
-        allocate(ev_aux(nk,nexp,nexp,na,nu,na,nu,nfc,nfcm,2))
+            allocate(v_aux(nk,nexp,nexp,na,nu,na,nu,nfc,nfcm,2))
+            allocate(ev_aux(nk,nexp,nexp,na,nu,na,nu,nfc,nfcm,2))
 
-        allocate(lfpm(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(lfpf(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
-        allocate(c_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))
-        allocate(v_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2,2))
-        allocate(k_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))  
-        allocate(nm_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))
-        allocate(nf_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))   
+            allocate(lfpm(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(lfpf(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm))
+            allocate(c_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))
+            allocate(v_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2,2))
+            allocate(k_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))  
+            allocate(nm_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))
+            allocate(nf_lfp(nk,nexp,nexp,na,nu,na,nu,T,nfc,nfcm,2,2))   
 
-        allocate(lfps(2,nk,nexp,na,nu,T,nfc))
-        allocate(cs_lfp(2,nk,nexp,na,nu,T,nfc,2))
-        allocate(ns_lfp(2,nk,nexp,na,nu,T,nfc,2))
-        allocate(ks_lfp(2,nk,nexp,na,nu,T,nfc,2))  
-        allocate(vs_lfp(2,nk,nexp,na,nu,T,nfc,2))                 
+            allocate(lfps(2,nk,nexp,na,nu,T,nfc))
+            allocate(cs_lfp(2,nk,nexp,na,nu,T,nfc,2))
+            allocate(ns_lfp(2,nk,nexp,na,nu,T,nfc,2))
+            allocate(ks_lfp(2,nk,nexp,na,nu,T,nfc,2))  
+            allocate(vs_lfp(2,nk,nexp,na,nu,T,nfc,2))                 
 
-        allocate(vs(2,nk,nexp,na,nu,T,nfc))
-        allocate(evs(2,nk,nexp,na,nu,T,nfc))
-        allocate(evm(2,nk,nexp,na,nu,T,nfc))
-        allocate(cs(2,nk,nexp,na,nu,T,nfc))
-        allocate(edcs(2,nk,nexp,na,nu,T,nfc))
-        allocate(Uprimes(2,nk,nexp,na,nu,T,nfc))
-        allocate(ks(2,nk,nexp,na,nu,T,nfc))
-        allocate(ns(2,nk,nexp,na,nu,T,nfc))
+            allocate(vs(2,nk,nexp,na,nu,T,nfc))
+            allocate(evs(2,nk,nexp,na,nu,T,nfc))
+            allocate(evm(2,nk,nexp,na,nu,T,nfc))
+            allocate(cs(2,nk,nexp,na,nu,T,nfc))
+            allocate(edcs(2,nk,nexp,na,nu,T,nfc))
+            allocate(Uprimes(2,nk,nexp,na,nu,T,nfc))
+            allocate(ks(2,nk,nexp,na,nu,T,nfc))
+            allocate(ns(2,nk,nexp,na,nu,T,nfc))
 
-        allocate(a_couple(na,na))
-        allocate(a(2,na))
-        allocate(Prob_a(2,na))
+            allocate(a_couple(na,na))
+            allocate(a(2,na))
+            allocate(Prob_a(2,na))
 
-        allocate(fc(2,nfc))
-        allocate(Prob_fc(2,nfc))
-        allocate(fcm(2,nfcm))
-        allocate(Prob_fcm(2,nfcm))
-        allocate(u(2,nu))
-        allocate(Prob_u(2,nu))
-        allocate(trans_u(2,nu,nu))
-        allocate(trans_a(2,na,na))
-        allocate(trans_fc(2,nfc,nfc))
-        allocate(trans_fcm(2,nfcm,nfcm))
-        allocate(OmegaRet(Tret))
-        allocate(OmegaRet2(Tret))
-        allocate(OmegaActive(T))
-        allocate(Probm(T))
-        allocate(Probd(T))
-        !allocate(Share_single(T))
-        allocate(WeightRet(Tret))
-        allocate(WeightActive(T))
+            allocate(fc(2,nfc))
+            allocate(Prob_fc(2,nfc))
+            allocate(fcm(2,nfcm))
+            allocate(Prob_fcm(2,nfcm))
+            allocate(u(2,nu))
+            allocate(Prob_u(2,nu))
+            allocate(trans_u(2,nu,nu))
+            allocate(trans_a(2,na,na))
+            allocate(trans_fc(2,nfc,nfc))
+            allocate(trans_fcm(2,nfcm,nfcm))
+            allocate(OmegaRet(Tret))
+            allocate(OmegaRet2(Tret))
+            allocate(OmegaActive(T))
+            allocate(Probm(T))
+            allocate(Probd(T))
+            !allocate(Share_single(T))
+            allocate(WeightRet(Tret))
+            allocate(WeightActive(T))
 
-        allocate(fpartner(nk,nexp,na,nu,T,nfc))
-        allocate(mpartner(nk,nexp,na,nu,T,nfcm))
-        allocate(fpartnerdum(nk,nexp,na,nu,T,nfc))
-        allocate(mpartnerdum(nk,nexp,na,nu,T,nfcm))
-        allocate(fpartnerdum2(nk,nexp,na,nu,T,nfc))
-        allocate(mpartnerdum2(nk,nexp,na,nu,T,nfcm))
-        allocate(ability_prob(na,na))
-        allocate(av_earnings(2,2,na))
-        allocate(laborm(nc,nw,nw))
-        allocate(laborf(nc,nw,nw))
-        allocate(labormwork(nc,nw))
-        allocate(laborfwork(nc,nw))
-        allocate(laborsinglem(nc,nw))
-        allocate(laborsinglef(nc,nw))
+            allocate(fpartner(nk,nexp,na,nu,T,nfc))
+            allocate(mpartner(nk,nexp,na,nu,T,nfcm))
+            allocate(fpartnerdum(nk,nexp,na,nu,T,nfc))
+            allocate(mpartnerdum(nk,nexp,na,nu,T,nfcm))
+            allocate(fpartnerdum2(nk,nexp,na,nu,T,nfc))
+            allocate(mpartnerdum2(nk,nexp,na,nu,T,nfcm))
+            allocate(ability_prob(na,na))
+            allocate(av_earnings(2,2,na))
+            allocate(laborm(nc,nw,nw))
+            allocate(laborf(nc,nw,nw))
+            allocate(labormwork(nc,nw))
+            allocate(laborfwork(nc,nw))
+            allocate(laborsinglem(nc,nw))
+            allocate(laborsinglef(nc,nw))
 
-        allocate(c_grid(nc))
-        allocate(wage_grid(nw))
-        allocate(k_grid(nk))
-        allocate(exp_grid(nexp,T+Tret))
+            allocate(c_grid(nc))
+            allocate(wage_grid(nw))
+            allocate(k_grid(nk))
+            allocate(exp_grid(nexp,T+Tret))
 
-        allocate(c_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(edc_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(edc_ret_spln_coefs(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(Uprime_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(v_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(v_ret2(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(ev_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(k_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(nm_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(nf_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(retm(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(retf(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(vs_ret2(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(vs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(evs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(evs_ret_spln_coefs(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(cs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(Eulers_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(edcs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(edcs_ret_spln_coefs(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(Uprimes_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(ks_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(ns_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(Incomes_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(rets(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(break(nk))
-        
-        allocate(lfpm_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(lfpf_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
-        allocate(k_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
-        allocate(c_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
-        allocate(nm_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
-        allocate(nf_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
-        allocate(lfps_ret(2,2,nk,nexp,na,nu,Tret,nfc))
-        allocate(cs_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
-        allocate(ks_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
-        allocate(ns_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
-        
+            allocate(c_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(edc_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(edc_ret_spln_coefs(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(Uprime_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(v_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(v_ret2(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(ev_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(k_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(nm_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(nf_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(retm(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(retf(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(vs_ret2(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(vs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(evs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(evs_ret_spln_coefs(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(cs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(Eulers_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(edcs_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(edcs_ret_spln_coefs(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(Uprimes_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(ks_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(ns_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(Incomes_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(rets(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(break(nk))
+            
+            allocate(lfpm_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(lfpf_ret(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm))
+            allocate(k_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
+            allocate(c_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
+            allocate(nm_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
+            allocate(nf_ret_lfp(2,2,nk,nexp,nexp,na,nu,na,nu,Tret,nfc,nfcm,2,2))
+            allocate(lfps_ret(2,2,nk,nexp,na,nu,Tret,nfc))
+            allocate(cs_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
+            allocate(ks_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
+            allocate(ns_ret_lfp(2,2,nk,nexp,na,nu,Tret,nfc,2))
+            
 
-        open(1, file='singledist.txt')
+            open(1, file='singledist.txt')
 
-        read (1, *) fpartner,mpartner
+            read (1, *) fpartner,mpartner
 
-        close(1)
+            close(1)
 
-        open(1, file='abilityprob.txt')
+            open(1, file='abilityprob.txt')
 
-        read (1, *) ability_prob
+            read (1, *) ability_prob
 
-        close(1)
+            close(1)
 
-        open(1, file='av_earnings.txt')
+            open(1, file='av_earnings.txt')
 
-        read (1, *) av_earnings
+            read (1, *) av_earnings
 
-        close(1)
+            close(1)
 
-        trans_u = 0d0
-        prob_u=0d0
-        trans_a = 0d0
-        prob_a=0d0
-        gamma(1,:) = (/ 0.0605927d0, -0.0010648d0, 0.0000093d0 /)
-        gamma(2,:) = (/ 0.0784408d0, -0.0025596d0, 0.0000256d0 /)
-        gamma0=0.0676d0
-        gamma0f=-0.0685d0
+            trans_u = 0d0
+            prob_u=0d0
+            trans_a = 0d0
+            prob_a=0d0
+            gamma(1,:) = (/ 0.0605927d0, -0.0010648d0, 0.0000093d0 /)
+            gamma(2,:) = (/ 0.0784408d0, -0.0025596d0, 0.0000256d0 /)
+            gamma0=0.0676d0
+            gamma0f=-0.0685d0
 
-        theta(:) = (/ 0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
-        thetas(:) = (/ 0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
-        AE = 1d0
-        !Unemp_benefit=0.201795*AE
-        !ratio=4.325d0
-        Unemp_benefit=0d0
-        r=alpha*ratio**(alpha-1d0)-delta
-        w=(1d0-alpha)*ratio**alpha
-        call MakeGrid(nk,k_grid,0d0,100d0,3d0)
-        call MakeGrid(nc,c_grid,0.01d0,100d0,3d0)
+            theta(:) = (/ 0.93124354*tax_level_scale, 0.15002363*tax_prog_scale /)
+            thetas(:) = (/ 0.81773322*tax_level_scale, 0.11060017*tax_prog_scale /)
+            AE = 1d0
+            !Unemp_benefit=0.201795*AE
+            !ratio=4.325d0
+            Unemp_benefit=0d0
+            r=alpha*ratio**(alpha-1d0)-delta
+            w=(1d0-alpha)*ratio**alpha
+            call MakeGrid(nk,k_grid,0d0,100d0,3d0)
+            call MakeGrid(nc,c_grid,0.01d0,100d0,3d0)
 
-        exp_grid=0d0
-        do it2=2,T
-            call MakeGrid(nexp,exp_grid(:,it2),0d0,1d0*(it2-1),1d0)
-        end do
+            exp_grid=0d0
+            do it2=2,T
+                call MakeGrid(nexp,exp_grid(:,it2),0d0,1d0*(it2-1),1d0)
+            end do
 
-        do it2=T+1,T+Tret
-            call MakeGrid(nexp,exp_grid(:,it2),0d0,1d0*(it2-1),1d0)
-        end do
-
-
-        exp_grid(:,1)=exp_grid(:,2)
-
-        !Filling in US divorce and marriage probabilities
-
-        probd(1)=0.11908938
-        probd(2)=0.09947980
-        probd(3)=0.08335590
-        probd(4)=0.07024181
-        probd(5)=0.05970394
-        probd(6)=0.05134912
-
-        probm(1)=0.08301004
-        probm(2)=0.09522406
-        probm(3)=0.10423554
-        probm(4)=0.11041682
-        probm(5)=0.11411954
-        probm(6)=0.11567485       
-
-        OmegaActive=1d0
-
-        OmegaRet(1)=1d0-0.014319d0
-        OmegaRet(2)=1d0-0.015540d0    
-
-        if (testing == 0) then
-            probd(7)=0.04482276
-            probd(8)=0.03980704
-            probd(9)=0.03601902
-            probd(10)=0.03320882
-            probd(11)=0.03115778
-            probd(12)=0.02967661
-            probd(13)=0.02860353
-            probd(14)=0.02780249
-            probd(15)=0.02716124
-            probd(16)=0.02658955
-            probd(17)=0.02601734
-            probd(18)=0.02539286
-            probd(19)=0.02468080
-            probd(20)=0.02386051
-            probd(21)=0.02292411
-            probd(22)=0.02187467
-            probd(23)=0.02072434
-            probd(24)=0.01949255
-            probd(25)=0.01820413
-            probd(26)=0.01688749
-            probd(27)=0.01557275
-            probd(28)=0.01428994
-            probd(29)=0.01306712
-            probd(30)=0.01192853
-            probd(31)=0.01089280
-            probd(32)=0.00997105
-            probd(33)=0.00916507
-            probd(34)=0.00846549
-            probd(35)=0.00784992
-            probd(36)=0.00728109
-            probd(37)=0.00670507
-            probd(38)=0.00604934
-            probd(39)=0.00522102
-            probd(40)=0.00410500
-            probd(41)=0.00256208
-            probd(42)=0.00042715
-            probd(43)=0.00000000
-            probd(44)=0.00000000
-            probd(45)=0.00000000
-
-            probm(7)=0.11539366
-            probm(8)=0.11356688
-            probm(9)=0.11046570
-            probm(10)=0.10634176
-            probm(11)=0.10142749
-            probm(12)=0.09593630
-            probm(13)=0.09006280
-            probm(14)=0.08398313
-            probm(15)=0.07785512
-            probm(16)=0.07181858
-            probm(17)=0.06599554
-            probm(18)=0.06049049
-            probm(19)=0.05539063
-            probm(20)=0.05076610
-            probm(21)=0.04667024
-            probm(22)=0.04313985
-            probm(23)=0.04019541
-            probm(24)=0.03784131
-            probm(25)=0.03606616
-            probm(26)=0.03484296
-            probm(27)=0.03412940
-            probm(28)=0.03386807
-            probm(29)=0.03398674
-            probm(30)=0.03439857
-            probm(31)=0.03500238
-            probm(32)=0.03568288
-            probm(33)=0.03631093
-            probm(34)=0.03674376
-            probm(35)=0.03682526
-            probm(36)=0.03638617
-            probm(37)=0.03524438
-            probm(38)=0.03320513
-            probm(39)=0.03006129
-            probm(40)=0.02559356
-            probm(41)=0.01957079
-            probm(42)=0.01175015
-            probm(43)=0.00187740
-            probm(44)=0.00000000
-            probm(45)=0.00000000
-
-            OmegaRet(3)=1d0-0.016920d0
-            OmegaRet(4)=1d0-0.018448d0
-            OmegaRet(5)=1d0-0.020170d0         
-            OmegaRet(6)=1d0-0.022022d0
-            OmegaRet(7)=1d0-0.023973d0
-            OmegaRet(8)=1d0-0.026203d0
-            OmegaRet(9)=1d0-0.028771d0
-            OmegaRet(10)=1d0-0.031629d0
-            OmegaRet(11)=1d0-0.034611d0
-            OmegaRet(12)=1d0-0.037710d0
-            OmegaRet(13)=1d0-0.041264d0
-            OmegaRet(14)=1d0-0.045405d0
-            OmegaRet(15)=1d0-0.050128d0
-            OmegaRet(16)=1d0-0.055339d0
-            OmegaRet(17)=1d0-0.061005d0
-            OmegaRet(18)=1d0-0.067396d0
-            OmegaRet(19)=1d0-0.074476d0
-            OmegaRet(20)=1d0-0.082272d0
-            OmegaRet(21)=1d0-0.091816d0
-            OmegaRet(22)=1d0-0.101898d0
-            OmegaRet(23)=1d0-0.112870d0
-            OmegaRet(24)=1d0-0.124763d0
-            OmegaRet(25)=1d0-0.137597d0
-            OmegaRet(26)=1d0-0.151383d0
-            OmegaRet(27)=1d0-0.166117d0
-            OmegaRet(28)=1d0-0.181778d0
-            OmegaRet(29)=1d0-0.198331d0
-            OmegaRet(30)=1d0-0.215721d0
-            OmegaRet(31)=1d0-0.233874d0
-            OmegaRet(32)=1d0-0.252699d0
-            OmegaRet(33)=1d0-0.272086d0
-            OmegaRet(34)=1d0-0.291912d0
-            OmegaRet(35)=1d0-0.312040d0
-            OmegaRet(36)=1d0-1d0
-        end if
-
-        !OmegaRet=1d0
-
-        OmegaRet2(1)=1d0
-        do it2=1,Tret-1
-            OmegaRet2(it2+1)=OmegaRet(it2)
-        end do
+            do it2=T+1,T+Tret
+                call MakeGrid(nexp,exp_grid(:,it2),0d0,1d0*(it2-1),1d0)
+            end do
 
 
-        call tauchen_hans(sigma_am,rho_am,na,a(1,:),trans_a(1,:,:),prob_a(1,:))
-        call tauchen_hans(sigma_um,rho_um,nu,u(1,:),trans_u(1,:,:),prob_u(1,:))
+            exp_grid(:,1)=exp_grid(:,2)
 
-        call tauchen_hans(sigma_af,rho_af,na,a(2,:),trans_a(2,:,:),prob_a(2,:))
-        call tauchen_hans(sigma_uf,rho_uf,nu,u(2,:),trans_u(2,:,:),prob_u(2,:))
+            !Filling in US divorce and marriage probabilities
 
-        fc(1,:)=exp(mu_fcm)
-        fc(2,:)=exp(mu_fcs)
-        fcm(1,:)=exp(mu_fcmm)
-        fcm(2,:)=exp(mu_fcsm)
-        
-        call InitSimulation()
+            probd(1)=0.11908938
+            probd(2)=0.09947980
+            probd(3)=0.08335590
+            probd(4)=0.07024181
+            probd(5)=0.05970394
+            probd(6)=0.05134912
+
+            probm(1)=0.08301004
+            probm(2)=0.09522406
+            probm(3)=0.10423554
+            probm(4)=0.11041682
+            probm(5)=0.11411954
+            probm(6)=0.11567485       
+
+            OmegaActive=1d0
+
+            OmegaRet(1)=1d0-0.014319d0
+            OmegaRet(2)=1d0-0.015540d0    
+
+            if (testing == 0) then
+                probd(7)=0.04482276
+                probd(8)=0.03980704
+                probd(9)=0.03601902
+                probd(10)=0.03320882
+                probd(11)=0.03115778
+                probd(12)=0.02967661
+                probd(13)=0.02860353
+                probd(14)=0.02780249
+                probd(15)=0.02716124
+                probd(16)=0.02658955
+                probd(17)=0.02601734
+                probd(18)=0.02539286
+                probd(19)=0.02468080
+                probd(20)=0.02386051
+                probd(21)=0.02292411
+                probd(22)=0.02187467
+                probd(23)=0.02072434
+                probd(24)=0.01949255
+                probd(25)=0.01820413
+                probd(26)=0.01688749
+                probd(27)=0.01557275
+                probd(28)=0.01428994
+                probd(29)=0.01306712
+                probd(30)=0.01192853
+                probd(31)=0.01089280
+                probd(32)=0.00997105
+                probd(33)=0.00916507
+                probd(34)=0.00846549
+                probd(35)=0.00784992
+                probd(36)=0.00728109
+                probd(37)=0.00670507
+                probd(38)=0.00604934
+                probd(39)=0.00522102
+                probd(40)=0.00410500
+                probd(41)=0.00256208
+                probd(42)=0.00042715
+                probd(43)=0.00000000
+                probd(44)=0.00000000
+                probd(45)=0.00000000
+
+                probm(7)=0.11539366
+                probm(8)=0.11356688
+                probm(9)=0.11046570
+                probm(10)=0.10634176
+                probm(11)=0.10142749
+                probm(12)=0.09593630
+                probm(13)=0.09006280
+                probm(14)=0.08398313
+                probm(15)=0.07785512
+                probm(16)=0.07181858
+                probm(17)=0.06599554
+                probm(18)=0.06049049
+                probm(19)=0.05539063
+                probm(20)=0.05076610
+                probm(21)=0.04667024
+                probm(22)=0.04313985
+                probm(23)=0.04019541
+                probm(24)=0.03784131
+                probm(25)=0.03606616
+                probm(26)=0.03484296
+                probm(27)=0.03412940
+                probm(28)=0.03386807
+                probm(29)=0.03398674
+                probm(30)=0.03439857
+                probm(31)=0.03500238
+                probm(32)=0.03568288
+                probm(33)=0.03631093
+                probm(34)=0.03674376
+                probm(35)=0.03682526
+                probm(36)=0.03638617
+                probm(37)=0.03524438
+                probm(38)=0.03320513
+                probm(39)=0.03006129
+                probm(40)=0.02559356
+                probm(41)=0.01957079
+                probm(42)=0.01175015
+                probm(43)=0.00187740
+                probm(44)=0.00000000
+                probm(45)=0.00000000
+
+                OmegaRet(3)=1d0-0.016920d0
+                OmegaRet(4)=1d0-0.018448d0
+                OmegaRet(5)=1d0-0.020170d0         
+                OmegaRet(6)=1d0-0.022022d0
+                OmegaRet(7)=1d0-0.023973d0
+                OmegaRet(8)=1d0-0.026203d0
+                OmegaRet(9)=1d0-0.028771d0
+                OmegaRet(10)=1d0-0.031629d0
+                OmegaRet(11)=1d0-0.034611d0
+                OmegaRet(12)=1d0-0.037710d0
+                OmegaRet(13)=1d0-0.041264d0
+                OmegaRet(14)=1d0-0.045405d0
+                OmegaRet(15)=1d0-0.050128d0
+                OmegaRet(16)=1d0-0.055339d0
+                OmegaRet(17)=1d0-0.061005d0
+                OmegaRet(18)=1d0-0.067396d0
+                OmegaRet(19)=1d0-0.074476d0
+                OmegaRet(20)=1d0-0.082272d0
+                OmegaRet(21)=1d0-0.091816d0
+                OmegaRet(22)=1d0-0.101898d0
+                OmegaRet(23)=1d0-0.112870d0
+                OmegaRet(24)=1d0-0.124763d0
+                OmegaRet(25)=1d0-0.137597d0
+                OmegaRet(26)=1d0-0.151383d0
+                OmegaRet(27)=1d0-0.166117d0
+                OmegaRet(28)=1d0-0.181778d0
+                OmegaRet(29)=1d0-0.198331d0
+                OmegaRet(30)=1d0-0.215721d0
+                OmegaRet(31)=1d0-0.233874d0
+                OmegaRet(32)=1d0-0.252699d0
+                OmegaRet(33)=1d0-0.272086d0
+                OmegaRet(34)=1d0-0.291912d0
+                OmegaRet(35)=1d0-0.312040d0
+                OmegaRet(36)=1d0-1d0
+            end if
+
+            !OmegaRet=1d0
+
+            OmegaRet2(1)=1d0
+            do it2=1,Tret-1
+                OmegaRet2(it2+1)=OmegaRet(it2)
+            end do
 
 
-        
-    end subroutine Initialize  
+            call tauchen_hans(sigma_am,rho_am,na,a(1,:),trans_a(1,:,:),prob_a(1,:))
+            call tauchen_hans(sigma_um,rho_um,nu,u(1,:),trans_u(1,:,:),prob_u(1,:))
+
+            call tauchen_hans(sigma_af,rho_af,na,a(2,:),trans_a(2,:,:),prob_a(2,:))
+            call tauchen_hans(sigma_uf,rho_uf,nu,u(2,:),trans_u(2,:,:),prob_u(2,:))
+
+            fc(1,:)=exp(mu_fcm)
+            fc(2,:)=exp(mu_fcs)
+            fcm(1,:)=exp(mu_fcmm)
+            fcm(2,:)=exp(mu_fcsm)
+            
+            call InitSimulation()
+
+
+            
+        end subroutine Initialize  
 
     subroutine generate_paths()
         implicit none
         integer :: it2, it3, it4
         real(8) :: dum2, dum3
+        integer :: gen_earnings_distr
+        
+        gen_earnings_distr = 0
+        
         print *, 'av_earnings(1,1,:) is',av_earnings(1,1,:)
         print *, 'av_earnings(1,2,:) is',av_earnings(1,2,:)
         print *, 'av_earnings(2,1,:) is',av_earnings(2,1,:)
@@ -4044,17 +4050,77 @@ contains
 
         close(1)
 
-        open(1, file='Probm.txt')
-        do it2=1,T
-            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
-        end do
-        close(1)
+        !open(1, file='Probm.txt')
+        !do it2=1,T
+        !    write (1,'(F12.4,F12.4)') (it2+19)*1d0, probm(it2)
+        !end do
+        !close(1)
+        !
+        !open(1, file='Probd.txt')
+        !do it2=1,T
+        !    write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
+        !end do
+        !close(1)
+        
+        if (gen_earnings_distr == 1) then
+            !Variables are age, ID number, earnings
+            !open(1,file=trim(results_folder)//trim(tax_folder)//'lfppathmarried_male2.txt')
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_male.txt')
 
-        open(1, file='Probd.txt')
-        do it2=1,T
-            write (1,'(F12.4,F12.4)') (it2+19)*1d0, probd(it2)
-        end do
-        close(1)
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1m(it4,it3,it2,10)<0.5d0) then
+                            it7=exp1m(it3,it4,it2,2)
+                            !if(it7==1) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,5)
+                            !end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)
+    
+            !Variables are age, ID number, earnings
+    
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_single_female.txt')
+
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1f(it4,it3,it2,10)<0.5d0) then
+                            it7=exp1f(it3,it4,it2,2)
+                            !if(it7==1) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1f(it3,it4,it2,5)
+                            !end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)
+    
+            !Variables are age, male ID number, household earnings
+    
+            open(1, file=trim(results_folder)//trim(tax_folder)//'Simulated_earnings_married.txt')
+
+            do it2=1,T
+                do it3=1,nsim2
+                    do it4=1,nsim
+                        if(Sim1m(it4,it3,it2,10)>0.5d0) then
+                            it7=exp1m(it3,it4,it2,4)                
+                            if((exp1m(it3,it4,it2,2)==1).AND.(exp1f(it3,it7,it2,2)==1)) then
+                                write (1,'(F12.4,F12.4,F12.4)') (it2+19)*1d0, nsim*(it3-1)*1d0+it4*1d0, Sim1m(it3,it4,it2,6)
+                            end if
+                        end if
+                    end do
+                end do
+            end do
+    
+            close(1)    
+            
+        end if
 
 
     end subroutine generate_paths
